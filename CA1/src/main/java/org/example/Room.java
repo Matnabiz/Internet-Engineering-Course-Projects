@@ -2,20 +2,20 @@ package org.example;
 
 public class Room {
     // Attributes (Fields)
-    private int roomNumber;
+    private int id;
     private int capacity;
 
     public Room(int roomNumber, int capacity) {
-        this.roomNumber = roomNumber;
+        this.id = roomNumber;
         this.capacity = capacity;
     }
 
-    public int getRoomNumber() {
-        return roomNumber;
+    public int getId() {
+        return id;
     }
 
-    public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getCapacity() {
@@ -27,7 +27,7 @@ public class Room {
     }
 
     public void displayInfo() {
-        System.out.println("Room Number: " + roomNumber);
+        System.out.println("Room Number: " + id);
         System.out.println("Capacity: " + capacity);
     }
 

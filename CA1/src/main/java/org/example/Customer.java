@@ -3,13 +3,13 @@ package org.example;
 public class Customer {
 
     private String ssn;
-    private String phoneNumber;
-    private int age;
     private String name;
+    private String phone;
+    private int age;
 
     public Customer(String ssn, String phoneNumber, int age, String name) {
         this.ssn = ssn;
-        this.phoneNumber = phoneNumber;
+        this.phone = phoneNumber;
         this.age = age;
         this.name = name;
     }
@@ -22,12 +22,12 @@ public class Customer {
         this.ssn = ssn;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
     public void setNumber(String number) {
-        this.phoneNumber = number;
+        this.phone = number;
     }
 
     public int getAge() {
@@ -50,6 +50,6 @@ public class Customer {
         System.out.println("Name: " + name);
         System.out.println("Age: " + age);
         System.out.println("National Number: " + ssn);
-        System.out.println("Phone Number: " + phoneNumber);
+        System.out.println("Phone Number: " + phone);
     }
 }

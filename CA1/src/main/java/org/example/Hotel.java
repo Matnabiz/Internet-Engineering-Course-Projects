@@ -6,12 +6,12 @@ public class Hotel {
     private List<Customer> customers;
     private List<Booking> bookings;
 
-    public Hotel(String inputFilePath) {
+    public Hotel() {
         this.rooms = new ArrayList<>();
         this.customers = new ArrayList<>();
         this.bookings = new ArrayList<>();
 
-        HotelData data = InputHandler.readJsonFile(inputFilePath);
+        HotelData data = InputHandler.readJsonFile();
         if (data != null) {
             this.customers = data.getCustomers();
             this.rooms = data.getRooms();
@@ -85,10 +85,10 @@ public class Hotel {
         List<String> phoneNumbers = new ArrayList<>();
 
         for (Booking booking : bookings) {
-            if (booking.roomNum.equals(roomNumber)) {
+            if (booking.room_id.equals(roomNumber)) {
                 for (Customer customer : customers) {
-                    if (customer.getSsn().equals(booking.NationalId)) {
-                        phoneNumbers.add(customer.getPhoneNumber());
+                    if (customer.getSsn().equals(booking.customer_id)) {
+                        phoneNumbers.add(customer.getPhone());
                     }
                 }
             }

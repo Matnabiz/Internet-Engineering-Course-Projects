@@ -5,24 +5,24 @@ import java.util.concurrent.TimeUnit;
 
 public class Booking {
 
-    String NationalId;
-    String resId;
-    String roomNum;
-    Date checkInDate;
-    Date checkOutDate;
+    String id;
+    String room_id;
+    String customer_id;
+    Date check_in;
+    Date check_out;
 
 
     public Booking(String NationalId, String resId, String roomNum, Date checkInDate, Date checkOutDate) {
-        this.NationalId = NationalId;
-        this.resId = resId;
-        this.roomNum = roomNum;
-        this.checkInDate = checkInDate;
-        this.checkOutDate = checkOutDate;
+        this.customer_id = NationalId;
+        this.id = resId;
+        this.room_id = roomNum;
+        this.check_in = checkInDate;
+        this.check_out = checkOutDate;
 
     }
 
     public int getStayDurationInDays() {
-        long diffInMillis = checkOutDate.getTime() - checkInDate.getTime();
+        long diffInMillis = check_out.getTime() - check_in.getTime();
         return (int) TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
     }
 }

@@ -3,25 +3,25 @@
       {
         "ssn": 1001,
         "name": "John Doe",
-        "phoneNumber": "09101234567",
+        "phone": "09101234567",
         "age": 30
       },
       {
         "ssn": 1002,
         "name": "Alice Smith",
-        "phoneNumber": "09119876543",
+        "phone": "09119876543",
         "age": 25
       },
       {
         "ssn": 1003,
         "name": "Bob Johnson",
-        "phoneNumber": "09115678901",
+        "phone": "09115678901",
         "age": 40
       },
       {
         "ssn": 1004,
         "name": "Sarah Brown",
-        "phoneNumber": "09114567890",
+        "phone": "09114567890",
         "age": 35
       }
     ],
