@@ -1,0 +1,77 @@
+{
+    "customers": [
+      {
+        "ssn": 1001,
+        "name": "John Doe",
+        "phone": "09101234567",
+        "age": 30
+      },
+      {
+        "ssn": 1002,
+        "name": "Alice Smith",
+        "phone": "09119876543",
+        "age": 25
+      },
+      {
+        "ssn": 1003,
+        "name": "Bob Johnson",
+        "phone": "09115678901",
+        "age": 40
+      },
+      {
+        "ssn": 1004,
+        "name": "Sarah Brown",
+        "phone": "09114567890",
+        "age": 35
+      }
+    ],
+    "rooms": [
+      {
+        "id": 101,
+        "capacity": 2
+      },
+      {
+        "id": 102,
+        "capacity": 3
+      },
+      {
+        "id": 103,
+        "capacity": 1
+      },
+      {
+        "id": 104,
+        "capacity": 4
+      }
+    ],
+    "bookings": [
+      {
+        "id": 1,
+        "room_id": 101,
+        "customer_id": 1001,
+        "check_in": "2024-02-01 14:00:00",
+        "check_out": "2024-02-05 11:00:00"
+      },
+      {
+        "id": 2,
+        "room_id": 102,
+        "customer_id": 1002,
+        "check_in": "2024-02-03 12:00:00",
+        "check_out": "2024-02-07 10:00:00"
+      },
+      {
+        "id": 3,
+        "room_id": 103,
+        "customer_id": 1003,
+        "check_in": "2024-02-10 16:00:00",
+        "check_out": "2024-02-12 09:00:00"
+      },
+      {
+        "id": 4,
+        "room_id": 104,
+        "customer_id": 1004,
+        "check_in": "2024-02-05 15:00:00",
+        "check_out": "2024-02-08 12:00:00"
+      }
+    ]
+  }
+  

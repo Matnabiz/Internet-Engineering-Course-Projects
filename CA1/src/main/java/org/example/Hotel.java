@@ -6,10 +6,21 @@ public class Hotel {
     private List<Customer> customers;
     private List<Booking> bookings;
 
-    public Hotel() {
+    public Hotel(String inputFilePath) {
         this.rooms = new ArrayList<>();
         this.customers = new ArrayList<>();
         this.bookings = new ArrayList<>();
+
+        HotelData data = InputHandler.readJsonFile(jsonFilePath);
+        if (data != null) {
+            this.customers = data.getCustomers();
+            this.rooms = data.getRooms();
+            this.bookings = data.getBookings();
+        } else {
+            this.customers = new ArrayList<>();
+            this.rooms = new ArrayList<>();
+            this.bookings = new ArrayList<>();
+        }
     }
 
     public void addRoom(Room room) {
@@ -22,6 +33,30 @@ public class Hotel {
 
     public void addBooking(Booking booking) {
         bookings.add(booking);
+    }
+
+    public List<Booking> getAllBookings() {
+        List<Booking> allBookings = new ArrayList<>();
+        for (Booking booking : booking) {
+            allBookings.add(booking);
+        }
+        return allBookings;
+    }
+
+    public List<Customer> getAllCustomers() {
+        List<Customer> allCustomers = new ArrayList<>();
+        for (Customer customer : customers) {
+            allCustomers.add(customer);
+        }
+        return allCustomers;
+    }
+
+    public List<Room> getAllRooms(){
+        List<Room> allRooms = new ArrayList<>();
+        for (Room room : rooms) {
+            allRooms.add(room);
+        }
+        return allRooms;
     }
 
     public List<Room> getRooms(int minCapacity) {
