@@ -2,24 +2,24 @@ package org.example;
 
 public class Customer {
 
-    private String nationalNumber;
+    private String ssn;
     private String phoneNumber;
     private int age;
     private String name;
 
-    public Customer(String nationalNumber, String phoneNumber, int age, String name) {
-        this.nationalNumber = nationalNumber;
+    public Customer(String ssn, String phoneNumber, int age, String name) {
+        this.ssn = ssn;
         this.phoneNumber = phoneNumber;
         this.age = age;
         this.name = name;
     }
 
-    public String getNationalNumber() {
-        return nationalNumber;
+    public String getSsn() {
+        return ssn;
     }
 
-    public void setNationalNumber(String nationalNumber) {
-        this.nationalNumber = nationalNumber;
+    public void setSsn(String ssn) {
+        this.ssn = ssn;
     }
 
     public String getPhoneNumber() {
@@ -49,7 +49,7 @@ public class Customer {
     public void displayInfo() {
         System.out.println("Name: " + name);
         System.out.println("Age: " + age);
-        System.out.println("National Number: " + nationalNumber);
+        System.out.println("National Number: " + ssn);
         System.out.println("Phone Number: " + phoneNumber);
     }
 }
