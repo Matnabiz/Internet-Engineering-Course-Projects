@@ -11,7 +11,7 @@ public class Hotel {
         this.customers = new ArrayList<>();
         this.bookings = new ArrayList<>();
 
-        HotelData data = InputHandler.readJsonFile();
+        HotelData data = InputHandler.readJsonFile("C:\\Users\\AGN\\Desktop\\CA1\\src\\main\\java\\org\\example\\data.json");
         if (data != null) {
             this.customers = data.getCustomers();
             this.rooms = data.getRooms();

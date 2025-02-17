@@ -1,11 +1,15 @@
 package org.example;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Room {
     // Attributes (Fields)
     private int id;
     private int capacity;
 
-    public Room(int roomNumber, int capacity) {
+    @JsonCreator
+    public Room(@JsonProperty("id") int roomNumber, @JsonProperty("capacity") int capacity) {
         this.id = roomNumber;
         this.capacity = capacity;
     }
