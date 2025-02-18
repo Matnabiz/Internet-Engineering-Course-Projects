@@ -8,27 +8,29 @@ import java.util.concurrent.TimeUnit;
 
 public class Booking {
 
-    String id;
-    String room_id;
-    String customer_id;
-    Date check_in;
-    Date check_out;
+    String resId;
+    String roomNumber;
+    String ssn;
+    Date checkInDate;
+    Date checkOutDate;
 
     @JsonCreator
-    public Booking(@JsonProperty("customer_id") String NationalId, @JsonProperty("id") String resId, @JsonProperty("room_id") String roomNum, @JsonProperty("check_in") Date checkInDate, @JsonProperty("check_out") Date checkOutDate) {
-        this.customer_id = NationalId;
-        this.id = resId;
-        this.room_id = roomNum;
-        this.check_in = checkInDate;
-        this.check_out = checkOutDate;
+    public Booking(@JsonProperty("customer_id") String ssn, @JsonProperty("id") String resId, @JsonProperty("room_id") String roomNum, @JsonProperty("check_in") Date checkInDate, @JsonProperty("check_out") Date checkOutDate) {
+        this.ssn = ssn;
+        this.resId = resId;
+        this.roomNumber = roomNum;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
 
     }
 
     public int getStayDurationInDays() {
-        long diffInMillis = check_out.getTime() - check_in.getTime();
+        long diffInMillis = this.checkOutDate.getTime() - this.checkInDate.getTime();
         return (int) TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
     }
 
-    public Date getCheck_in() { return check_in; }
-    public Date getCheck_out() { return check_out; }
+    public Date getCheckInDate() { return this.checkInDate; }
+    public Date getCheckOutDate() { return this.checkOutDate; }
+
+    public String getRoomNumber() { return this.roomNumber; }
 }

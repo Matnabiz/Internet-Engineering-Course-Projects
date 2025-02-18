@@ -81,9 +81,9 @@ public class Hotel {
         List<String> phoneNumbers = new ArrayList<>();
 
         for (Booking booking : bookings) {
-            if (booking.room_id.equals(roomNumber)) {
+            if (booking.roomNumber.equals(roomNumber)) {
                 for (Customer customer : customers) {
-                    if (customer.getSsn().equals(booking.customer_id)) {
+                    if (customer.getSsn().equals(booking.ssn)) {
                         phoneNumbers.add(customer.getPhone());
                     }
                 }
@@ -106,6 +106,39 @@ public class Hotel {
             System.err.println("Error exporting data to JSON: " + e.getMessage());
         }
     }
+
+    public void logState(String filePath) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            List<Room> roomList = rooms.stream().map(room -> {
+                List<Booking> roomBookings = bookings.stream()
+                        .filter(booking -> booking.getRoomNumber().equals(String.valueOf(room.getRoomNumber())))
+                        .map(booking -> new Booking(
+                                customers.stream()
+                                        .filter(c -> c.getSsn().equals(booking.ssn))
+                                        .findFirst()
+                                        .orElse(null),
+                                Integer.parseInt(booking.resId),
+                                null,
+                                booking.checkInDate,
+                                booking.checkOutDate
+                        ))
+                        .collect(Collectors.toList());
+                Room currentRoom = new Room(room.getRoomNumber(), room.getCapacity());
+
+                currentRoom.setRelatedBookings(roomBookings);
+                return currentRoom;
+            }).collect(Collectors.toList());
+
+            objectMapper.writeValue(new File(filePath), roomList);
+            System.out.println("✅ State successfully logged to: " + filePath);
+        } catch (IOException e) {
+            System.err.println("❌ Error exporting state to JSON: " + e.getMessage());
+        }
+    }
 }
+
+
 
 

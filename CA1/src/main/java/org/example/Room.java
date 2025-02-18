@@ -4,21 +4,22 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Room {
-    private int id;
+    private int number;
     private int capacity;
+    private List<Booking> relatedBookings;
 
     @JsonCreator
     public Room(@JsonProperty("id") int roomNumber, @JsonProperty("capacity") int capacity) {
-        this.id = roomNumber;
+        this.number = roomNumber;
         this.capacity = capacity;
     }
 
-    public int getId() {
-        return id;
+    public int getNumber() {
+        return this.number;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public int getCapacity() {
@@ -30,8 +31,12 @@ public class Room {
     }
 
     public void displayInfo() {
-        System.out.println("Room Number: " + id);
-        System.out.println("Capacity: " + capacity);
+        System.out.println("Room Number: " + this.number);
+        System.out.println("Capacity: " + this.capacity);
     }
 
+    public List<Booking> getBookings() { return this.relatedBookings; }
+    public void setRelatedBookings(List<Booking> bookings) { this.relatedBookings = bookings; }
+
+    public int getRoomNumber() { return this.number; }
 }
