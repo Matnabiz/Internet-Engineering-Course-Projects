@@ -14,7 +14,7 @@ public class BookingTest {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             Booking booking = objectMapper.readValue(json, Booking.class);
-            assertNotNull(booking.getCheck_in());
+            assertNotNull(booking.getCheckInDate());
             assertTrue(booking.getStayDurationInDays()>0);
         } catch (Exception e) {
             fail("Error during deserialization: " + e.getMessage());

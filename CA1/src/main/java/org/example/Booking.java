@@ -33,4 +33,7 @@ public class Booking {
     public Date getCheckOutDate() { return this.checkOutDate; }
 
     public String getRoomNumber() { return this.roomNumber; }
+    public String getResId() { return this.resId; }
+    public String getSsn() { return  this.ssn; }
+
 }

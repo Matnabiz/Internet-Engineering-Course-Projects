@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Room {
     private int number;
     private int capacity;
-    private List<Booking> relatedBookings;
 
     @JsonCreator
     public Room(@JsonProperty("id") int roomNumber, @JsonProperty("capacity") int capacity) {
@@ -34,9 +33,6 @@ public class Room {
         System.out.println("Room Number: " + this.number);
         System.out.println("Capacity: " + this.capacity);
     }
-
-    public List<Booking> getBookings() { return this.relatedBookings; }
-    public void setRelatedBookings(List<Booking> bookings) { this.relatedBookings = bookings; }
 
     public int getRoomNumber() { return this.number; }
 }

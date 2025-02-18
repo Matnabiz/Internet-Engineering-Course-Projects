@@ -111,32 +111,31 @@ public class Hotel {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            List<Room> roomList = rooms.stream().map(room -> {
-                List<Booking> roomBookings = bookings.stream()
+            List<BookingsInRoom> BookingsInRoomList = rooms.stream().map(room -> {
+                List<BookingWithCustomer> roomBookings = bookings.stream()
                         .filter(booking -> booking.getRoomNumber().equals(String.valueOf(room.getRoomNumber())))
-                        .map(booking -> new Booking(
+                        .map(booking -> new BookingWithCustomer(
+                                Integer.parseInt(booking.getResId()),
                                 customers.stream()
-                                        .filter(c -> c.getSsn().equals(booking.ssn))
+                                        .filter(c -> c.getSsn().equals(booking.getSsn()))
                                         .findFirst()
                                         .orElse(null),
-                                Integer.parseInt(booking.resId),
-                                null,
-                                booking.checkInDate,
-                                booking.checkOutDate
+                                booking.getCheckInDate(),
+                                booking.getCheckOutDate()
                         ))
                         .collect(Collectors.toList());
-                Room currentRoom = new Room(room.getRoomNumber(), room.getCapacity());
 
-                currentRoom.setRelatedBookings(roomBookings);
-                return currentRoom;
+                return new BookingsInRoom(room.getRoomNumber(), room.getCapacity(), roomBookings);
             }).collect(Collectors.toList());
 
-            objectMapper.writeValue(new File(filePath), roomList);
+            objectMapper.writeValue(new File(filePath), BookingsInRoomList);
             System.out.println("✅ State successfully logged to: " + filePath);
         } catch (IOException e) {
             System.err.println("❌ Error exporting state to JSON: " + e.getMessage());
         }
     }
+
+
 }
 
 
