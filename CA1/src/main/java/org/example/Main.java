@@ -11,6 +11,7 @@ public class Main {
         System.out.println("Rooms: " + hotel.getAllRooms().size());
         System.out.println("Bookings: " + hotel.getAllBookings().size());
         System.out.println(hotel.getOldestCustomerName());
+        hotel.exportToJson("C:\\Users\\Windows 11\\Desktop\\Internet-Engineering-Course-Projects\\CA1\\src\\main\\java\\org\\example\\outputFile.json");
 
 
     }

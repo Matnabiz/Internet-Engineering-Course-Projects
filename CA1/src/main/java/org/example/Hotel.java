@@ -101,9 +101,9 @@ public class Hotel {
             hotelData.setCustomers(this.customers);
 
             objectMapper.writeValue(new File(filePath), hotelData);
-            System.out.println("✅ Data successfully exported to: " + filePath);
+            System.out.println("Data successfully exported to: " + filePath);
         } catch (IOException e) {
-            System.err.println("❌ Error exporting data to JSON: " + e.getMessage());
+            System.err.println("Error exporting data to JSON: " + e.getMessage());
         }
     }
 }
