@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Room {
-    // Attributes (Fields)
     private int id;
     private int capacity;
 

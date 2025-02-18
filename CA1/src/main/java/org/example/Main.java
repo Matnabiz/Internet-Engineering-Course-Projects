@@ -10,6 +10,8 @@ public class Main {
         System.out.println("Customers: " + hotel.getAllCustomers().size());
         System.out.println("Rooms: " + hotel.getAllRooms().size());
         System.out.println("Bookings: " + hotel.getAllBookings().size());
+        System.out.println(hotel.getOldestCustomerName());
+
 
     }
 }

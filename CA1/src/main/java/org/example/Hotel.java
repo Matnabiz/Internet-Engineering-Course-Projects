@@ -1,5 +1,9 @@
 package org.example;
 import java.util.*;
+import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 
 public class Hotel {
     private List<Room> rooms;
@@ -11,7 +15,7 @@ public class Hotel {
         this.customers = new ArrayList<>();
         this.bookings = new ArrayList<>();
 
-        HotelData data = InputHandler.readJsonFile("C:\\Users\\AGN\\Desktop\\CA1\\src\\main\\java\\org\\example\\data.json");
+        HotelData data = InputHandler.readJsonFile("C:\\Users\\Windows 11\\Desktop\\Internet-Engineering-Course-Projects\\CA1\\src\\main\\java\\org\\example\\data.json");
         if (data != null) {
             this.customers = data.getCustomers();
             this.rooms = data.getRooms();
@@ -60,25 +64,17 @@ public class Hotel {
     }
 
     public List<Room> getRooms(int minCapacity) {
-        List<Room> availableRooms = new ArrayList<>();
-        for (Room room : rooms) {
-            if (room.getCapacity() >= minCapacity) {
-                availableRooms.add(room);
-            }
-        }
-        return availableRooms;
+        Collectors Collectors = null;
+        return rooms.stream()
+                .filter(room -> room.getCapacity() >= minCapacity)
+                .collect(Collectors.toList());
     }
 
     public String getOldestCustomerName() {
-        if (customers.isEmpty()) return "No customers available.";
-
-        Customer oldest = customers.get(0);
-        for (Customer customer : customers) {
-            if (customer.getAge() > oldest.getAge()) {
-                oldest = customer;
-            }
-        }
-        return oldest.getName();
+        return customers.stream()
+                .max(Comparator.comparingInt(Customer::getAge))
+                .map(Customer::getName)
+                .orElse("No customers found");
     }
 
     public String getCustomerPhonesByRoomNumber(String roomNumber) {
@@ -95,4 +91,21 @@ public class Hotel {
         }
         return phoneNumbers.isEmpty() ? "No customers found for this room." : String.join(", ", phoneNumbers);
     }
+
+    public void exportToJson(String filePath) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            HotelData hotelData = new HotelData();
+            hotelData.setRooms(this.rooms);
+            hotelData.setBookings(this.bookings);
+            hotelData.setCustomers(this.customers);
+
+            objectMapper.writeValue(new File(filePath), hotelData);
+            System.out.println("✅ Data successfully exported to: " + filePath);
+        } catch (IOException e) {
+            System.err.println("❌ Error exporting data to JSON: " + e.getMessage());
+        }
+    }
 }
+
+
