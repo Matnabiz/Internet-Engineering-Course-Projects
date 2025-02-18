@@ -16,11 +16,39 @@ public class Hotel {
         this.bookings = new ArrayList<>();
 
         HotelData data = InputHandler.readJsonFile("C:\\Users\\Windows 11\\Desktop\\Internet-Engineering-Course-Projects\\CA1\\src\\main\\java\\org\\example\\data.json");
+
         if (data != null) {
-            this.customers = data.getCustomers();
-            this.rooms = data.getRooms();
-            this.bookings = data.getBookings();
-        } else {
+            Set<String> uniqueRoomNumbers = new HashSet<>();
+            Set<String> uniqueCustomerSSNs = new HashSet<>();
+            Set<String> uniqueBookingIds = new HashSet<>();
+
+            for (Room room : data.getRooms()) {
+                if (uniqueRoomNumbers.add(String.valueOf(room.getRoomNumber()))) {
+                    this.rooms.add(room);
+                } else {
+                    System.err.println("Duplicate room found: " + room.getRoomNumber() + " → Skipping");
+                }
+            }
+
+            // Ensure Unique Customers
+            for (Customer customer : data.getCustomers()) {
+                if (uniqueCustomerSSNs.add(customer.getSsn())) {
+                    this.customers.add(customer);
+                } else {
+                    System.err.println("Duplicate customer found (SSN: " + customer.getSsn() + ") → Skipping");
+                }
+            }
+
+            // Ensure Unique Bookings
+            for (Booking booking : data.getBookings()) {
+                if (uniqueBookingIds.add(booking.getResId())) {
+                    this.bookings.add(booking);
+                } else {
+                    System.err.println("Duplicate booking found (Reservation ID: " + booking.getResId() + ") → Skipping");
+                }
+            }
+        }
+        else {
             this.customers = new ArrayList<>();
             this.rooms = new ArrayList<>();
             this.bookings = new ArrayList<>();
@@ -129,9 +157,9 @@ public class Hotel {
             }).collect(Collectors.toList());
 
             objectMapper.writeValue(new File(filePath), BookingsInRoomList);
-            System.out.println("✅ State successfully logged to: " + filePath);
+            System.out.println("State Log successfully logged to: " + filePath);
         } catch (IOException e) {
-            System.err.println("❌ Error exporting state to JSON: " + e.getMessage());
+            System.err.println("Error exporting state log to JSON: " + e.getMessage());
         }
     }
 
