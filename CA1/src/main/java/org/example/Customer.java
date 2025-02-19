@@ -7,13 +7,13 @@ public class Customer {
 
     private String ssn;
     private String name;
-    private String phone;
+    private String phoneNumber;
     private int age;
 
     @JsonCreator
     public Customer(@JsonProperty("ssn") String ssn, @JsonProperty("phone") String phoneNumber, @JsonProperty("age") int age, @JsonProperty("name") String name) {
         this.ssn = ssn;
-        this.phone = phoneNumber;
+        this.phoneNumber = phoneNumber;
         this.age = age;
         this.name = name;
     }
@@ -26,13 +26,9 @@ public class Customer {
         this.ssn = ssn;
     }
 
-    public String getPhone() {
-        return phone;
-    }
+    public String getPhone() { return this.phoneNumber; }
 
-    public void setNumber(String number) {
-        this.phone = number;
-    }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
     public int getAge() {
         return age;
@@ -51,9 +47,9 @@ public class Customer {
     }
 
     public void displayInfo() {
-        System.out.println("Name: " + name);
-        System.out.println("Age: " + age);
-        System.out.println("National Number: " + ssn);
-        System.out.println("Phone Number: " + phone);
+        System.out.println("Name: " + this.name);
+        System.out.println("Age: " + this.age);
+        System.out.println("National Number: " + this.ssn);
+        System.out.println("Phone Number: " + this.phoneNumber);
     }
 }
