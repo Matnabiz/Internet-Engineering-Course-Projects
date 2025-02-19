@@ -13,6 +13,6 @@ public class Main {
         System.out.println(hotel.getOldestCustomerName());
         hotel.exportToJson("C:\\Users\\Windows 11\\Desktop\\Internet-Engineering-Course-Projects\\CA1\\src\\main\\java\\org\\example\\outputFile.json");
         hotel.logState("C:\\Users\\Windows 11\\Desktop\\Internet-Engineering-Course-Projects\\CA1\\src\\main\\java\\org\\example\\log.json");
-
+        hotel.getRooms(2);
     }
 }
