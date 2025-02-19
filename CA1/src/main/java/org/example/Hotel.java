@@ -139,7 +139,7 @@ public class Hotel {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            List<BookingsInRoom> BookingsInRoomList = rooms.stream().map(room -> {
+            List<BookingsOfRoom> BookingsInRoomList = rooms.stream().map(room -> {
                 List<BookingWithCustomer> roomBookings = bookings.stream()
                         .filter(booking -> booking.getRoomNumber().equals(String.valueOf(room.getRoomNumber())))
                         .map(booking -> new BookingWithCustomer(
@@ -153,7 +153,7 @@ public class Hotel {
                         ))
                         .collect(Collectors.toList());
 
-                return new BookingsInRoom(room.getRoomNumber(), room.getCapacity(), roomBookings);
+                return new BookingsOfRoom(room.getRoomNumber(), room.getCapacity(), roomBookings);
             }).collect(Collectors.toList());
 
             objectMapper.writeValue(new File(filePath), BookingsInRoomList);

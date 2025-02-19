@@ -2,12 +2,12 @@ package org.example;
 
 import java.util.List;
 
-public class BookingsInRoom {
+public class BookingsOfRoom {
     private int roomNumber;
     private int capacity;
     private List<BookingWithCustomer> bookings;
 
-    public BookingsInRoom(int roomId, int capacity, List<BookingWithCustomer> bookings) {
+    public BookingsOfRoom(int roomId, int capacity, List<BookingWithCustomer> bookings) {
         this.roomNumber = roomNumber;
         this.capacity = capacity;
         this.bookings = bookings;
