@@ -30,7 +30,6 @@ public class Hotel {
                 }
             }
 
-            // Ensure Unique Customers
             for (Customer customer : data.getCustomers()) {
                 if (uniqueCustomerSSNs.add(customer.getSsn())) {
                     this.customers.add(customer);
@@ -39,7 +38,6 @@ public class Hotel {
                 }
             }
 
-            // Ensure Unique Bookings
             for (Booking booking : data.getBookings()) {
                 if (uniqueBookingIds.add(booking.getResId())) {
                     this.bookings.add(booking);
