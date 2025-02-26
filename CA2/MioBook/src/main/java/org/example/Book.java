@@ -9,6 +9,6 @@ public class Book {
     int price;
     String synopsis;
     String content;
-    
+
 
 }

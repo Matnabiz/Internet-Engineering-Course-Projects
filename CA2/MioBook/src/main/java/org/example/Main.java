@@ -1,14 +1,13 @@
 package org.example;
 
+import java.util.ArrayList;
 
 public class Main {
+    private ArrayList<Book> Books = new ArrayList<>();
+    private ArrayList<User> Users = new ArrayList<>();
+    private ArrayList<Author> Authors = new ArrayList<>();
+
     public static void main(String[] args) {
-
-        System.out.printf("Hello and welcome!");
-
-        for (int i = 1; i <= 5; i++) {
-
-            System.out.println("i = " + i);
-        }
+        System.out.println("Hello, World!");
     }
 }
