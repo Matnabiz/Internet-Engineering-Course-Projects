@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class Library {
-    private ArrayList<Book> Books = new ArrayList<>();
-    private ArrayList<User> Users = new ArrayList<>();
-    private ArrayList<Author> Authors = new ArrayList<>();
+    private ArrayList<Book> books = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
+    private ArrayList<Author> authors = new ArrayList<>();
     private String success;
     private  String message;
 
@@ -15,23 +15,29 @@ public class Library {
 
     }
 
-    public void addBookToCart (String userName,String bookTitle) {
-        boolean existUser = Users.stream().anyMatch(user -> user.getUsername().equals(userName));
-        boolean existBook = Books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
-        if(!existUser){
-            message = "User doesn't exist !";
+    private boolean userExists(String username){
+        return users.stream().anyMatch(user -> user.getUsername().equals(userName));
+    }
+
+    private boolean bookExists(String bookTitle){
+        return books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
+    }
+
+    public void addBookToCart (String userName, String bookTitle) {
+        if(!userExists(userName)){
+            message = "User doesn't exist!";
             success = "false" ;
         }
-        if(!existBook){
-            message = "Book doesn't exist !";
+        if(!bookExists(bookTitle)){
+            message = "Book doesn't exist!";
             success = "false" ;
         }
 
-        Optional<User> Customer = Users.stream().filter(u -> u.getUsername().equals(userName)).findFirst();
-        Book BookToBeAddedToCart = Books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst();
+        Optional<User> Customer = users.stream().filter(u -> u.getUsername().equals(userName)).findFirst();
+        Book BookToBeAddedToCart = books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst();
 
         if(Customer.getRole().equals("admin")) {
-            message = "You are admin , you can't buy!";
+            message = "You are an admin, you can't buy!";
             success = "false" ;
         }
 
@@ -40,25 +46,25 @@ public class Library {
             success = "false" ;
         }
         else {
-            int i = Users.indexOf(Customer);
-            Users.get(i).addShppingBook(BookToBeAddedToCart);
+            int i = users.indexOf(Customer);
+            users.get(i).addShppingBook(BookToBeAddedToCart);
         }
     }
 
     public void deleteBookFromCart(String userName, String bookTitle){
-        boolean existsUser = Users.stream().anyMatch(user -> user.getUsername().equals(userName));
-        boolean existsBook = Books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
+        boolean existsUser = users.stream().anyMatch(user -> user.getUsername().equals(userName));
+        boolean existsBook = books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
         if(!existsUser){
-            message = "User doesn't exist !";
+            message = "User doesn't exist!";
             success = "false" ;
         }
         if(!existsBook){
-            message = "Book doesn't exist not at all!";
+            message = "Book doesn't exist!";
             success = "false" ;
         }
 
-        User Buyer = Users.stream().filter(u -> u.getUsername().equals(userName)).findFirst();
-        Book B_Book = Books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst();
+        User Buyer = users.stream().filter(u -> u.getUsername().equals(userName)).findFirst();
+        Book B_Book = books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst();
 
         if(Buyer.getRole().equals("admin")) {
             message = "You are admin , you can't do this !";
@@ -69,8 +75,8 @@ public class Library {
             success = "false" ;
         }
         else {
-            int i = Users.indexOf(Buyer);
-            Users.get(i).deleteShppingBook(B_Book);
+            int i = users.indexOf(Buyer);
+            users.get(i).deleteShppingBook(B_Book);
         }
     }
 }
