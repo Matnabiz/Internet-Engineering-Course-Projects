@@ -9,7 +9,7 @@ public class Library {
     private String success;
     private  String message;
 
-    public void addCart (String userName,String bookTitle) {
+    public void addBookToCart (String userName,String bookTitle) {
         boolean existUser = Users.stream().anyMatch(user -> user.getUsername().equals(userName));
         boolean existBook = Books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
         if(!existUser){
@@ -39,14 +39,14 @@ public class Library {
         }
     }
 
-    public void deleteBook(String userName,String bookTitle){
-        boolean existUser = Users.stream().anyMatch(user -> user.getUsername().equals(userName));
-        boolean existBook = Books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
-        if(!existUser){
+    public void deleteBookFromCart(String userName, String bookTitle){
+        boolean existsUser = Users.stream().anyMatch(user -> user.getUsername().equals(userName));
+        boolean existsBook = Books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
+        if(!existsUser){
             message = "User doesn't exist !";
             success = "false" ;
         }
-        if(!existBook){
+        if(!existsBook){
             message = "Book doesn't exist not at all!";
             success = "false" ;
         }
