@@ -16,7 +16,7 @@ public class Library {
     }
 
     private boolean userExists(String username){
-        return users.stream().anyMatch(user -> user.getUsername().equals(userName));
+        return users.stream().anyMatch(user -> user.getUsername().equals(username));
     }
 
     private boolean bookExists(String bookTitle){
@@ -27,27 +27,37 @@ public class Library {
         if(!userExists(userName)){
             message = "User doesn't exist!";
             success = "false" ;
+            return;
         }
         if(!bookExists(bookTitle)){
             message = "Book doesn't exist!";
             success = "false" ;
+            return;
         }
 
-        Optional<User> Customer = users.stream().filter(u -> u.getUsername().equals(userName)).findFirst();
-        Book BookToBeAddedToCart = books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst();
+        User Customer = users.stream()
+                .filter(u -> u.getUsername().equals(userName))
+                .findFirst()
+                .orElse(null);
+
+        Book BookToBeAddedToCart = books.stream()
+                .filter(b -> b.getTitle().equals(bookTitle))
+                .findFirst()
+                .orElse(null);
+        if (Customer == null || BookToBeAddedToCart == null) return;
 
         if(Customer.getRole().equals("admin")) {
             message = "You are an admin, you can't buy!";
             success = "false" ;
         }
 
-        else if(Customer.getShoppingCart().length() = 10) {
+        if (Customer.getShoppingCart().size() == 10) {
             message = "Your cart is full!";
             success = "false" ;
         }
         else {
             int i = users.indexOf(Customer);
-            users.get(i).addShppingBook(BookToBeAddedToCart);
+            users.get(i).addBookToCart(BookToBeAddedToCart);
         }
     }
 
@@ -63,8 +73,8 @@ public class Library {
             success = "false" ;
         }
 
-        User Buyer = users.stream().filter(u -> u.getUsername().equals(userName)).findFirst();
-        Book B_Book = books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst();
+        Optional<User> Buyer = users.stream().filter(u -> u.getUsername().equals(userName)).findFirst();
+        Optional<Book> B_Book = books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst();
 
         if(Buyer.getRole().equals("admin")) {
             message = "You are admin , you can't do this !";

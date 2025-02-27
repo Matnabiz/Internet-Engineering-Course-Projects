@@ -10,7 +10,6 @@ public class Book {
     private String synopsis;
     private String content;
 
-    // Constructor
     public Book(String title, String author, String publisher, int publicationYear, String genres, int price, String synopsis, String content) {
         this.title = title;
         this.author = author;

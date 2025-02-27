@@ -49,7 +49,7 @@ public class User {
 
     public void setShoppingCart(ArrayList<Book> shoppingCart) { this.shoppingCart = shoppingCart; }
 
-    public void addShoppingBook(Book book) { this.shoppingCart.add(book); }
+    public void addBookToCart(Book book) { this.shoppingCart.add(book); }
 
     public void deleteShoppingBook(Book book) { this.shoppingCart.remove(book); }
 }
