@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Library {
     private ArrayList<Book> Books = new ArrayList<>();
@@ -26,21 +27,21 @@ public class Library {
             success = "false" ;
         }
 
-        User Buyer = Users.stream().filter(u -> u.getUsername().equals(userName)).findFirst();
-        Book B_Book = Books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst();
+        Optional<User> Customer = Users.stream().filter(u -> u.getUsername().equals(userName)).findFirst();
+        Book BookToBeAddedToCart = Books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst();
 
-        if(Buyer.getRole().equals("admin")) {
-            message = "You are admin , you can't buy !";
+        if(Customer.getRole().equals("admin")) {
+            message = "You are admin , you can't buy!";
             success = "false" ;
         }
 
-        else if(Buyer.getShoppingCart().length() = 10) {
-            message = "Your card is full !";
+        else if(Customer.getShoppingCart().length() = 10) {
+            message = "Your cart is full!";
             success = "false" ;
         }
         else {
-            int i = Users.indexOf(Buyer);
-            Users.get(i).addShppingBook(B_Book);
+            int i = Users.indexOf(Customer);
+            Users.get(i).addShppingBook(BookToBeAddedToCart);
         }
     }
 
