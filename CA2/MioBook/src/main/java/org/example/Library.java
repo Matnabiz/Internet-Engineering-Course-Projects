@@ -9,6 +9,11 @@ public class Library {
     private String success;
     private  String message;
 
+    public void addUser(String role, String username, String password, String email, Address address){
+
+
+    }
+
     public void addBookToCart (String userName,String bookTitle) {
         boolean existUser = Users.stream().anyMatch(user -> user.getUsername().equals(userName));
         boolean existBook = Books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
