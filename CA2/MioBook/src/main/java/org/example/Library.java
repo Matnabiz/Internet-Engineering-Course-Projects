@@ -2,6 +2,8 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.regex.Pattern;
+
 
 public class Library {
     private ArrayList<Book> books = new ArrayList<>();
@@ -23,6 +25,70 @@ public class Library {
         return books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
     }
 
+    private boolean emailExists(String email){
+        return users.stream().anyMatch(user -> user.getEmail().equals(email));
+    }
+
+    private boolean validateUsername(String username){
+        return Pattern.matches("^[a-zA-Z0-9_-]+$", username);
+    }
+
+    private boolean validatePassword(String password){
+        return password.length() < 4;
+    }
+
+    private boolean validateEmail(String email){
+        return Pattern.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", email);
+    }
+
+    private boolean validateRole(String role){
+        return role.equalsIgnoreCase("customer") && !role.equalsIgnoreCase("admin");
+    }
+    public void addUser(String username, String password, String email, String address, String role) {
+
+        if (!validateUsername(username)) {
+            message = "Invalid username! Only letters, numbers, underscore (_), and hyphen (-) are allowed.";
+            success = "false";
+            return;
+        }
+
+
+        if (userExists(username)) {
+            message = "Username already exists! Please choose a different one.";
+            success = "false";
+            return;
+        }
+
+        if (emailExists(email)) {
+            message = "Email address already registered! Please use a different one.";
+            success = "false";
+            return;
+        }
+
+        if (validatePassword(password)) {
+            message = "Password must be at least 4 characters long!";
+            success = "false";
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            message = "Invalid email format! Example: example@test.com";
+            success = "false";
+            return;
+        }
+
+        if (!validateRole(role)) {
+            message = "Invalid role! Role must be either 'customer' or 'admin'.";
+            success = "false";
+            return;
+        }
+
+        User newUser = new User(username, password, email, address, role.toLowerCase(), 0);
+        users.add(newUser);
+
+        message = "User successfully registered!";
+        success = "true";
+    }
     public void addBookToCart (String userName, String bookTitle) {
         if(!userExists(userName)){
             message = "User doesn't exist!";
