@@ -6,12 +6,12 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private String address;
+    private Address address;
     private String role;
     private int balance;
     private ArrayList<Book> shoppingCart;
 
-    public User(String username, String password, String email, String address, String role, int balance) {
+    public User(String username, String password, String email, Address address, String role, int balance) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -27,7 +27,7 @@ public class User {
 
     public String getEmail() { return email; }
 
-    public String getAddress() { return address; }
+    public Address getAddress() { return address; }
 
     public String getRole() { return role; }
 
@@ -41,7 +41,7 @@ public class User {
 
     public void setEmail(String email) { this.email = email; }
 
-    public void setAddress(String address) { this.address = address; }
+    public void setAddress(Address address) { this.address = address; }
 
     public void setRole(String role) { this.role = role; }
 

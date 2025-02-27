@@ -1,7 +1,10 @@
 package org.example;
 
+import java.time.format.DateTimeParseException;
+import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 
@@ -18,6 +21,10 @@ public class Library {
 
     private boolean bookExists(String bookTitle){
         return books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
+    }
+
+    private boolean authorExists(String name){
+        return authors.stream().anyMatch(a -> a.getName().equals(name));
     }
 
     private boolean emailExists(String email){
@@ -40,7 +47,21 @@ public class Library {
         return role.equalsIgnoreCase("customer") && !role.equalsIgnoreCase("admin");
     }
 
-    public void addUser(String username, String password, String email, String address, String role) {
+    private User findUser(String username){
+        return this.users.stream()
+                .filter(u -> u.getUsername().equals(username))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Book findBook(String bookTitle){
+        return this.books.stream()
+                .filter(b -> b.getTitle().equals(bookTitle))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void addUser(String username, String password, String email, Address address, String role) {
 
         if (!validateUsername(username)) {
             message = "Invalid username! Only letters, numbers, underscore (_), and hyphen (-) are allowed.";
@@ -98,30 +119,22 @@ public class Library {
             return;
         }
 
-        User Customer = users.stream()
-                .filter(u -> u.getUsername().equals(username))
-                .findFirst()
-                .orElse(null);
+        User customer = findUser(username);
+        Book bookToBeAddedToCart = findBook(bookTitle);
 
-        Book BookToBeAddedToCart = books.stream()
-                .filter(b -> b.getTitle().equals(bookTitle))
-                .findFirst()
-                .orElse(null);
-        if (Customer == null || BookToBeAddedToCart == null) return;
+        if (customer == null || bookToBeAddedToCart == null) return;
 
-        if(Customer.getRole().equals("admin")) {
+        if(customer.getRole().equals("admin")) {
             message = "You are an admin, you can't buy!";
             success = "false" ;
         }
 
-        if (Customer.getShoppingCart().size() == 10) {
+        if (customer.getShoppingCart().size() == 10) {
             message = "Your cart is full!";
             success = "false" ;
         }
-        else {
-            int i = users.indexOf(Customer);
-            users.get(i).addBookToCart(BookToBeAddedToCart);
-        }
+
+        customer.addBookToCart(bookToBeAddedToCart);
     }
 
     public void deleteBookFromCart(String username, String bookTitle){
@@ -156,4 +169,62 @@ public class Library {
         message = "Book removed from cart successfully!";
         success = "true";
     }
+
+    public void addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
+
+        if (!userExists(adminUsername)) {
+            message = "User doesn't exist!";
+            success = "false";
+            return;
+        }
+
+        User adminUser = findUser(adminUsername);
+
+        if (!adminUser.getRole().equals("admin")) {
+            message = "Only an admin can add authors!";
+            success = "false";
+            return;
+        }
+
+
+        if (authorExists(authorName)) {
+            message = "Author already exists!";
+            success = "false";
+            return;
+        }
+
+        LocalDate birthDateParsed;
+        try {
+            birthDateParsed = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        } catch (DateTimeParseException e) {
+            message = "Invalid date of birth format! Use dd-MM-yyyy.";
+            success = "false";
+            return;
+        }
+
+        LocalDate deathDateParsed = null;
+        if (deathDate != null && !deathDate.isEmpty()) {
+            try {
+                deathDateParsed = LocalDate.parse(deathDate, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            } catch (DateTimeParseException e) {
+                message = "Invalid date of death format! Use dd-MM-yyyy.";
+                success = "false";
+                return;
+            }
+
+            if (deathDateParsed.isBefore(birthDateParsed)) {
+                message = "Date of death cannot be before date of birth!";
+                success = "false";
+                return;
+            }
+        }
+
+        Author newAuthor = new Author(authorName, penName, nationality, birthDateParsed, deathDateParsed);
+        authors.add(newAuthor);
+
+        message = "Author added successfully!";
+        success = "true";
+    }
+
+
 }
