@@ -34,6 +34,12 @@ public class Validation {
         return customer.getShoppingCart().contains(book);
     }
 
+    public boolean minimumCreditForBalanceCharge(int credit){
+        return credit > 1000;
+    }
 
+    public boolean minimumBookCountInCartForCheckout(User customer){
+        return customer.getShoppingCart().size() >= 1;
+    }
 
 }

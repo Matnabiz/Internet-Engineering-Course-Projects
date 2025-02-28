@@ -28,23 +28,23 @@ public class User {
         this.transactionHistory = new ArrayList<List<Object>>();
     }
 
-    public String getUsername() { return username; }
+    public String getUsername() { return this.username; }
 
-    public String getPassword() { return password; }
+    public String getPassword() { return this.password; }
 
-    public String getEmail() { return email; }
+    public String getEmail() { return this.email; }
 
-    public Address getAddress() { return address; }
+    public Address getAddress() { return this.address; }
 
-    public String getRole() { return role; }
+    public String getRole() { return this.role; }
 
-    public int getBalance() { return balance; }
+    public int getBalance() { return this.balance; }
 
-    public int getPayableAmount() {return payableAmount;}
+    public int getPayableAmount() { return this.payableAmount; }
 
-    public ArrayList<List<Object>> getTransactionHistory() {return transactionHistory;}
+    public ArrayList<List<Object>> getTransactionHistory() { return this.transactionHistory; }
 
-    public ArrayList<Book> getShoppingCart() { return shoppingCart; }
+    public ArrayList<Book> getShoppingCart() { return this.shoppingCart; }
 
     public void setUsername(String username) { this.username = username; }
 
@@ -62,11 +62,14 @@ public class User {
 
     public void setShoppingCart(ArrayList<Book> shoppingCart) { this.shoppingCart = shoppingCart; }
 
-    public void addBookToCart(Book book) { this.shoppingCart.add(book); }
+    public void addBookToCart(Book bookToBeAddedToCart) {
+        this.shoppingCart.add(bookToBeAddedToCart);
+        this.increasePayableAmount(bookToBeAddedToCart.getPrice());
+    }
 
-    public void incPayableAmount(int amount) { this.payableAmount = this.payableAmount+amount;}
+    private void increasePayableAmount(int amount) { this.payableAmount = this.payableAmount+amount;}
 
     public void deleteShoppingBook(Book book) { this.shoppingCart.remove(book); }
 
-    public void clearCard() {this.shoppingCart.clear();this.payableAmount=0;}
+    public void clearCard() {this.shoppingCart.clear(); this.payableAmount=0;}
 }

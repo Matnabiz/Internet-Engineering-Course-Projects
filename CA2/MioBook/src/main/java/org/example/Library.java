@@ -177,7 +177,6 @@ public class Library {
 
         else {
             customer.addBookToCart(bookToBeAddedToCart);
-            customer.incPayableAmount(bookToBeAddedToCart.getPrice());
             message = "Added book to cart.";
             success = "true";
         }
@@ -236,7 +235,6 @@ public class Library {
             return;
         }
 
-
         if (authorExists(authorName)) {
             message = "Author already exists!";
             success = "false";
@@ -287,12 +285,14 @@ public class Library {
 
         User customer = findUser(username);
         if(customer.getRole().equals("admin")) {
-            message = "This activity isn't for admins";
+            message = "An admin can't add credit!";
             success = "false" ;
             return;
         }
 
-        if(credit < 1000){
+        Validation validateData = null;
+
+        if(!validateData.minimumCreditForBalanceCharge(credit)){
             message = "You should charge at least 1$ or 1000cent!";
             success = "false";
         }
@@ -304,40 +304,44 @@ public class Library {
         }
     }
 
-    public void purchaseCard(String username){
+    public void purchaseCart(String username){
         if(!userExists(username)){
             message = "this username doesn't exist in system";
             success = "false";
             return;
         }
 
-        User u_user = findUser(username);
-        if(u_user.getShoppingCart().size()<1){
+
+        User customer = findUser(username);
+        Validation validateData = null;
+
+        if(!validateData.minimumBookCountInCartForCheckout(customer)){
             message = "Card don't have any book!";
             success = "false";
             return;
         }
-        if(u_user.getBalance()<u_user.getPayableAmount()){
+
+        if(customer.getBalance() < customer.getPayableAmount()){
             message = "Balance isn't enough for purchase!";
             success = "false";
             return;
         }
 
         List<Object> transaction = new ArrayList<>();
-        transaction.addAll(u_user.getShoppingCart());
-        transaction.add(u_user.getShoppingCart().size());
-        transaction.add(u_user.getPayableAmount());
+        transaction.addAll(customer.getShoppingCart());
+        transaction.add(customer.getShoppingCart().size());
+        transaction.add(customer.getPayableAmount());
         LocalDateTime purchaseTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedTime = purchaseTime.format(formatter);
         transaction.add(formattedTime);
-        u_user.addTransactionHistory(transaction);
+        customer.addTransactionHistory(transaction);
 
         message = "Purchase completed successfully.";
         success = "true";
         data = transaction;
 
-        u_user.clearCard();
+        customer.clearCard();
 
     }
 
