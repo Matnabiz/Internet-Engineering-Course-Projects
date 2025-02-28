@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 
@@ -380,5 +381,27 @@ public class Library {
         success = "true";
     }
 
-    
+    public String showUserDetails(String username) {
+
+        if(!userExists(username)){
+            message = "this username doesn't exist in system";
+            success = "false";
+            Map<String, Object> failure = Map.of(
+                    "success", success,
+                    "message", message
+            );
+            return OutputToJson.generateJson(failure);
+        }
+
+        User user = findUser(username);
+        Map<String, Object> userData = Map.of(
+                "username", user.get().getUsername(),
+                "email", user.get().getEmail(),
+                "address", user.get().getAddress(),
+                "role", user.get().getRole(),
+                "balance", user.get().getBalance()
+        );
+
+        return OutputToJson.generateJson(userData);
+    }
 }

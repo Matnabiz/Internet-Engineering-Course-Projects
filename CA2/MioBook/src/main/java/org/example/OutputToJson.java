@@ -11,11 +11,16 @@ public class OutputToJson {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
-    public static String generateJson(Map<String, Object> data) {
+    public static String generateJson(boolean success, String message, Map<String, Object> data) {
         try {
-            return objectMapper.writeValueAsString(data);
+            Map<String, Object> response = Map.of(
+                    "success", success,
+                    "message", message,
+                    "data", data
+            );
+            return objectMapper.writeValueAsString(response);
         } catch (Exception e) {
-            return "{\"error\": \"Failed to generate JSON\"}";
+            return "{\"success\": false, \"message\": \"Failed to generate JSON\", \"data\": {}}";
         }
     }
 }
