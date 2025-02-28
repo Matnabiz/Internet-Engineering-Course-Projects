@@ -12,8 +12,9 @@ public class User {
     private String role;
     private int balance;
     private ArrayList<Book> shoppingCart;
+    private ArrayList<Book> shelf;
     private int payableAmount;
-    private ArrayList<List<Object>> transactionHistory; // everay arrayList is a history , start with books
+    private ArrayList<List<Object>> transactionHistory; // every arrayList is a history , start with books
                                                             // and three last elements are number of books and total price and time
                                                             // { books , numberOfBooks , totalPrice , Time }
 
@@ -26,6 +27,7 @@ public class User {
         this.balance = balance;
         this.shoppingCart = new ArrayList<>();
         this.transactionHistory = new ArrayList<List<Object>>();
+        this.shelf = new ArrayList<>();
     }
 
     public String getUsername() { return this.username; }
@@ -76,12 +78,13 @@ public class User {
 
     private void decreasePayableAmount(int amount) { this.payableAmount -= amount;}
 
+    private void addBoughtBooksToShelf(){ this.shelf.addAll(this.shoppingCart); }
+
     public void updateInfoAfterCheckout() {
+        this.addBoughtBooksToShelf();
         this.shoppingCart.clear();
         this.balance -= this.getPayableAmount();
         this.payableAmount = 0;
     }
-
-
 
 }
