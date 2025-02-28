@@ -2,7 +2,6 @@ package org.example;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -48,6 +47,10 @@ public class Library {
 
     private boolean validateRole(String role){
         return role.equalsIgnoreCase("customer") && !role.equalsIgnoreCase("admin");
+    }
+
+    private boolean birthBeforeDeath(LocalDate deathDate, LocalDate birthDate){
+        return birthDate.isBefore(deathDate);
     }
 
     private User findUser(String username){
@@ -110,8 +113,10 @@ public class Library {
         success = "true";
     }
 
-    public void addBook (String username, String bookTitle ,String bookAuthor ,String bookPublisher ,
-                         String publishYear ,ArrayList<String> bookGenres ,String bookContent ,String bookSynopsys ,int bookPrice){
+    public void addBook (String username, String bookTitle,
+                         String bookAuthor, String bookPublisher,
+                         String publishYear, ArrayList<String> bookGenres,
+                         String bookContent, String bookSynopsys, int bookPrice){
 
         if(!userExists(username)){
             message = "This username doesn't exist in system!";
@@ -152,11 +157,13 @@ public class Library {
 
         Book newBook = new Book(bookTitle,bookAuthor,bookPublisher,Integer.parseInt(publishYear),
                 bookGenres,bookPrice,bookSynopsys,bookContent);
+        books.add(newBook);
         message =  "Book added successfully.";
         success = "true";
 
 
     }
+
     public void addBookToCart (String username, String bookTitle) {
         if(!userExists(username)){
             message = "User doesn't exist!";
@@ -272,7 +279,7 @@ public class Library {
                 return;
             }
 
-            if (deathDateParsed.isBefore(birthDateParsed)) {
+            if (!birthBeforeDeath(deathDateParsed, birthDateParsed)) {
                 message = "Date of death cannot be before date of birth!";
                 success = "false";
                 return;
