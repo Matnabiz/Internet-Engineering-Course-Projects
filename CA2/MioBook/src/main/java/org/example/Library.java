@@ -43,7 +43,7 @@ public class Library {
 
     private Author findAuthor(String name){
         return this.authors.stream()
-                .filter(u -> u.getUsername().equals(name))
+                .filter(u -> u.getName().equals(name))
                 .findFirst()
                 .orElse(null);
     }
@@ -380,13 +380,24 @@ public class Library {
         return OutputToJson.generateJson(true, message, userData);
     }
 
-    public String showAuthorDetails(String name){
+    public String showAuthorDetails(String authorName){
 
         if (!authorExists(authorName)) {
             message = "Author doesn't exist!";
             return OutputToJson.generateJson(false, message, null);
         }
-        Author author = find
+        Author author = findAuthor(authorName);
+        message = "Author details retrieved successfully.\n";
+        Map<String, Object> authorData = Map.of(
+                "name", author.getName(),
+                "penName", author.getPenName(),
+                "nationality", author.getNationality(),
+                "born", author.getBirthDate(),
+                "died", author.getDeathDate()
+        );
+        return OutputToJson.generateJson(true, message, authorData);
     }
+
+    
 
 }
