@@ -1,10 +1,12 @@
 package org.example;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 
@@ -14,6 +16,7 @@ public class Library {
     private ArrayList<Author> authors = new ArrayList<>();
     private String success;
     private  String message;
+    private List<Object> data;
 
     private boolean userExists(String username){
         return users.stream().anyMatch(user -> user.getUsername().equals(username));
@@ -107,6 +110,53 @@ public class Library {
         success = "true";
     }
 
+    public void addBook (String username, String bookTitle ,String bookAuthor ,String bookPublisher ,
+                         String publishYear ,ArrayList<String> bookGenres ,String bookContent ,String bookSynopsys ,int bookPrice){
+
+        if(!userExists(username)){
+            message = "This username doesn't exist in system!";
+            success = "false";
+        }
+
+        if(bookExists(bookTitle)){
+            message = "This book already exist in system !";
+            success = "false";
+            return;
+        }
+        if(!authorExists(bookAuthor)){
+            message = "The author of this book doesn't exist!";
+            success = "false";
+            return;
+        }
+
+        User u_user= findUser(username);
+        if (!u_user.getRole().equals("admin")) {
+            message = "Only an admin can add books!";
+            success = "false";
+            return;
+        }
+
+        try{
+            Integer.parseInt(publishYear);
+        } catch (NumberFormatException e) {
+            message = "Publish year isn't in right format!";
+            success = "false";
+            return;
+        }
+
+        if(bookGenres.size()<1){
+            message = "Book at least have one genres" ;
+            success = "false" ;
+            return;
+        }
+
+        Book newBook = new Book(bookTitle,bookAuthor,bookPublisher,Integer.parseInt(publishYear),
+                bookGenres,bookPrice,bookSynopsys,bookContent);
+        message =  "Book added successfully.";
+        success = "true";
+
+
+    }
     public void addBookToCart (String username, String bookTitle) {
         if(!userExists(username)){
             message = "User doesn't exist!";
@@ -129,12 +179,18 @@ public class Library {
             success = "false" ;
         }
 
-        if (customer.getShoppingCart().size() == 10) {
+        else if (customer.getShoppingCart().size() == 10) {
             message = "Your cart is full!";
             success = "false" ;
         }
 
-        customer.addBookToCart(bookToBeAddedToCart);
+        else {
+            customer.addBookToCart(bookToBeAddedToCart);
+            customer.incPayableAmount(bookToBeAddedToCart.getPrice());
+            message = "Added book to cart.";
+            success = "true";
+        }
+
     }
 
     public void deleteBookFromCart(String username, String bookTitle){
@@ -150,24 +206,28 @@ public class Library {
             return;
         }
 
-        User customer = users.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
-        Book bookInCart = books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst().orElse(null);
-        if (customer == null || bookInCart == null) return;
+        //User customer = users.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
+        //Book bookInCart = books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst().orElse(null);
+
+        User customer = findUser(username);
+        Book bookToBeDeletedFromCart = findBook(bookTitle);
+
+        if (customer == null || bookToBeDeletedFromCart == null) return;
 
         if(customer.getRole().equals("admin")) {
             message = "You are admin , you can't do this!";
             success = "false" ;
         }
 
-        else if(!customer.getShoppingCart().contains(bookInCart)){
+        else if(!customer.getShoppingCart().contains(bookToBeDeletedFromCart)){
             message = "You don't have this book in your cart!";
             success = "false" ;
         }
-
-
-        customer.deleteShoppingBook(bookInCart);
-        message = "Book removed from cart successfully!";
-        success = "true";
+        else {
+            customer.deleteShoppingBook(bookToBeDeletedFromCart);
+            message = "Book removed from cart successfully!";
+            success = "true";
+        }
     }
 
     public void addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
@@ -226,5 +286,67 @@ public class Library {
         success = "true";
     }
 
+    public void addCredit(String username,int credit){
+        if(!userExists(username)){
+            message = "This username doesn't exist in system!";
+            success = "false";
+            return;
+        }
+
+        User customer = findUser(username);
+        if(customer.getRole().equals("admin")) {
+            message = "This activity isn't for admins";
+            success = "false" ;
+            return;
+        }
+
+        if(credit < 1000){
+            message = "You should charge at least 1$ or 1000cent!";
+            success = "false";
+        }
+        else {
+            User u_user = findUser(username);
+            u_user.increaseBalance(credit);
+            message = "Credit added successfully.";
+            success = "true" ;
+        }
+    }
+
+    public void purchaseCard(String username){
+        if(!userExists(username)){
+            message = "this username doesn't exist in system";
+            success = "false";
+            return;
+        }
+
+        User u_user = findUser(username);
+        if(u_user.getShoppingCart().size()<1){
+            message = "Card don't have any book!";
+            success = "false";
+            return;
+        }
+        if(u_user.getBalance()<u_user.getPayableAmount()){
+            message = "Balance isn't enough for purchase!";
+            success = "false";
+            return;
+        }
+
+        List<Object> transaction = new ArrayList<>();
+        transaction.addAll(u_user.getShoppingCart());
+        transaction.add(u_user.getShoppingCart().size());
+        transaction.add(u_user.getPayableAmount());
+        LocalDateTime purchaseTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedTime = purchaseTime.format(formatter);
+        transaction.add(formattedTime);
+        u_user.addTransactionHistory(transaction);
+
+        message = "Purchase completed successfully.";
+        success = "true";
+        data = transaction;
+
+        u_user.clearCard();
+
+    }
 
 }

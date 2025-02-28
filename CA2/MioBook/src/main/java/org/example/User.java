@@ -1,6 +1,8 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class User {
     private String username;
@@ -10,6 +12,10 @@ public class User {
     private String role;
     private int balance;
     private ArrayList<Book> shoppingCart;
+    private int payableAmount;
+    private ArrayList<List<Object>> transactionHistory; // everay arrayList is a history , start with books
+                                                            // and three last elements are number of books and total price and time
+                                                            // { books , numberOfBooks , totalPrice , Time }
 
     public User(String username, String password, String email, Address address, String role, int balance) {
         this.username = username;
@@ -19,6 +25,7 @@ public class User {
         this.role = role;
         this.balance = balance;
         this.shoppingCart = new ArrayList<>();
+        this.transactionHistory = new ArrayList<List<Object>>();
     }
 
     public String getUsername() { return username; }
@@ -33,6 +40,10 @@ public class User {
 
     public int getBalance() { return balance; }
 
+    public int getPayableAmount() {return payableAmount;}
+
+    public ArrayList<List<Object>> getTransactionHistory() {return transactionHistory;}
+
     public ArrayList<Book> getShoppingCart() { return shoppingCart; }
 
     public void setUsername(String username) { this.username = username; }
@@ -45,11 +56,17 @@ public class User {
 
     public void setRole(String role) { this.role = role; }
 
-    public void setBalance(int balance) { this.balance = balance; }
+    public void addTransactionHistory(List<Object> newTransaction) {this.transactionHistory.add(newTransaction);}
+
+    public void increaseBalance(int balance) { this.balance = this.balance+balance; }
 
     public void setShoppingCart(ArrayList<Book> shoppingCart) { this.shoppingCart = shoppingCart; }
 
     public void addBookToCart(Book book) { this.shoppingCart.add(book); }
 
+    public void incPayableAmount(int amount) { this.payableAmount = this.payableAmount+amount;}
+
     public void deleteShoppingBook(Book book) { this.shoppingCart.remove(book); }
+
+    public void clearCard() {this.shoppingCart.clear();this.payableAmount=0;}
 }

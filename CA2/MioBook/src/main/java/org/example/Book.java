@@ -1,16 +1,17 @@
 package org.example;
+import java.util.ArrayList;
 
 public class Book {
     private String title;
     private String author;
     private String publisher;
     private int publicationYear;
-    private String genres;
+    private ArrayList<String> genres;
     private int price;
     private String synopsis;
     private String content;
 
-    public Book(String title, String author, String publisher, int publicationYear, String genres, int price, String synopsis, String content) {
+    public Book(String title, String author, String publisher, int publicationYear, ArrayList<String> genres, int price, String synopsis, String content) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
@@ -29,7 +30,7 @@ public class Book {
 
     public int getPublicationYear() { return publicationYear; }
 
-    public String getGenres() { return genres; }
+    public ArrayList<String> getGenres() { return genres; }
 
     public int getPrice() { return price; }
 
@@ -45,7 +46,7 @@ public class Book {
 
     public void setPublicationYear(int publicationYear) { this.publicationYear = publicationYear; }
 
-    public void setGenres(String genres) { this.genres = genres; }
+    public void setGenres(ArrayList<String> genres) { this.genres = genres; }
 
     public void setPrice(int price) { this.price = price; }
 
