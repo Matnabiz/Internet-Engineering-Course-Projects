@@ -398,6 +398,24 @@ public class Library {
         return OutputToJson.generateJson(true, message, authorData);
     }
 
-    
+    public String showBookDetails(String bookTitle){
+
+        if (!bookExists(bookTitle)) {
+            message = "Book doesn't exist!";
+            return OutputToJson.generateJson(false, message, null);
+        }
+
+        Book book = findBook(bookTitle);
+        message = "Book details retrieved successfully.\n";
+        Map<String, Object> bookData = Map.of(
+                "author", book.getAuthor(),
+                "publisher", book.getPublisher(),
+                "genres", book.getGenres(),
+                "year", book.getPublicationYear(),
+                "price", book.getPrice(),
+                "averageRating", book.computeAverageRating()
+        );
+        return OutputToJson.generateJson(true, message, authorData);
+    }
 
 }

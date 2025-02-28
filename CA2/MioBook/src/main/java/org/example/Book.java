@@ -59,4 +59,9 @@ public class Book {
     public void setSynopsis(String synopsis) { this.synopsis = synopsis; }
 
     public void setContent(String content) { this.content = content; }
+
+    public double computeAverageRating(){
+        if (comments.isEmpty()) return 0.0;
+        return comments.stream().mapToInt(Comment::getRating).average().orElse(0.0);
+    }
 }
