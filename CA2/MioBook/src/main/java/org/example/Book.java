@@ -64,4 +64,6 @@ public class Book {
         if (comments.isEmpty()) return 0.0;
         return comments.stream().mapToInt(Comment::getRating).average().orElse(0.0);
     }
+
+
 }

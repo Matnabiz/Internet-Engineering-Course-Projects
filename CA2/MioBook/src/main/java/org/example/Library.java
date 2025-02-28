@@ -415,7 +415,7 @@ public class Library {
                 "price", book.getPrice(),
                 "averageRating", book.computeAverageRating()
         );
-        return OutputToJson.generateJson(true, message, authorData);
+        return OutputToJson.generateJson(true, message, bookData);
     }
 
 }
