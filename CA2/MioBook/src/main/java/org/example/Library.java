@@ -197,23 +197,22 @@ public class Library {
             return;
         }
 
-        //User customer = users.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
-        //Book bookInCart = books.stream().filter(b -> b.getTitle().equals(bookTitle)).findFirst().orElse(null);
-
         User customer = findUser(username);
         Book bookToBeDeletedFromCart = findBook(bookTitle);
+        Validation validateData = null;
 
         if (customer == null || bookToBeDeletedFromCart == null) return;
 
         if(customer.getRole().equals("admin")) {
-            message = "You are admin , you can't do this!";
+            message = "You are admin, you can't do this!";
             success = "false" ;
         }
 
-        else if(!customer.getShoppingCart().contains(bookToBeDeletedFromCart)){
+        else if(!validateData.customerHasBookInCart(customer, bookToBeDeletedFromCart)){
             message = "You don't have this book in your cart!";
             success = "false" ;
         }
+
         else {
             customer.deleteShoppingBook(bookToBeDeletedFromCart);
             message = "Book removed from cart successfully!";

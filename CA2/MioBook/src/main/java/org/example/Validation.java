@@ -29,4 +29,11 @@ public class Validation {
     public boolean minimumGenreCount(ArrayList<String> bookGenres){
         return bookGenres.size() > 1;
     }
+
+    public boolean customerHasBookInCart(User customer, Book book){
+        return customer.getShoppingCart().contains(book);
+    }
+
+
+
 }
