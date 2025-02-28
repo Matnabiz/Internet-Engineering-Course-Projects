@@ -41,6 +41,13 @@ public class Library {
                 .orElse(null);
     }
 
+    private Author findAuthor(String name){
+        return this.authors.stream()
+                .filter(u -> u.getUsername().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
     private Book findBook(String bookTitle){
         return this.books.stream()
                 .filter(b -> b.getTitle().equals(bookTitle))
@@ -282,6 +289,7 @@ public class Library {
     }
 
     public String purchaseCart(String username){
+
         if(!userExists(username)){
             message = "this username doesn't exist in system";
             return OutputToJson.generateJson(false, message, null);
@@ -371,4 +379,14 @@ public class Library {
 
         return OutputToJson.generateJson(true, message, userData);
     }
+
+    public String showAuthorDetails(String name){
+
+        if (!authorExists(authorName)) {
+            message = "Author doesn't exist!";
+            return OutputToJson.generateJson(false, message, null);
+        }
+        Author author = find
+    }
+
 }
