@@ -50,5 +50,8 @@ public class Validation {
         return rating > 1 && rating < 5;
     }
 
+    public boolean cartIsFull(User customer){
+        return customer.getShoppingCart().size() == 10;
+    }
 
 }

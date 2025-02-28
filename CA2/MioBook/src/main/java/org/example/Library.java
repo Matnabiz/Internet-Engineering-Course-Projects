@@ -159,22 +159,21 @@ public class Library {
 
         User customer = findUser(username);
         Book bookToBeAddedToCart = findBook(bookTitle);
+        Validation validateData = null;
 
         if(customer.getRole().equals("admin")) {
             message = "You are an admin, you can't buy!";
             return OutputToJson.generateJson(false, message, null);
         }
 
-        else if (customer.getShoppingCart().size() == 10) {
+        else if (validateData.cartIsFull(customer)) {
             message = "Your cart is full!";
             return OutputToJson.generateJson(false, message, null);
         }
 
-        else {
-            customer.addBookToCart(bookToBeAddedToCart);
-            message = "Added book to cart.";
-            return OutputToJson.generateJson(true, message, null);
-        }
+        customer.addBookToCart(bookToBeAddedToCart);
+        message = "Added book to cart.";
+        return OutputToJson.generateJson(true, message, null);
 
     }
 
