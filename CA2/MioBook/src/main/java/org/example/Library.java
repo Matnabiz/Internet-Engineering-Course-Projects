@@ -344,4 +344,40 @@ public class Library {
 
     }
 
+    public void addComment(String username, String bookTitle, String commentBody, int rating) {
+
+        User customer = findUser(username);
+        Book book = findBook(bookTitle);
+        Validation validateData = null;
+
+        if(!userExists(username)){
+            message = "this username doesn't exist in system";
+            success = "false";
+            return;
+        }
+
+        if(customer.getRole().equals("admin")) {
+            message = "An admin can't add credit!";
+            success = "false";
+            return;
+        }
+
+        if(!bookExists(bookTitle)){
+            message = "Book doesn't exist!";
+            success = "false";
+            return;
+        }
+
+        if (!validateData.ratingInRange(rating)) {
+            message = "Rating can only be a natural number between 1 and 5!";
+            success = "false";
+            return;
+        }
+
+        Comment newComment = new Comment(username, commentBody, rating);
+        book.addComment(newComment);
+        message = "Review added successfully.";
+        success = "true";
+    }
+    
 }

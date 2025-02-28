@@ -46,4 +46,9 @@ public class Validation {
         return customer.getBalance() >= customer.getPayableAmount();
     }
 
+    public boolean ratingInRange(int rating){
+        return rating > 1 && rating < 5;
+    }
+
+
 }

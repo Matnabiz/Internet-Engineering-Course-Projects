@@ -10,6 +10,8 @@ public class Book {
     private int price;
     private String synopsis;
     private String content;
+    private ArrayList<Comment> comments = new ArrayList<>();
+
 
     public Book(String title, String author, String publisher, int publicationYear, ArrayList<String> genres, int price, String synopsis, String content) {
         this.title = title;
@@ -37,6 +39,10 @@ public class Book {
     public String getSynopsis() { return synopsis; }
 
     public String getContent() { return content; }
+
+    public ArrayList<Comment> getComments() { return this.comments; }
+
+    public void addComment(Comment comment) { this.comments.add(comment); }
 
     public void setTitle(String title) { this.title = title; }
 
