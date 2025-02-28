@@ -76,7 +76,12 @@ public class User {
 
     private void decreasePayableAmount(int amount) { this.payableAmount -= amount;}
 
+    public void updateInfoAfterCheckout() {
+        this.shoppingCart.clear();
+        this.balance -= this.getPayableAmount();
+        this.payableAmount = 0;
+    }
 
 
-    public void clearCard() {this.shoppingCart.clear(); this.payableAmount=0;}
+
 }

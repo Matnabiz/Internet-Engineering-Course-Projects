@@ -183,7 +183,7 @@ public class Library {
 
     }
 
-    public void deleteBookFromCart(String username, String bookTitle){
+    public void removeBookFromCart(String username, String bookTitle){
 
         if(!userExists(username)){
             message = "User doesn't exist!";
@@ -197,23 +197,23 @@ public class Library {
         }
 
         User customer = findUser(username);
-        Book bookToBeDeletedFromCart = findBook(bookTitle);
+        Book bookToBeRemovedFromCart = findBook(bookTitle);
         Validation validateData = null;
 
-        if (customer == null || bookToBeDeletedFromCart == null) return;
+        if (customer == null || bookToBeRemovedFromCart == null) return;
 
         if(customer.getRole().equals("admin")) {
             message = "You are admin, you can't do this!";
             success = "false" ;
         }
 
-        else if(!validateData.customerHasBookInCart(customer, bookToBeDeletedFromCart)){
+        else if(!validateData.customerHasBookInCart(customer, bookToBeRemovedFromCart)){
             message = "You don't have this book in your cart!";
             success = "false" ;
         }
 
         else {
-            customer.deleteBookFromCart(bookToBeDeletedFromCart);
+            customer.deleteBookFromCart(bookToBeRemovedFromCart);
             message = "Book removed from cart successfully!";
             success = "true";
         }
@@ -311,7 +311,6 @@ public class Library {
             return;
         }
 
-
         User customer = findUser(username);
         Validation validateData = null;
 
@@ -321,7 +320,7 @@ public class Library {
             return;
         }
 
-        if(customer.getBalance() < customer.getPayableAmount()){
+        if(!validateData.enoughBalanceForCheckout(customer)){
             message = "Balance isn't enough for purchase!";
             success = "false";
             return;
@@ -341,7 +340,7 @@ public class Library {
         success = "true";
         data = transaction;
 
-        customer.clearCard();
+        customer.updateInfoAfterCheckout();
 
     }
 

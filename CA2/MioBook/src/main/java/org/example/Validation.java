@@ -42,4 +42,8 @@ public class Validation {
         return customer.getShoppingCart().size() >= 1;
     }
 
+    public boolean enoughBalanceForCheckout(User customer){
+        return customer.getBalance() >= customer.getPayableAmount();
+    }
+
 }
