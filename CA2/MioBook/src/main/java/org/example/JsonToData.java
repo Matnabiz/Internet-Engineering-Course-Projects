@@ -3,6 +3,8 @@ package org.example;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
+
 public class JsonToData {
     private Library library;
 
@@ -53,10 +55,11 @@ public class JsonToData {
         String username = rootNode.get("username").asText();
         String name = rootNode.get("name").asText();
         String penName = rootNode.has("penName") ? rootNode.get("penName").asText() : null;
+        String nationality = rootNode.has("nationality") ? rootNode.get("nationality").asText() : null;
         String born = rootNode.get("born").asText();
         String died = rootNode.has("died") ? rootNode.get("died").asText() : null;
 
-        library.addAuthor(username, name, penName, born, died);
+        library.addAuthor(username, name, penName, nationality, born, died);
     }
 
     private void handleAddUser(JsonNode rootNode) {
@@ -72,14 +75,18 @@ public class JsonToData {
     }
 
     private void handleAddBook(JsonNode rootNode) {
+        String username = rootNode.get("username").asText();
         String title = rootNode.get("title").asText();
         String author = rootNode.get("author").asText();
         int price = rootNode.get("price").asInt();
         int publicationYear = rootNode.get("publicationYear").asInt();
         String publisher = rootNode.get("publisher").asText();
+        ArrayList<String> genres = rootNode.get("genres").asText();
+        String content = rootNode.get("content").asText();
+        String synopsis = rootNode.get("synopsis").asText();
 
-        Book newBook = new Book(title, author, publisher, publicationYear, price);
-        library.addBook(newBook);
+
+        library.addBook(username, title, author, publisher, publicationYear, genres, content, synopsis, price);
     }
 
     private void handleAddComment(JsonNode rootNode) {

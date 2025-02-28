@@ -1,4 +1,5 @@
 package org.example;
+import java.util.Scanner;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,6 @@ public class Main {
 
             if (input.equalsIgnoreCase("exit")) {
                 System.out.println("Exiting...");
-                Thread.sleep(1000);
                 break;
             }
 

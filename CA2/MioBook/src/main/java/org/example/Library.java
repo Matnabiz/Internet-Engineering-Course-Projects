@@ -99,7 +99,7 @@ public class Library {
 
     public String addBook (String username, String bookTitle,
                          String bookAuthor, String bookPublisher,
-                         String publishYear, ArrayList<String> bookGenres,
+                         int publishYear, ArrayList<String> bookGenres,
                          String bookContent, String bookSynopsys, int bookPrice){
 
         if(!userExists(username)){
@@ -122,13 +122,6 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        try{
-            Integer.parseInt(publishYear);
-        } catch (NumberFormatException e) {
-            message = "Publish year isn't in right format!";
-            return OutputToJson.generateJson(false, message, null);
-        }
-
         Validation validateData = null;
 
         if(!validateData.minimumGenreCount(bookGenres)){
@@ -137,7 +130,7 @@ public class Library {
         }
 
         Book newBook = new Book(bookTitle, bookAuthor,
-                bookPublisher, Integer.parseInt(publishYear),
+                bookPublisher, publishYear,
                 bookGenres,bookPrice,bookSynopsys,bookContent);
         books.add(newBook);
         message =  "Book added successfully.";
