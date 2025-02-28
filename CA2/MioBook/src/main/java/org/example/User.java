@@ -67,9 +67,16 @@ public class User {
         this.increasePayableAmount(bookToBeAddedToCart.getPrice());
     }
 
-    private void increasePayableAmount(int amount) { this.payableAmount = this.payableAmount+amount;}
+    public void deleteBookFromCart(Book bookToBeDeletedFromCart) {
+        this.shoppingCart.remove(bookToBeDeletedFromCart);
+        decreasePayableAmount(bookToBeDeletedFromCart.getPrice());
+    }
 
-    public void deleteShoppingBook(Book book) { this.shoppingCart.remove(book); }
+    private void increasePayableAmount(int amount) { this.payableAmount += amount;}
+
+    private void decreasePayableAmount(int amount) { this.payableAmount -= amount;}
+
+
 
     public void clearCard() {this.shoppingCart.clear(); this.payableAmount=0;}
 }

@@ -213,7 +213,7 @@ public class Library {
         }
 
         else {
-            customer.deleteShoppingBook(bookToBeDeletedFromCart);
+            customer.deleteBookFromCart(bookToBeDeletedFromCart);
             message = "Book removed from cart successfully!";
             success = "true";
         }
