@@ -14,7 +14,7 @@ public class Library {
     private ArrayList<Book> books = new ArrayList<>();
     private ArrayList<User> users = new ArrayList<>();
     private ArrayList<Author> authors = new ArrayList<>();
-    private String success;
+    private boolean success;
     private  String message;
     private List<Object> data;
 
@@ -48,96 +48,85 @@ public class Library {
                 .orElse(null);
     }
 
-    public void addUser(String username, String password, String email, Address address, String role) {
+    public String addUser(String username, String password, String email, Address address, String role) {
         
         Validation validateData = null;
 
         if (!validateData.validateUsername(username)) {
             message = "Invalid username! Only letters, numbers, underscore (_), and hyphen (-) are allowed.";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
 
         if (userExists(username)) {
             message = "Username already exists! Please choose a different one.";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         if (emailExists(email)) {
             message = "Email address already registered! Please use a different one.";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         if (validateData.validatePassword(password)) {
             message = "Password must be at least 4 characters long!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         if (!validateData.validateEmail(email)) {
             message = "Invalid email format! Example: example@test.com";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         if (!validateData.validateRole(role)) {
             message = "Invalid role! Role must be either 'customer' or 'admin'.";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         User newUser = new User(username, password, email, address, role.toLowerCase(), 0);
         users.add(newUser);
 
         message = "User successfully registered!";
-        success = "true";
+        return OutputToJson.generateJson(true, message, null);
     }
 
-    public void addBook (String username, String bookTitle,
+    public String addBook (String username, String bookTitle,
                          String bookAuthor, String bookPublisher,
                          String publishYear, ArrayList<String> bookGenres,
                          String bookContent, String bookSynopsys, int bookPrice){
 
         if(!userExists(username)){
             message = "This username doesn't exist in system!";
-            success = "false";
+            return OutputToJson.generateJson(false, message, null);
         }
 
         if(bookExists(bookTitle)){
             message = "This book already exist in system !";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
         if(!authorExists(bookAuthor)){
             message = "The author of this book doesn't exist!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         User bookAdder= findUser(username);
         if (!bookAdder.getRole().equals("admin")) {
             message = "Only an admin can add books!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         try{
             Integer.parseInt(publishYear);
         } catch (NumberFormatException e) {
             message = "Publish year isn't in right format!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         Validation validateData = null;
 
         if(!validateData.minimumGenreCount(bookGenres)){
             message = "A Book should at least have one genre!" ;
-            success = "false" ;
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         Book newBook = new Book(bookTitle, bookAuthor,
@@ -145,101 +134,93 @@ public class Library {
                 bookGenres,bookPrice,bookSynopsys,bookContent);
         books.add(newBook);
         message =  "Book added successfully.";
-        success = "true";
+        return OutputToJson.generateJson(true, message, null);
 
     }
 
-    public void addBookToCart (String username, String bookTitle) {
+    public String addBookToCart (String username, String bookTitle) {
+
         if(!userExists(username)){
             message = "User doesn't exist!";
-            success = "false" ;
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
+
         if(!bookExists(bookTitle)){
             message = "Book doesn't exist!";
-            success = "false" ;
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         User customer = findUser(username);
         Book bookToBeAddedToCart = findBook(bookTitle);
 
-        if (customer == null || bookToBeAddedToCart == null) return;
-
         if(customer.getRole().equals("admin")) {
             message = "You are an admin, you can't buy!";
-            success = "false" ;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         else if (customer.getShoppingCart().size() == 10) {
             message = "Your cart is full!";
-            success = "false" ;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         else {
             customer.addBookToCart(bookToBeAddedToCart);
             message = "Added book to cart.";
-            success = "true";
+            return OutputToJson.generateJson(true, message, null);
         }
 
     }
 
-    public void removeBookFromCart(String username, String bookTitle){
+    public String removeBookFromCart(String username, String bookTitle){
 
         if(!userExists(username)){
             message = "User doesn't exist!";
-            success = "false" ;
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
+
         if(!bookExists(bookTitle)){
             message = "Book doesn't exist!";
-            success = "false" ;
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         User customer = findUser(username);
         Book bookToBeRemovedFromCart = findBook(bookTitle);
         Validation validateData = null;
 
-        if (customer == null || bookToBeRemovedFromCart == null) return;
-
         if(customer.getRole().equals("admin")) {
             message = "You are admin, you can't do this!";
-            success = "false" ;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         else if(!validateData.customerHasBookInCart(customer, bookToBeRemovedFromCart)){
             message = "You don't have this book in your cart!";
-            success = "false" ;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         else {
             customer.deleteBookFromCart(bookToBeRemovedFromCart);
             message = "Book removed from cart successfully!";
-            success = "true";
+            return OutputToJson.generateJson(true, message, null);
         }
     }
 
-    public void addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
+    public String addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
 
         if (!userExists(adminUsername)) {
             message = "User doesn't exist!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         User adminUser = findUser(adminUsername);
 
         if (!adminUser.getRole().equals("admin")) {
             message = "Only an admin can add authors!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         if (authorExists(authorName)) {
             message = "Author already exists!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         LocalDate birthDateParsed;
@@ -247,8 +228,7 @@ public class Library {
             birthDateParsed = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         } catch (DateTimeParseException e) {
             message = "Invalid date of birth format! Use dd-MM-yyyy.";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         LocalDate deathDateParsed = null;
@@ -257,16 +237,14 @@ public class Library {
                 deathDateParsed = LocalDate.parse(deathDate, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
             } catch (DateTimeParseException e) {
                 message = "Invalid date of death format! Use dd-MM-yyyy.";
-                success = "false";
-                return;
+                return OutputToJson.generateJson(false, message, null);
             }
 
             Validation validateData = null;
 
             if (!validateData.birthBeforeDeath(deathDateParsed, birthDateParsed)) {
                 message = "Date of death cannot be before date of birth!";
-                success = "false";
-                return;
+                return OutputToJson.generateJson(false, message, null);
             }
         }
 
@@ -274,42 +252,39 @@ public class Library {
         authors.add(newAuthor);
 
         message = "Author added successfully!";
-        success = "true";
+        return OutputToJson.generateJson(true, message, null);
     }
 
-    public void addCredit(String username,int credit){
+    public String addCredit(String username,int credit){
         if(!userExists(username)){
             message = "This username doesn't exist in system!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         User customer = findUser(username);
         if(customer.getRole().equals("admin")) {
             message = "An admin can't add credit!";
-            success = "false" ;
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         Validation validateData = null;
 
         if(!validateData.minimumCreditForBalanceCharge(credit)){
             message = "You should charge at least 1$ or 1000cent!";
-            success = "false";
+            return OutputToJson.generateJson(false, message, null);
         }
 
         else {
             customer.increaseBalance(credit);
             message = "Credit added successfully.";
-            success = "true" ;
+            return OutputToJson.generateJson(true, message, null);
         }
     }
 
-    public void purchaseCart(String username){
+    public String purchaseCart(String username){
         if(!userExists(username)){
             message = "this username doesn't exist in system";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         User customer = findUser(username);
@@ -317,14 +292,12 @@ public class Library {
 
         if(!validateData.minimumBookCountInCartForCheckout(customer)){
             message = "Card don't have any book!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         if(!validateData.enoughBalanceForCheckout(customer)){
             message = "Balance isn't enough for purchase!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         List<Object> transaction = new ArrayList<>();
@@ -338,14 +311,16 @@ public class Library {
         customer.addTransactionHistory(transaction);
 
         message = "Purchase completed successfully.";
-        success = "true";
-        data = transaction;
-
+        Map<String, Object> userData = Map.of(
+                "bookCount", customer.getShoppingCart().size(),
+                "totalCost", customer.getPayableAmount(),
+                "date", formattedTime
+        );
         customer.updateInfoAfterCheckout();
-
+        return OutputToJson.generateJson(true, message, userData);
     }
 
-    public void addComment(String username, String bookTitle, String commentBody, int rating) {
+    public String addComment(String username, String bookTitle, String commentBody, int rating) {
 
         User customer = findUser(username);
         Book book = findBook(bookTitle);
@@ -353,55 +328,47 @@ public class Library {
 
         if(!userExists(username)){
             message = "this username doesn't exist in system";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         if(customer.getRole().equals("admin")) {
             message = "An admin can't add credit!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         if(!bookExists(bookTitle)){
             message = "Book doesn't exist!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         if (!validateData.ratingInRange(rating)) {
             message = "Rating can only be a natural number between 1 and 5!";
-            success = "false";
-            return;
+            return OutputToJson.generateJson(false, message, null);
         }
 
         Comment newComment = new Comment(username, commentBody, rating);
         book.addComment(newComment);
         message = "Review added successfully.";
-        success = "true";
+        return OutputToJson.generateJson(true, message, null);
     }
 
     public String showUserDetails(String username) {
 
         if(!userExists(username)){
             message = "this username doesn't exist in system";
-            success = "false";
-            Map<String, Object> failure = Map.of(
-                    "success", success,
-                    "message", message
-            );
-            return OutputToJson.generateJson(failure);
+            return OutputToJson.generateJson(false, message, null);
         }
 
+        message = "User details retrieved successfully.\n";
         User user = findUser(username);
         Map<String, Object> userData = Map.of(
-                "username", user.get().getUsername(),
-                "email", user.get().getEmail(),
-                "address", user.get().getAddress(),
-                "role", user.get().getRole(),
-                "balance", user.get().getBalance()
+                "username", user.getUsername(),
+                "email", user.getEmail(),
+                "address", user.getAddress(),
+                "role", user.getRole(),
+                "balance", user.getBalance()
         );
 
-        return OutputToJson.generateJson(userData);
+        return OutputToJson.generateJson(true, message, userData);
     }
 }
