@@ -33,26 +33,6 @@ public class Library {
         return users.stream().anyMatch(user -> user.getEmail().equals(email));
     }
 
-    private boolean validateUsername(String username){
-        return Pattern.matches("^[a-zA-Z0-9_-]+$", username);
-    }
-
-    private boolean validatePassword(String password){
-        return password.length() < 4;
-    }
-
-    private boolean validateEmail(String email){
-        return Pattern.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", email);
-    }
-
-    private boolean validateRole(String role){
-        return role.equalsIgnoreCase("customer") && !role.equalsIgnoreCase("admin");
-    }
-
-    private boolean birthBeforeDeath(LocalDate deathDate, LocalDate birthDate){
-        return birthDate.isBefore(deathDate);
-    }
-
     private User findUser(String username){
         return this.users.stream()
                 .filter(u -> u.getUsername().equals(username))
@@ -68,8 +48,10 @@ public class Library {
     }
 
     public void addUser(String username, String password, String email, Address address, String role) {
+        
+        Validation validateData = null;
 
-        if (!validateUsername(username)) {
+        if (!validateData.validateUsername(username)) {
             message = "Invalid username! Only letters, numbers, underscore (_), and hyphen (-) are allowed.";
             success = "false";
             return;
@@ -88,19 +70,19 @@ public class Library {
             return;
         }
 
-        if (validatePassword(password)) {
+        if (validateData.validatePassword(password)) {
             message = "Password must be at least 4 characters long!";
             success = "false";
             return;
         }
 
-        if (!validateEmail(email)) {
+        if (!validateData.validateEmail(email)) {
             message = "Invalid email format! Example: example@test.com";
             success = "false";
             return;
         }
 
-        if (!validateRole(role)) {
+        if (!validateData.validateRole(role)) {
             message = "Invalid role! Role must be either 'customer' or 'admin'.";
             success = "false";
             return;
@@ -134,8 +116,8 @@ public class Library {
             return;
         }
 
-        User u_user= findUser(username);
-        if (!u_user.getRole().equals("admin")) {
+        User bookAdder= findUser(username);
+        if (!bookAdder.getRole().equals("admin")) {
             message = "Only an admin can add books!";
             success = "false";
             return;
@@ -149,18 +131,20 @@ public class Library {
             return;
         }
 
-        if(bookGenres.size()<1){
-            message = "Book at least have one genres" ;
+        Validation validateData = null;
+
+        if(!validateData.minimumGenreCount(bookGenres)){
+            message = "A Book should at least have one genre!" ;
             success = "false" ;
             return;
         }
 
-        Book newBook = new Book(bookTitle,bookAuthor,bookPublisher,Integer.parseInt(publishYear),
+        Book newBook = new Book(bookTitle, bookAuthor,
+                bookPublisher, Integer.parseInt(publishYear),
                 bookGenres,bookPrice,bookSynopsys,bookContent);
         books.add(newBook);
         message =  "Book added successfully.";
         success = "true";
-
 
     }
 
@@ -279,7 +263,9 @@ public class Library {
                 return;
             }
 
-            if (!birthBeforeDeath(deathDateParsed, birthDateParsed)) {
+            Validation validateData = null;
+
+            if (!validateData.birthBeforeDeath(deathDateParsed, birthDateParsed)) {
                 message = "Date of death cannot be before date of birth!";
                 success = "false";
                 return;
@@ -311,9 +297,9 @@ public class Library {
             message = "You should charge at least 1$ or 1000cent!";
             success = "false";
         }
+
         else {
-            User u_user = findUser(username);
-            u_user.increaseBalance(credit);
+            customer.increaseBalance(credit);
             message = "Credit added successfully.";
             success = "true" ;
         }

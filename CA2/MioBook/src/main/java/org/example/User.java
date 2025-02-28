@@ -58,7 +58,7 @@ public class User {
 
     public void addTransactionHistory(List<Object> newTransaction) {this.transactionHistory.add(newTransaction);}
 
-    public void increaseBalance(int balance) { this.balance = this.balance+balance; }
+    public void increaseBalance(int balanceToBeAdded) { this.balance += balanceToBeAdded; }
 
     public void setShoppingCart(ArrayList<Book> shoppingCart) { this.shoppingCart = shoppingCart; }
 
