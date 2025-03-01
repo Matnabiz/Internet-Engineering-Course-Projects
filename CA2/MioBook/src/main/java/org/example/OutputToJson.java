@@ -13,6 +13,9 @@ public class OutputToJson {
 
     public static String generateJson(boolean success, String message, Map<String, Object> data) {
         try {
+            if (data == null) {
+                data = Map.of();
+            }
             Map<String, Object> response = Map.of(
                     "success", success,
                     "message", message,
@@ -26,7 +29,7 @@ public class OutputToJson {
             return jsonOutput;
         } catch (Exception e) {
             String errorJson = "{\"success\": false, \"message\": \"Failed to generate JSON\", \"data\": {}}";
-            System.out.println(errorJson); // Print error JSON
+            System.out.println(errorJson);
             return errorJson;
         }
     }

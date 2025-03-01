@@ -20,8 +20,8 @@ public class JsonToData {
                 return;
             }
 
-            String command = input.substring(0, firstSpace); // Extract command (e.g., add_author)
-            String jsonString = input.substring(firstSpace + 1); // Extract JSON data
+            String command = input.substring(0, firstSpace);
+            String jsonString = input.substring(firstSpace + 1);
 
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(jsonString);
@@ -58,6 +58,8 @@ public class JsonToData {
         String nationality = rootNode.has("nationality") ? rootNode.get("nationality").asText() : null;
         String born = rootNode.get("born").asText();
         String died = rootNode.has("died") ? rootNode.get("died").asText() : null;
+        System.out.println(name);
+
 
         library.addAuthor(username, name, penName, nationality, born, died);
     }
@@ -69,6 +71,7 @@ public class JsonToData {
         String country = rootNode.get("address").get("country").asText();
         String city = rootNode.get("address").get("city").asText();
         String role = rootNode.get("role").asText();
+        System.out.println(username);
 
         Address address = new Address(country, city);
         library.addUser(username, password, email, address, role);

@@ -204,12 +204,12 @@ public class Library {
     }
 
     public String addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
+        System.out.println("Hi!");
 
         if (!userExists(adminUsername)) {
             message = "User doesn't exist!";
             return OutputToJson.generateJson(false, message, null);
         }
-
         User adminUser = findUser(adminUsername);
 
         if (!adminUser.getRole().equals("admin")) {
