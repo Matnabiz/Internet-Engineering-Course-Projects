@@ -18,9 +18,16 @@ public class OutputToJson {
                     "message", message,
                     "data", data
             );
-            return objectMapper.writeValueAsString(response);
+
+            String jsonOutput = objectMapper.writeValueAsString(response);
+
+            System.out.println(jsonOutput);
+
+            return jsonOutput;
         } catch (Exception e) {
-            return "{\"success\": false, \"message\": \"Failed to generate JSON\", \"data\": {}}";
+            String errorJson = "{\"success\": false, \"message\": \"Failed to generate JSON\", \"data\": {}}";
+            System.out.println(errorJson); // Print error JSON
+            return errorJson;
         }
     }
 }

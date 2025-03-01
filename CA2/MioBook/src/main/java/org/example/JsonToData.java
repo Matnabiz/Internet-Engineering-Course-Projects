@@ -81,7 +81,14 @@ public class JsonToData {
         int price = rootNode.get("price").asInt();
         int publicationYear = rootNode.get("publicationYear").asInt();
         String publisher = rootNode.get("publisher").asText();
-        ArrayList<String> genres = rootNode.get("genres").asText();
+        ArrayList<String> genres = new ArrayList<>();
+        JsonNode genresNode = rootNode.get("genres");
+
+        if (genresNode != null && genresNode.isArray()) {
+            for (JsonNode genre : genresNode) {
+                genres.add(genre.asText());
+            }
+        }
         String content = rootNode.get("content").asText();
         String synopsis = rootNode.get("synopsis").asText();
 
@@ -100,6 +107,6 @@ public class JsonToData {
 
     private void handleCheckout(JsonNode rootNode) {
         String username = rootNode.get("username").asText();
-        library.checkout(username);
+        library.purchaseCart(username);
     }
 }
