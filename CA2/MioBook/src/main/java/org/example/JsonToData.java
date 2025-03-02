@@ -171,7 +171,18 @@ public class JsonToData {
     private void handleShowUserDetails(JsonNode rootNode) {
         String username = rootNode.get("username").asText();
 
-        library.addBookToCart(username);
+        library.showUserDetails(username);
+    }
+
+    private void handleShowAuthorDetails(JsonNode rootNode) {
+        String authorName = rootNode.get("name").asText();
+
+        library.showAuthorDetails(authorName);
+    }
+
+    private void handleShowBookDetails(JsonNode rootNode) {
+        String bookTitle = rootNode.get("title").asText();
+        library.showBookDetails(bookTitle);
     }
 
     private void handleAddComment(JsonNode rootNode) {
