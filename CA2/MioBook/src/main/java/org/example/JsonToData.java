@@ -156,7 +156,7 @@ public class JsonToData {
         library.addComment(username, bookTitle, comment, rating);
     }
 
-    private void handleCheckout(JsonNode rootNode) {
+    private void handlePurchaseCart(JsonNode rootNode) {
         String username = rootNode.get("username").asText();
         library.purchaseCart(username);
     }
