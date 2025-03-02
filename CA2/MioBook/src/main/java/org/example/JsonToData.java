@@ -36,11 +36,59 @@ public class JsonToData {
                 case "add_book":
                     handleAddBook(rootNode);
                     break;
-                case "add_comment":
+                case "add_cart":
+                    handleAddCart(rootNode);
+                    break;
+                case "remove_cart":
+                    handleRemoveCart(rootNode);
+                    break;
+                case "add_credit":
+                    handleAddCredit(rootNode);
+                    break;
+                case "purchase_cart":
+                    handlePurchaseCart(rootNode);
+                    break;
+                case "borrow_book":
+                    handleBorrowBook(rootNode);
+                    break;
+                case "add_review":
                     handleAddComment(rootNode);
                     break;
-                case "checkout":
-                    handleCheckout(rootNode);
+                case "show_user_details":
+                    handleShowUserDetails(rootNode);
+                    break;
+                case "show_author_details":
+                    handleShowAuthorDetails(rootNode);
+                    break;
+                case "show_book_details":
+                    handleShowBookDetails(rootNode);
+                    break;
+                case "show_book_content":
+                    handleShowBookContent(rootNode);
+                    break;
+                case "show_book_reviews":
+                    hanldeShowBookReviews(rootNode);
+                    break;
+                case "show_cart":
+                    handleShowCart(rootNode);
+                    break;
+                case "show_purchase_history":
+                    handleShowPurchaseHistory(rootNode);
+                    break;
+                case "show_purchased_books":
+                    handleShowPurchasedBooks(rootNode);
+                    break;
+                case "search_books_by_title":
+                    handleSearchBooksByTitle(rootNode);
+                    break;
+                case "search_books_by_year":
+                    handleSearchBooksByYear(rootNode);
+                    break;
+                case "search_books_by_author":
+                    handleSearchBooksByAuthor(rootNode);
+                    break;
+                case "search_books_by_genre":
+                    handleSearchBooksByGenre(rootNode);
                     break;
                 default:
                     System.out.println("Invalid command: " + command);
