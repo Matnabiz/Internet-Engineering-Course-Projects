@@ -154,7 +154,12 @@ public class JsonToData {
         library.addBookToCart(username, bookTitle);
     }
 
+    private void handleRemoveCart(JsonNode rootNode) {
+        String username = rootNode.get("username").asText();
+        String bookTitle = rootNode.get("title").asText();
 
+        library.removeBookFromCart(username, bookTitle);
+    }
 
 
 
