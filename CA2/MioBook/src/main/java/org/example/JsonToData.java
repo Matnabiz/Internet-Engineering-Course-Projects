@@ -147,6 +147,17 @@ public class JsonToData {
         library.addBook(username, title, author, publisher, publicationYear, genres, content, synopsis, price);
     }
 
+    private void handleAddCart(JsonNode rootNode) {
+        String username = rootNode.get("username").asText();
+        String bookTitle = rootNode.get("title").asText();
+
+        library.addBookToCart(username, bookTitle);
+    }
+
+
+
+
+
     private void handleAddComment(JsonNode rootNode) {
         String username = rootNode.get("username").asText();
         String bookTitle = rootNode.get("bookTitle").asText();
