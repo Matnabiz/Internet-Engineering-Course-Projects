@@ -67,7 +67,7 @@ public class JsonToData {
                     handleShowBookContent(rootNode);
                     break;
                 case "show_book_reviews":
-                    hanldeShowBookReviews(rootNode);
+                    handleShowBookReviews(rootNode);
                     break;
                 case "show_cart":
                     handleShowCart(rootNode);
@@ -183,6 +183,46 @@ public class JsonToData {
     private void handleShowBookDetails(JsonNode rootNode) {
         String bookTitle = rootNode.get("title").asText();
         library.showBookDetails(bookTitle);
+    }
+
+    private void handleShowCart(JsonNode rootNode) {
+        //Pending
+    }
+
+    private void handleSearchBooksByTitle(JsonNode rootNode) {
+        //Pending
+    }
+
+    private void handleSearchBooksByAuthor(JsonNode rootNode) {
+        //Pending
+    }
+
+    private void handleSearchBooksByGenre(JsonNode rootNode) {
+        //Pending
+    }
+
+    private void handleSearchBooksByYear(JsonNode rootNode) {
+        //Pending
+    }
+
+    private void handleShowBookContent(JsonNode rootNode) {
+        //Pending
+    }
+
+    private void handleBorrowBook(JsonNode rootNode) {
+        //Pending
+    }
+
+    private void handleShowPurchaseHistory(JsonNode rootNode) {
+        //Pending
+    }
+
+    private void handleShowBookReviews(JsonNode rootNode) {
+        //Pending
+    }
+
+    private void handleShowPurchasedBooks(JsonNode rootNode) {
+        //Pending
     }
 
     private void handleAddComment(JsonNode rootNode) {
