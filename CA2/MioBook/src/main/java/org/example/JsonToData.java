@@ -161,13 +161,24 @@ public class JsonToData {
         library.removeBookFromCart(username, bookTitle);
     }
 
+    private void handleAddCredit(JsonNode rootNode) {
+        String username = rootNode.get("username").asText();
+        int credit  = rootNode.get("credit").asInt();
 
+        library.addCredit(username, credit);
+    }
+
+    private void handleShowUserDetails(JsonNode rootNode) {
+        String username = rootNode.get("username").asText();
+
+        library.addBookToCart(username);
+    }
 
     private void handleAddComment(JsonNode rootNode) {
         String username = rootNode.get("username").asText();
-        String bookTitle = rootNode.get("bookTitle").asText();
+        String bookTitle = rootNode.get("title").asText();
         String comment = rootNode.get("comment").asText();
-        int rating = rootNode.get("rating").asInt();
+        int rating = rootNode.get("rate").asInt();
 
         library.addComment(username, bookTitle, comment, rating);
     }
