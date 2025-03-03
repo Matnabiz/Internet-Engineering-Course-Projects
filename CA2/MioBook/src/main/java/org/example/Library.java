@@ -417,20 +417,20 @@ public class Library {
         }
 
         Book book = findBook(bookTitle);
-        int h_v = 0;
+
         ArrayList<Map<String,Object>> reviews = new ArrayList<>();
         for(Comment comment : book.getComments()){
             reviews.add(Map.of("username",comment.getUsername(),"rate",comment.getRating(),"comment",comment.getBody()));
-            h_v = h_v + comment.getRating();
         }
-        int average_rate = h_v / (book.getComments().size());
+        double averageRate = book.computeAverageRating();
         message = "Book reviews retrieved successfully.\n";
+
         Map<String, Object> bookData = Map.of(
                 "title", book.getTitle(),
-                "reviews",reviews,
-                "averageRating", average_rate
+                "reviews", reviews,
+                "averageRating", averageRate
         );
-        return OutputToJson.generateJson(true,message,bookData);
+        return OutputToJson.generateJson(true, message, bookData);
     }
 
 
