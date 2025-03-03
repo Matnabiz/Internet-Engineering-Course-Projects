@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
+import java.util.stream.Collectors;
 
 public class Library {
     private ArrayList<Book> books = new ArrayList<>();
@@ -410,7 +410,7 @@ public class Library {
         return OutputToJson.generateJson(true, message, bookData);
     }
 
-    public String ShowBookReviews (String bookTitle){
+    public String showBookReviews (String bookTitle){
         if(!bookExists(bookTitle)){
             message = "This book doesn't exist in system!\n";
             return OutputToJson.generateJson(false, message, null);
@@ -433,12 +433,12 @@ public class Library {
         return OutputToJson.generateJson(true, message, bookData);
     }
 
-
-    public String SearchBooksByTitle(String bookTitle){
+    public String searchBooksByTitle(String bookTitle){
         if(!bookExists(bookTitle)){
             message = "this book doesn't exist in system!";
             return OutputToJson.generateJson(false,message,null);
         }
+
         ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
                 .filter(book -> book.getTitle().toLowerCase().contains(bookTitle.toLowerCase()))
                 .collect(Collectors.toList());
@@ -465,7 +465,7 @@ public class Library {
     public String searchBooksByAuthor(String authorName){
         if(!authorExists(authorName)){
             message = "this author doesn't exist in system!";
-            return OutputToJson.generateJson(false,message,null);
+            return OutputToJson.generateJson(false, message,null);
         }
         ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
                 .filter(book -> book.getAuthor().toLowerCase().contains(authorName.toLowerCase()))
@@ -490,7 +490,7 @@ public class Library {
         return OutputToJson.generateJson(true,message,searchResult);
     }
 
-    public String SearchBooksByGenre (String genre){
+    public String searchBooksByGenre (String genre){
         ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
                 .filter(book -> book.getGenres().contains(genre))
                 .collect(Collectors.toList());
@@ -514,7 +514,7 @@ public class Library {
         return OutputToJson.generateJson(true,message,searchResult);
     }
 
-    public String SearchBooksByYear (int fromYear,int toYear){
+    public String searchBooksByYear (int fromYear,int toYear){
         ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
                 .filter(book -> book.getPublicationYear() >= fromYear && book.getPublicationYear() <= toYear)
                 .collect(Collectors.toList());

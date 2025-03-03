@@ -190,19 +190,24 @@ public class JsonToData {
     }
 
     private void handleSearchBooksByTitle(JsonNode rootNode) {
-        //Pending
+        String bookTitle = rootNode.get("title").asText();
+        library.searchBooksByTitle(bookTitle);
     }
 
     private void handleSearchBooksByAuthor(JsonNode rootNode) {
-        //Pending
+        String bookAuthor = rootNode.get("name").asText();
+        library.searchBooksByAuthor(bookAuthor);
     }
 
     private void handleSearchBooksByGenre(JsonNode rootNode) {
-        //Pending
+        String genre = rootNode.get("genre").asText();
+        library.searchBooksByGenre(genre);
     }
 
     private void handleSearchBooksByYear(JsonNode rootNode) {
-        //Pending
+        int fromYear = rootNode.get("from").asInt();
+        int toYear = rootNode.get("to").asInt();
+        library.searchBooksByYear(fromYear, toYear);
     }
 
     private void handleShowBookContent(JsonNode rootNode) {
