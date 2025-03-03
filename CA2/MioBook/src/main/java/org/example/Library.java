@@ -410,4 +410,132 @@ public class Library {
         return OutputToJson.generateJson(true, message, bookData);
     }
 
+    public String ShowBookReviews (String bookTitle){
+        if(!bookExists(bookTitle)){
+            message = "This book doesn't exist in system!\n";
+            return OutputToJson.generateJson(false, message, null);
+        }
+
+        Book book = findBook(bookTitle);
+        int h_v = 0;
+        ArrayList<Map<String,Object>> reviews = new ArrayList<>();
+        for(Comment comment : book.getComments()){
+            reviews.add(Map.of("username",comment.getUsername(),"rate",comment.getRating(),"comment",comment.getBody()));
+            h_v = h_v + comment.getRating();
+        }
+        int average_rate = h_v / (book.getComments().size());
+        message = "Book reviews retrieved successfully.\n";
+        Map<String, Object> bookData = Map.of(
+                "title", book.getTitle(),
+                "reviews",reviews,
+                "averageRating", average_rate
+        );
+        return OutputToJson.generateJson(true,message,bookData);
+    }
+
+
+    public String SearchBooksByTitle(String bookTitle){
+        if(!bookExists(bookTitle)){
+            message = "this book doesn't exist in system!";
+            return OutputToJson.generateJson(false,message,null);
+        }
+        ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
+                .filter(book -> book.getTitle().toLowerCase().contains(bookTitle.toLowerCase()))
+                .collect(Collectors.toList());
+
+        ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
+        for(Book book : searchedBook){
+            fBooks.add(Map.of("title",book.getTitle(),
+                    "author",book.getAuthor(),
+                    "publisher",book.getPublisher(),
+                    "genres",book.getGenres(),
+                    "year",book.getPublicationYear(),
+                    "price",book.getPrice(),
+                    "synopsis",book.getSynopsis()));
+        }
+
+        Map<String, Object> searchResult = Map.of(
+                "search", bookTitle,
+                "books",fBooks
+        );
+        message = "Books containing '" + bookTitle + "'  in their title:";
+        return OutputToJson.generateJson(true,message,searchResult);
+    }
+
+    public String searchBooksByAuthor(String authorName){
+        if(!authorExists(authorName)){
+            message = "this author doesn't exist in system!";
+            return OutputToJson.generateJson(false,message,null);
+        }
+        ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
+                .filter(book -> book.getAuthor().toLowerCase().contains(authorName.toLowerCase()))
+                .collect(Collectors.toList());
+
+        ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
+        for(Book book : searchedBook){
+            fBooks.add(Map.of("title",book.getTitle(),
+                    "author",book.getAuthor(),
+                    "publisher",book.getPublisher(),
+                    "genres",book.getGenres(),
+                    "year",book.getPublicationYear(),
+                    "price",book.getPrice(),
+                    "synopsis",book.getSynopsis()));
+        }
+
+        Map<String, Object> searchResult = Map.of(
+                "search", authorName,
+                "books",fBooks
+        );
+        message = "Books by "+authorName;
+        return OutputToJson.generateJson(true,message,searchResult);
+    }
+
+    public String SearchBooksByGenre (String genre){
+        ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
+                .filter(book -> book.getGenres().contains(genre))
+                .collect(Collectors.toList());
+
+        ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
+        for(Book book : searchedBook){
+            fBooks.add(Map.of("title",book.getTitle(),
+                    "author",book.getAuthor(),
+                    "publisher",book.getPublisher(),
+                    "genres",book.getGenres(),
+                    "year",book.getPublicationYear(),
+                    "price",book.getPrice(),
+                    "synopsis",book.getSynopsis()));
+        }
+
+        Map<String, Object> searchResult = Map.of(
+                "search", genre,
+                "books",fBooks
+        );
+        message = "Books in the '" + genre + "' genre:";
+        return OutputToJson.generateJson(true,message,searchResult);
+    }
+
+    public String SearchBooksByYear (int fromYear,int toYear){
+        ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
+                .filter(book -> book.getPublicationYear() >= fromYear && book.getPublicationYear() <= toYear)
+                .collect(Collectors.toList());
+
+        ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
+        for(Book book : searchedBook){
+            fBooks.add(Map.of("title",book.getTitle(),
+                    "author",book.getAuthor(),
+                    "publisher",book.getPublisher(),
+                    "genres",book.getGenres(),
+                    "year",book.getPublicationYear(),
+                    "price",book.getPrice(),
+                    "synopsis",book.getSynopsis()));
+        }
+
+        Map<String, Object> searchResult = Map.of(
+                "search", fromYear+"-"+toYear,
+                "books",fBooks
+        );
+        message = "Books published from '"+fromYear+"' to '"+toYear+"':";
+        return OutputToJson.generateJson(true,message,searchResult);
+    }
+
 }
