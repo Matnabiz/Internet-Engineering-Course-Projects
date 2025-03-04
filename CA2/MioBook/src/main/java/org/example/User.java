@@ -11,8 +11,9 @@ public class User {
     private Address address;
     private String role;
     private int balance;
-    private ArrayList<Book> shoppingCart;
-    private ArrayList<Book> shelf;
+    private ArrayList<Order> shoppingCart;
+    private ArrayList<Order> borrowedBooks;
+    private ArrayList<Order> boughtBooks;
     private int payableAmount;
     private ArrayList<List<Object>> transactionHistory; // every arrayList is a history , start with books
                                                             // and three last elements are number of books and total price and time
@@ -27,7 +28,8 @@ public class User {
         this.balance = balance;
         this.shoppingCart = new ArrayList<>();
         this.transactionHistory = new ArrayList<List<Object>>();
-        this.shelf = new ArrayList<>();
+        this.borrowedBooks = new ArrayList<>();
+        this.boughtBooks = new ArrayList<>();
     }
 
     public String getUsername() { return this.username; }
@@ -46,7 +48,7 @@ public class User {
 
     public ArrayList<List<Object>> getTransactionHistory() { return this.transactionHistory; }
 
-    public ArrayList<Book> getShoppingCart() { return this.shoppingCart; }
+    public ArrayList<Order> getShoppingCart() { return this.shoppingCart; }
 
     public void setUsername(String username) { this.username = username; }
 
@@ -62,23 +64,23 @@ public class User {
 
     public void increaseBalance(int balanceToBeAdded) { this.balance += balanceToBeAdded; }
 
-    public void setShoppingCart(ArrayList<Book> shoppingCart) { this.shoppingCart = shoppingCart; }
+    public void setShoppingCart(ArrayList<Order> shoppingCart) { this.shoppingCart = shoppingCart; }
 
-    public void addBookToCart(Book bookToBeAddedToCart) {
-        this.shoppingCart.add(bookToBeAddedToCart);
-        this.increasePayableAmount(bookToBeAddedToCart.getPrice());
+    public void addOrderToCart(Order orderToBeAddedToCart) {
+        this.shoppingCart.add(orderToBeAddedToCart);
+        this.increasePayableAmount(orderToBeAddedToCart.book.getPrice());
     }
 
-    public void deleteBookFromCart(Book bookToBeDeletedFromCart) {
-        this.shoppingCart.remove(bookToBeDeletedFromCart);
-        decreasePayableAmount(bookToBeDeletedFromCart.getPrice());
+    public void deleteOrderFromCart(Order orderToBeDeletedFromCart) {
+        this.shoppingCart.remove(orderToBeDeletedFromCart);
+        decreasePayableAmount(orderToBeDeletedFromCart.book.getPrice());
     }
 
     private void increasePayableAmount(int amount) { this.payableAmount += amount;}
 
     private void decreasePayableAmount(int amount) { this.payableAmount -= amount;}
 
-    private void addBoughtBooksToShelf(){ this.shelf.addAll(this.shoppingCart); }
+    private void addBoughtBooksToShelf(){ this.boughtBooks.addAll(this.shoppingCart); }
 
     public void updateInfoAfterCheckout() {
         this.addBoughtBooksToShelf();
