@@ -123,6 +123,7 @@ public class User {
 
     public boolean userHasBorrowedBook(String bookTitle) {
         for (Order order : this.borrowedBooks) {
+            //Check if the borrowing time has expired
             if (order.getBook().getTitle().equals(bookTitle))
                 return true;
         }

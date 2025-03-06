@@ -560,7 +560,7 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        //Check if user has access to the book or not
+
 
         message = "Book Content retrieved successfully.\n";
         Book bookToBeShown = findBook(bookTitle);
