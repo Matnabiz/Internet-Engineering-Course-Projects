@@ -202,13 +202,13 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        else if(!validateData.customerHasBookInCart(customer, bookToBeRemovedFromCart)){
+        else if(!validateData.customerHasBookInCart(customer, bookToBeRemovedFromCart.getTitle())){
             message = "You don't have this book in your cart!";
             return OutputToJson.generateJson(false, message, null);
         }
 
         else {
-            customer.removeBookFromCart(bookToBeRemovedFromCart);
+            customer.removeOrderFromCart(bookToBeRemovedFromCart);
             message = "Book removed from cart successfully!";
             return OutputToJson.generateJson(true, message, null);
         }

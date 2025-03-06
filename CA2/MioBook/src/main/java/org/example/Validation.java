@@ -30,8 +30,13 @@ public class Validation {
         return bookGenres.size() > 1;
     }
 
-    public boolean customerHasBookInCart(User customer, Book book){
-        return customer.getShoppingCart().contains(book);
+    public boolean customerHasBookInCart(User customer, String bookTitle){
+        for (Order order : customer.getShoppingCart()) {
+            if (order.getBook().getTitle() == bookTitle) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean minimumCreditForBalanceCharge(int credit){

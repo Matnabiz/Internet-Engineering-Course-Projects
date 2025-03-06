@@ -45,7 +45,7 @@ public class User {
     public int getBalance() { return this.balance; }
 
     public double getPayableAmount() { return this.payableAmount; }
-
+    
     public ArrayList<List<Object>> getTransactionHistory() { return this.transactionHistory; }
 
     public ArrayList<Order> getShoppingCart() { return this.shoppingCart; }
@@ -59,6 +59,15 @@ public class User {
     public void setAddress(Address address) { this.address = address; }
 
     public void setRole(String role) { this.role = role; }
+
+    private Order findOrder(String bookTitle){
+        for (Order order : this.shoppingCart) {
+            if (order.getBook().getTitle() == bookTitle) {
+                return order;
+            }
+        }
+        return null;
+    }
 
     public void addTransactionHistory(List<Object> newTransaction) {this.transactionHistory.add(newTransaction);}
 
@@ -74,7 +83,8 @@ public class User {
             this.increasePayableAmount(orderToBeAddedToCart.getBook().getPrice() * orderToBeAddedToCart.getBorrowDurationDays() / 10);
     }
 
-    public void removeOrderFromCart(Order orderToBeRemovedFromCart) {
+    public void removeOrderFromCart(Book bookToBeRemovedFromCart) {
+        Order orderToBeRemovedFromCart = findOrder(bookToBeRemovedFromCart.getTitle());
         this.shoppingCart.remove(orderToBeRemovedFromCart);
         if(orderToBeRemovedFromCart.getType() == "buy")
             this.decreasePayableAmount(orderToBeRemovedFromCart.getBook().getPrice());
