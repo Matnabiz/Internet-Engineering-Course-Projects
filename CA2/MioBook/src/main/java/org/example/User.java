@@ -62,7 +62,7 @@ public class User {
 
     private Order findOrder(String bookTitle){
         for (Order order : this.shoppingCart) {
-            if (order.getBook().getTitle() == bookTitle) {
+            if (order.getBook().getTitle().equals(bookTitle)) {
                 return order;
             }
         }
@@ -77,9 +77,9 @@ public class User {
 
     public void addOrderToCart(Order orderToBeAddedToCart) {
         this.shoppingCart.add(orderToBeAddedToCart);
-        if(orderToBeAddedToCart.getType() == "buy")
+        if(orderToBeAddedToCart.getType().equals("buy"))
             this.increasePayableAmount(orderToBeAddedToCart.getBook().getPrice());
-        else if(orderToBeAddedToCart.getType() == "borrow")
+        else if(orderToBeAddedToCart.getType().equals("borrow"))
             this.increasePayableAmount(orderToBeAddedToCart.getBook().getPrice() * orderToBeAddedToCart.getBorrowDurationDays() / 10);
     }
 
@@ -89,7 +89,8 @@ public class User {
         if(orderToBeRemovedFromCart.getType() == "buy")
             this.decreasePayableAmount(orderToBeRemovedFromCart.getBook().getPrice());
         else if(orderToBeRemovedFromCart.getType() == "borrow")
-            this.decreasePayableAmount(orderToBeRemovedFromCart.getBook().getPrice() * orderToBeRemovedFromCart.getBorrowDurationDays() / 10);    }
+            this.decreasePayableAmount(orderToBeRemovedFromCart.getBook().getPrice() * orderToBeRemovedFromCart.getBorrowDurationDays() / 10);
+    }
 
     private void increasePayableAmount(double amount) { this.payableAmount += amount;}
 
@@ -111,6 +112,23 @@ public class User {
         this.balance -= this.getPayableAmount();
         this.payableAmount = 0;
     }
+
+    public boolean userHasBoughtBook(String bookTitle) {
+        for (Order order : this.boughtBooks) {
+            if (order.getBook().getTitle().equals(bookTitle))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean userHasBorrowedBook(String bookTitle) {
+        for (Order order : this.borrowedBooks) {
+            if (order.getBook().getTitle().equals(bookTitle))
+                return true;
+        }
+        return false;
+    }
+
 
 
 }
