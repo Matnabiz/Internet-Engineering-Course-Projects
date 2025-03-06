@@ -147,18 +147,28 @@ public class JsonToData {
         library.addBook(username, title, author, publisher, publicationYear, genres, content, synopsis, price);
     }
 
+    private void handleBorrowBook(JsonNode rootNode) {
+        String username = rootNode.get("username").asText();
+        String bookTitle = rootNode.get("title").asText();
+        int borrowDurationDays = rootNode.get("days").asInt();
+
+        Order orderToBeAddedToCart = new Order(null, "borrow", borrowDurationDays);
+        library.addOrderToCart(username, bookTitle, orderToBeAddedToCart);
+    }
+
     private void handleAddCart(JsonNode rootNode) {
         String username = rootNode.get("username").asText();
         String bookTitle = rootNode.get("title").asText();
 
-        library.addBookToCart(username, bookTitle);
+        Order orderToBeAddedToCart = new Order(null, "buy", 0);
+        library.addOrderToCart(username, bookTitle, orderToBeAddedToCart);
     }
 
     private void handleRemoveCart(JsonNode rootNode) {
         String username = rootNode.get("username").asText();
         String bookTitle = rootNode.get("title").asText();
 
-        library.removeBookFromCart(username, bookTitle);
+        library.removeOrderFromCart(username, bookTitle);
     }
 
     private void handleAddCredit(JsonNode rootNode) {
@@ -211,10 +221,6 @@ public class JsonToData {
     }
 
     private void handleShowBookContent(JsonNode rootNode) {
-        //Pending
-    }
-
-    private void handleBorrowBook(JsonNode rootNode) {
         //Pending
     }
 

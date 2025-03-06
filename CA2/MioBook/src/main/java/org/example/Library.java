@@ -138,20 +138,22 @@ public class Library {
 
     }
 
-    public String addOrderToCart (String username, Order order) {
+    public String addOrderToCart (String username,String bookTitle, Order orderToBeAddedToCart) {
 
-        if(!userExists(username)){
+        if (!userExists(username)) {
             message = "User doesn't exist!";
             return OutputToJson.generateJson(false, message, null);
         }
 
-        if(!bookExists(order.book.getTitle())){
+        if (!bookExists(orderToBeAddedToCart.getBook().getTitle())) {
             message = "Book doesn't exist!";
             return OutputToJson.generateJson(false, message, null);
         }
 
+        Book bookToBeAddedToCart = findBook(bookTitle);
+        orderToBeAddedToCart.setBook(bookToBeAddedToCart);
+
         User customer = findUser(username);
-        Book bookToBeAddedToCart = findBook(order.getBook().getTitle());
         Validation validateData = null;
         if (customer.getRole().equals("admin")) {
             message = "You are an admin, you can't buy!";
@@ -160,13 +162,26 @@ public class Library {
             message = "Your cart is full!";
             return OutputToJson.generateJson(false, message, null);
         }
-        
-        customer.addOrderToCart(order);
-        message = "Book added to cart.";
-        return OutputToJson.generateJson(true, message, null);
+
+        if (orderToBeAddedToCart.getType() == "buy") {
+            customer.addOrderToCart(orderToBeAddedToCart);
+            message = "Book added to cart.";
+            return OutputToJson.generateJson(true, message, null);
+        }
+
+        else if (orderToBeAddedToCart.getType() == "borrow") {
+            customer.addOrderToCart(orderToBeAddedToCart);
+            message = "Book added to cart.";
+            return OutputToJson.generateJson(true, message, null);
+        }
+
+        else {
+            message = "Invalid purchase type.";
+            return OutputToJson.generateJson(false, message, null);
+        }
     }
 
-    public String removeBookFromCart(String username, String bookTitle){
+    public String removeOrderFromCart(String username, String bookTitle){
 
         if(!userExists(username)){
             message = "User doesn't exist!";
@@ -193,7 +208,7 @@ public class Library {
         }
 
         else {
-            customer.deleteBookFromCart(bookToBeRemovedFromCart);
+            customer.removeBookFromCart(bookToBeRemovedFromCart);
             message = "Book removed from cart successfully!";
             return OutputToJson.generateJson(true, message, null);
         }

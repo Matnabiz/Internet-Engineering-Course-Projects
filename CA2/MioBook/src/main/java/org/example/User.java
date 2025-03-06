@@ -14,7 +14,7 @@ public class User {
     private ArrayList<Order> shoppingCart;
     private ArrayList<Order> borrowedBooks;
     private ArrayList<Order> boughtBooks;
-    private int payableAmount;
+    private double payableAmount;
     private ArrayList<List<Object>> transactionHistory; // every arrayList is a history , start with books
                                                             // and three last elements are number of books and total price and time
                                                             // { books , numberOfBooks , totalPrice , Time }
@@ -44,7 +44,7 @@ public class User {
 
     public int getBalance() { return this.balance; }
 
-    public int getPayableAmount() { return this.payableAmount; }
+    public double getPayableAmount() { return this.payableAmount; }
 
     public ArrayList<List<Object>> getTransactionHistory() { return this.transactionHistory; }
 
@@ -68,22 +68,35 @@ public class User {
 
     public void addOrderToCart(Order orderToBeAddedToCart) {
         this.shoppingCart.add(orderToBeAddedToCart);
-        this.increasePayableAmount(orderToBeAddedToCart.book.getPrice());
+        if(orderToBeAddedToCart.getType() == "buy")
+            this.increasePayableAmount(orderToBeAddedToCart.getBook().getPrice());
+        else if(orderToBeAddedToCart.getType() == "borrow")
+            this.increasePayableAmount(orderToBeAddedToCart.getBook().getPrice() * orderToBeAddedToCart.getBorrowDurationDays() / 10);
     }
 
-    public void deleteOrderFromCart(Order orderToBeDeletedFromCart) {
-        this.shoppingCart.remove(orderToBeDeletedFromCart);
-        decreasePayableAmount(orderToBeDeletedFromCart.book.getPrice());
+    public void removeOrderFromCart(Order orderToBeRemovedFromCart) {
+        this.shoppingCart.remove(orderToBeRemovedFromCart);
+        if(orderToBeRemovedFromCart.getType() == "buy")
+            this.decreasePayableAmount(orderToBeRemovedFromCart.getBook().getPrice());
+        else if(orderToBeRemovedFromCart.getType() == "borrow")
+            this.decreasePayableAmount(orderToBeRemovedFromCart.getBook().getPrice() * orderToBeRemovedFromCart.getBorrowDurationDays() / 10);    }
+
+    private void increasePayableAmount(double amount) { this.payableAmount += amount;}
+
+    private void decreasePayableAmount(double amount) { this.payableAmount -= amount;}
+
+    private void addPurchasedOrdersToShelf() {
+        for (Order order : this.shoppingCart) {
+            if ("buy".equals(order.getType())) {
+                this.boughtBooks.add(order);
+            } else if ("borrow".equals(order.getType())) {
+                this.borrowedBooks.add(order);
+            }
+        }
     }
-
-    private void increasePayableAmount(int amount) { this.payableAmount += amount;}
-
-    private void decreasePayableAmount(int amount) { this.payableAmount -= amount;}
-
-    private void addBoughtBooksToShelf(){ this.boughtBooks.addAll(this.shoppingCart); }
 
     public void updateInfoAfterCheckout() {
-        this.addBoughtBooksToShelf();
+        this.addPurchasedOrdersToShelf();
         this.shoppingCart.clear();
         this.balance -= this.getPayableAmount();
         this.payableAmount = 0;

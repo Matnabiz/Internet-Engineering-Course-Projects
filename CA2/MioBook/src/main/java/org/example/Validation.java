@@ -51,7 +51,7 @@ public class Validation {
     }
 
     public boolean cartIsFull(User customer){
-        return customer.getShoppingCart().size() == 10;
+        return customer.getShoppingCart().size() >= 10;
     }
 
 }

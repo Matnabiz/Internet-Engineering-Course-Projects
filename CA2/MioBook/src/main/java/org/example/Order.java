@@ -1,14 +1,18 @@
 package org.example;
 
 public class Order {
+    private Book book;
+    private String type; // "purchase" or "borrow"
+    private int borrowDurationDays;
 
-    Book book;
-    String type;
-    int borrowDurationDays;
+    public Order(Book book, String type, int borrowDurationDays) {
+        this.book = book;
+        this.type = type;
+        this.borrowDurationDays = borrowDurationDays;
+    }
 
-
-    public Book getBook(){ return this.book; }
-    public String getType(){ return this.getType(); }
-    public int getBorrowDurationDays(){ return this.getBorrowDurationDays(); }
-
+    public Book getBook() { return this.book; }
+    public String getType() { return this.type; }
+    public int getBorrowDurationDays() { return this.borrowDurationDays; }
+    public void setBook(Book book) { this.book = book; }
 }
