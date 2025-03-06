@@ -221,7 +221,9 @@ public class JsonToData {
     }
 
     private void handleShowBookContent(JsonNode rootNode) {
-        //Pending
+        String username = rootNode.get("username").asText();
+        String bookTitle = rootNode.get("title").asText();
+        library.showBookContent(username, bookTitle);
     }
 
     private void handleShowPurchaseHistory(JsonNode rootNode) {
@@ -229,7 +231,9 @@ public class JsonToData {
     }
 
     private void handleShowBookReviews(JsonNode rootNode) {
-        //Pending
+        String bookTitle = rootNode.get("title").asText();
+
+        library.showBookReviews(bookTitle);
     }
 
     private void handleShowPurchasedBooks(JsonNode rootNode) {

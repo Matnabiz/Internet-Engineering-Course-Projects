@@ -549,4 +549,27 @@ public class Library {
         return OutputToJson.generateJson(true,message,searchResult);
     }
 
+    public String showBookContent(String username, String bookTitle){
+        if (!userExists(username)) {
+            message = "User doesn't exist!";
+            return OutputToJson.generateJson(false, message, null);
+        }
+
+        if (!bookExists(bookTitle)) {
+            message = "Book doesn't exist!";
+            return OutputToJson.generateJson(false, message, null);
+        }
+
+        //Check if user has access to the book or not
+
+        message = "Book Content retrieved successfully.\n";
+        Book bookToBeShown = findBook(bookTitle);
+        Map<String, Object> bookContent = Map.of(
+                "title", bookTitle,
+                "content", bookToBeShown.getContent()
+        );
+        return OutputToJson.generateJson(true, message, bookContent);
+
+    }
+
 }

@@ -45,7 +45,7 @@ public class User {
     public int getBalance() { return this.balance; }
 
     public double getPayableAmount() { return this.payableAmount; }
-    
+
     public ArrayList<List<Object>> getTransactionHistory() { return this.transactionHistory; }
 
     public ArrayList<Order> getShoppingCart() { return this.shoppingCart; }
