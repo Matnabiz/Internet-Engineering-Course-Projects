@@ -572,4 +572,84 @@ public class Library {
 
     }
 
+    public String showCart(String username){
+        if(!userExists(username)){
+            message = "User doesn't exist";
+            return OutputToJson.generateJson(false,message,null);
+        }
+
+        User u_user= findUser(username);
+        if (u_user.getRole().equals("admin")) {
+            message = "This command isn't for admins!";
+            return OutputToJson.generateJson(false, message, null);
+        }
+
+        ArrayList<Map<String,Object>> bookInCard = new ArrayList<>();
+        for(Order order : u_user.getShoppingCart()){
+            bookInCard.add(Map.of("title",order.getBook().getTitle(),
+                    "author",order.getBook().getAuthor(),
+                    "publisher",order.getBook().getPublisher(),
+                    "genres",order.getBook().getGenres(),
+                    "year",order.getBook().getPublicationYear(),
+                    "price",order.getBook().getPrice(),
+                    "isBorrowed",order.getType().equals("borrow"),
+                    "finalPrice",order.getOrderPrice(),
+                    "borrowDays",order.getBorrowDurationDays()));
+        }
+
+        Map<String, Object> cartDetails = Map.of(
+                "username", username,
+                "totalCost",u_user.getPayableAmount(),
+                "items",bookInCard
+        );
+        message="Buy cart retrieved successfully.";
+        return OutputToJson.generateJson(true,message,cartDetails);
+
+    }
+
+    public String showPurchaseHistory(String username) {
+
+        if (!userExists(username)) {
+            message = "User doesn't exist";
+            return OutputToJson.generateJson(false, message, null);
+        }
+
+        User u_user = findUser(username);
+        if (u_user.getRole().equals("admin")) {
+            message = "This command isn't for admins!";
+            return OutputToJson.generateJson(false, message, null);
+        }
+
+        ArrayList<Map<String, Object>> bookItems = new ArrayList<>();
+        for (int i = 0; i < u_user.getTransactionHistory().size() - 3; i++) {
+            if (u_user.getTransactionHistory().get(i) instanceof Order) {
+                Order order = (Order) u_user.getTransactionHistory().get(i); // Cast to Book
+                bookItems.add(Map.of("title", order.getBook().getTitle(),
+                        "author", order.getBook().getAuthor(),
+                        "publisher", order.getBook().getPublisher(),
+                        "genres", order.getBook().getGenres(),
+                        "year", order.getBook().getPublicationYear(),
+                        "isBorrowed", order.getType().equals("borrow"),
+                        "price", order.getBook().getPrice(),
+                        "finalPrice", order.getOrderPrice()));
+            }
+        }
+
+        Map<String, Object> purchaseHistory = Map.of(
+                "purchaseDate", u_user.getTransactionHistory().get(u_user.getTransactionHistory().size()),
+                "items", bookItems,
+                "totalCost", u_user.getTransactionHistory().get(u_user.getTransactionHistory().size() - 1));
+
+
+        Map<String, Object> finalPurchaseHistory = Map.of(
+                "username", username,
+                "purchaseHistory", purchaseHistory
+        );
+
+        message = "Purchase history retrieved successfully.";
+        return OutputToJson.generateJson(true, message, finalPurchaseHistory);
+    }
+
+
+
 }
