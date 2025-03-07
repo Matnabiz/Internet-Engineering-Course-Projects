@@ -106,7 +106,6 @@ public class JsonToData {
         String nationality = rootNode.has("nationality") ? rootNode.get("nationality").asText() : null;
         String born = rootNode.get("born").asText();
         String died = rootNode.has("died") ? rootNode.get("died").asText() : null;
-        System.out.println(name);
 
 
         library.addAuthor(username, name, penName, nationality, born, died);
@@ -119,7 +118,6 @@ public class JsonToData {
         String country = rootNode.get("address").get("country").asText();
         String city = rootNode.get("address").get("city").asText();
         String role = rootNode.get("role").asText();
-        System.out.println(username);
 
         Address address = new Address(country, city);
         library.addUser(username, password, email, address, role);
@@ -130,7 +128,7 @@ public class JsonToData {
         String title = rootNode.get("title").asText();
         String author = rootNode.get("author").asText();
         int price = rootNode.get("price").asInt();
-        int publicationYear = rootNode.get("publicationYear").asInt();
+        int publicationYear = rootNode.get("year").asInt();
         String publisher = rootNode.get("publisher").asText();
         ArrayList<String> genres = new ArrayList<>();
         JsonNode genresNode = rootNode.get("genres");

@@ -19,18 +19,18 @@ public class Validation {
     }
 
     public static boolean validateRole(String role){
-        return role.equalsIgnoreCase("customer") && !role.equalsIgnoreCase("admin");
+        return role.equalsIgnoreCase("customer") || role.equalsIgnoreCase("admin");
     }
 
-    public boolean birthBeforeDeath(LocalDate deathDate, LocalDate birthDate){
+    public static boolean birthBeforeDeath(LocalDate deathDate, LocalDate birthDate){
         return birthDate.isBefore(deathDate);
     }
 
-    public boolean minimumGenreCount(ArrayList<String> bookGenres){
+    public static boolean minimumGenreCount(ArrayList<String> bookGenres){
         return bookGenres.size() > 1;
     }
 
-    public boolean customerHasBookInCart(User customer, String bookTitle){
+    public static boolean customerHasBookInCart(User customer, String bookTitle){
         for (Order order : customer.getShoppingCart()) {
             if (order.getBook().getTitle() == bookTitle) {
                 return true;
@@ -39,23 +39,23 @@ public class Validation {
         return false;
     }
 
-    public boolean minimumCreditForBalanceCharge(int credit){
+    public static boolean minimumCreditForBalanceCharge(int credit){
         return credit > 1000;
     }
 
-    public boolean minimumBookCountInCartForCheckout(User customer){
+    public static boolean minimumBookCountInCartForCheckout(User customer){
         return customer.getShoppingCart().size() >= 1;
     }
 
-    public boolean enoughBalanceForCheckout(User customer){
+    public static boolean enoughBalanceForCheckout(User customer){
         return customer.getBalance() >= customer.getPayableAmount();
     }
 
-    public boolean ratingInRange(int rating){
+    public static boolean ratingInRange(int rating){
         return rating > 1 && rating < 5;
     }
 
-    public boolean cartIsFull(User customer){
+    public static boolean cartIsFull(User customer){
         return customer.getShoppingCart().size() >= 10;
     }
 

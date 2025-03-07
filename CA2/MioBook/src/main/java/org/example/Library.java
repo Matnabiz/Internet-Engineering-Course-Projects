@@ -122,9 +122,7 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        Validation validateData = null;
-
-        if(!validateData.minimumGenreCount(bookGenres)){
+        if(!Validation.minimumGenreCount(bookGenres)){
             message = "A Book should at least have one genre!" ;
             return OutputToJson.generateJson(false, message, null);
         }
@@ -145,7 +143,7 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        if (!bookExists(orderToBeAddedToCart.getBook().getTitle())) {
+        if (!bookExists(bookTitle)) {
             message = "Book doesn't exist!";
             return OutputToJson.generateJson(false, message, null);
         }
@@ -154,11 +152,10 @@ public class Library {
         orderToBeAddedToCart.setBook(bookToBeAddedToCart);
 
         User customer = findUser(username);
-        Validation validateData = null;
         if (customer.getRole().equals("admin")) {
             message = "You are an admin, you can't buy!";
             return OutputToJson.generateJson(false, message, null);
-        } else if (validateData.cartIsFull(customer)) {
+        } else if (Validation.cartIsFull(customer)) {
             message = "Your cart is full!";
             return OutputToJson.generateJson(false, message, null);
         }
@@ -195,14 +192,13 @@ public class Library {
 
         User customer = findUser(username);
         Book bookToBeRemovedFromCart = findBook(bookTitle);
-        Validation validateData = null;
 
         if(customer.getRole().equals("admin")) {
             message = "You are admin, you can't do this!";
             return OutputToJson.generateJson(false, message, null);
         }
 
-        else if(!validateData.customerHasBookInCart(customer, bookToBeRemovedFromCart.getTitle())){
+        else if(!Validation.customerHasBookInCart(customer, bookToBeRemovedFromCart.getTitle())){
             message = "You don't have this book in your cart!";
             return OutputToJson.generateJson(false, message, null);
         }
@@ -215,7 +211,6 @@ public class Library {
     }
 
     public String addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
-        System.out.println("Hi!");
 
         if (!userExists(adminUsername)) {
             message = "User doesn't exist!";
@@ -235,9 +230,9 @@ public class Library {
 
         LocalDate birthDateParsed;
         try {
-            birthDateParsed = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            birthDateParsed = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         } catch (DateTimeParseException e) {
-            message = "Invalid date of birth format! Use dd-MM-yyyy.";
+            message = "Invalid date of birth format! Use yyyy-mm-dd.";
             return OutputToJson.generateJson(false, message, null);
         }
 
@@ -250,9 +245,8 @@ public class Library {
                 return OutputToJson.generateJson(false, message, null);
             }
 
-            Validation validateData = null;
 
-            if (!validateData.birthBeforeDeath(deathDateParsed, birthDateParsed)) {
+            if (!Validation.birthBeforeDeath(deathDateParsed, birthDateParsed)) {
                 message = "Date of death cannot be before date of birth!";
                 return OutputToJson.generateJson(false, message, null);
             }
@@ -277,9 +271,8 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        Validation validateData = null;
 
-        if(!validateData.minimumCreditForBalanceCharge(credit)){
+        if(!Validation.minimumCreditForBalanceCharge(credit)){
             message = "You should charge at least 1$ or 100 cents!";
             return OutputToJson.generateJson(false, message, null);
         }
@@ -299,14 +292,13 @@ public class Library {
         }
 
         User customer = findUser(username);
-        Validation validateData = null;
 
-        if(!validateData.minimumBookCountInCartForCheckout(customer)){
+        if(!Validation.minimumBookCountInCartForCheckout(customer)){
             message = "Card don't have any book!";
             return OutputToJson.generateJson(false, message, null);
         }
 
-        if(!validateData.enoughBalanceForCheckout(customer)){
+        if(!Validation.enoughBalanceForCheckout(customer)){
             message = "Balance isn't enough for purchase!";
             return OutputToJson.generateJson(false, message, null);
         }
@@ -328,7 +320,6 @@ public class Library {
 
         User customer = findUser(username);
         Book book = findBook(bookTitle);
-        Validation validateData = null;
 
         if(!userExists(username)){
             message = "this username doesn't exist in system";
@@ -345,7 +336,7 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        if (!validateData.ratingInRange(rating)) {
+        if (!Validation.ratingInRange(rating)) {
             message = "Rating can only be a natural number between 1 and 5!";
             return OutputToJson.generateJson(false, message, null);
         }

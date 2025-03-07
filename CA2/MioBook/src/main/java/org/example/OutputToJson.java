@@ -13,14 +13,20 @@ public class OutputToJson {
 
     public static String generateJson(boolean success, String message, Map<String, Object> data) {
         try {
+            Map<String, Object> response = Map.of();
             if (data == null) {
-                data = Map.of();
+                response = Map.of(
+                        "success", success,
+                        "message", message
+                );
             }
-            Map<String, Object> response = Map.of(
-                    "success", success,
-                    "message", message,
-                    "data", data
-            );
+            else {
+                response = Map.of(
+                        "success", success,
+                        "message", message,
+                        "data", data
+                );
+            }
 
             String jsonOutput = objectMapper.writeValueAsString(response);
 
