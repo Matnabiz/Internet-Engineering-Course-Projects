@@ -671,7 +671,7 @@ public class Library {
                 LocalDateTime givenDate = LocalDateTime.parse(String.valueOf(u_user.getTransactionHistory().get(u_user.getTransactionHistory().size() - 1)));
                 LocalDateTime now = LocalDateTime.now();
                 long daysPassed = ChronoUnit.DAYS.between(givenDate, now);
-                if (order.getBorrowDurationDays() < daysPassed )  { // ----> check for bought book not borrowed
+                if (order.getBorrowDurationDays() > daysPassed )  { // ----> check for bought book not borrowed
                     purchasedBook.add(Map.of("title", order.getBook().getTitle(),
                             "author", order.getBook().getAuthor(),
                             "publisher", order.getBook().getPublisher(),
