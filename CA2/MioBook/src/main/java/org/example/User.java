@@ -147,8 +147,8 @@ public class User {
         return false;
     }
 
-    public boolean userHasAccessToBook(Book book){
-        ArrayList<Book> accesibleBooks = new ArrayList<>();
+    public boolean userHasAccessToBook(String bookTitle){
+        ArrayList<String> accesibleBooks = new ArrayList<>();
         for(int j=0; j<this.getTransactionHistory().size(); j++) {
             for (int i = 0; i < this.getTransactionHistory().get(j).size() - 3; i++) {
                 if (this.getTransactionHistory().get(j).get(i) instanceof Order) {
@@ -158,12 +158,12 @@ public class User {
                     LocalDateTime now = LocalDateTime.now();
                     long daysPassed = ChronoUnit.DAYS.between(givenDate, now);
                     if (order.getBorrowDurationDays() > daysPassed || order.getBorrowDurationDays() == 0)
-                        accesibleBooks.add(order.getBook());
+                        accesibleBooks.add(order.getBook().getTitle());
                 }
             }
         }
 
-        return accesibleBooks.contains(book);
+        return accesibleBooks.contains(bookTitle);
     }
 
 

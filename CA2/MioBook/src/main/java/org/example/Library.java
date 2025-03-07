@@ -154,7 +154,7 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        if(findUser(username).userHasAccessToBook(orderToBeAddedToCart.getBook())){
+        if(findUser(username).userHasAccessToBook(bookTitle)){
             message = "You already have access to this book!";
             return OutputToJson.generateJson(false, message, null);
         }
@@ -550,7 +550,7 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        if (!findUser(username).userHasAccessToBook(findBook(bookTitle))) {
+        if (!findUser(username).userHasAccessToBook(bookTitle)) {
             message = "You can't view this book!";
             return OutputToJson.generateJson(false, message, null);
         }
