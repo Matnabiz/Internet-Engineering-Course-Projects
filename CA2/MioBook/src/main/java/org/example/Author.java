@@ -2,6 +2,7 @@ package org.example;
 
 import java.time.LocalDate;
 import java.util.Date;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class Author {
     String name;

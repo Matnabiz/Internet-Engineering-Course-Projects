@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class Library {
     private ArrayList<Book> books = new ArrayList<>();
@@ -381,26 +382,34 @@ public class Library {
 
         Author author = findAuthor(authorName);
         message = "Author details retrieved successfully.\n";
-        Map<String, Object> authorData = Map.of();
+        //Map<String, Object> authorData = Map.of();
 
-        if(author.getDeathDate() == null) {
-            authorData = Map.of(
+        System.out.println(author.getName());
+        System.out.println(author.getPenName());
+        System.out.println(author.getNationality());
+        System.out.println(author.getBirthDate());
+        System.out.println(author.getDeathDate());
+
+        //if(author.getDeathDate() == null) {
+        Map<String, Object> authorData = Map.of(
                 "name", author.getName(),
                 "penName", author.getPenName(),
                 "nationality", author.getNationality(),
                 "born", author.getBirthDate()
             );
-        }
+        //    System.out.println(authorData);
+        //}
 
-        else{
-            authorData = Map.of(
-                "name", author.getName(),
-                "penName", author.getPenName(),
-                "nationality", author.getNationality(),
-                "born", author.getBirthDate(),
-                "died", author.getDeathDate()
-            );
-        }
+        //else{
+         //   authorData = Map.of(
+          //      "name", author.getName(),
+           //     "penName", author.getPenName(),
+            //    "nationality", author.getNationality(),
+             //   "born", author.getBirthDate(),
+              //  "died", author.getDeathDate()
+
+            //);
+        //}
 
         return OutputToJson.generateJson(true, message, authorData);
     }
@@ -658,23 +667,25 @@ public class Library {
             message = "This command isn't for admins!";
             return OutputToJson.generateJson(false, message, null);
         }
-
+        //System.out.println(u_user.getTransactionHistory());
         ArrayList<Map<String, Object>> purchasedBooks = new ArrayList<>();
-        for (int i = 0; i < u_user.getTransactionHistory().size() - 3; i++) {
-            if (u_user.getTransactionHistory().get(i) instanceof Order) {
-                Order order = (Order) u_user.getTransactionHistory().get(i);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                LocalDateTime givenDate = LocalDateTime.parse(String.valueOf(u_user.getTransactionHistory().get(u_user.getTransactionHistory().size() - 1)));
-                LocalDateTime now = LocalDateTime.now();
-                long daysPassed = ChronoUnit.DAYS.between(givenDate, now);
-                if (order.getBorrowDurationDays() > daysPassed || order.getBorrowDurationDays() == 0)  { // ----> check for bought book not borrowed
-                    purchasedBooks.add(Map.of("title", order.getBook().getTitle(),
-                            "author", order.getBook().getAuthor(),
-                            "publisher", order.getBook().getPublisher(),
-                            "category", order.getBook().getGenres(),
-                            "year", order.getBook().getPublicationYear(),
-                            "price", order.getBook().getPrice(),
-                            "isBorrowed", order.getType().equals("borrow")));
+        for(int j=0;j<u_user.getTransactionHistory().size();j++) {
+            for (int i = 0; i < u_user.getTransactionHistory().get(j).size() - 3; i++) {
+                if (u_user.getTransactionHistory().get(j).get(i) instanceof Order) {
+                    Order order = (Order) u_user.getTransactionHistory().get(j).get(i);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    LocalDateTime givenDate = LocalDateTime.parse(String.valueOf(u_user.getTransactionHistory().get(j).get(u_user.getTransactionHistory().get(j).size() - 1)), formatter);
+                    LocalDateTime now = LocalDateTime.now();
+                    long daysPassed = ChronoUnit.DAYS.between(givenDate, now);
+                    if (order.getBorrowDurationDays() > daysPassed || order.getBorrowDurationDays() == 0) { // ----> check for bought book not borrowed
+                        purchasedBooks.add(Map.of("title", order.getBook().getTitle(),
+                                "author", order.getBook().getAuthor(),
+                                "publisher", order.getBook().getPublisher(),
+                                "category", order.getBook().getGenres(),
+                                "year", order.getBook().getPublicationYear(),
+                                "price", order.getBook().getPrice(),
+                                "isBorrowed", order.getType().equals("borrow")));
+                    }
                 }
             }
         }
@@ -686,5 +697,6 @@ public class Library {
         message = "Purchased books retrieved successfully.";
         return OutputToJson.generateJson(true, message, finalPurchasedBook);
     }
+
 
 }
