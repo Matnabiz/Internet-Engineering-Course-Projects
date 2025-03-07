@@ -1,0 +1,105 @@
+body {
+    font-family: Inter;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 150vh;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.signup-box {
+    background: white;
+    padding: 30px;
+    width: 660px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 5px;
+}
+
+p {
+    color: #666;
+    font-size: 14px;
+}
+
+input {
+    width: 388px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.location {
+    display: flex;
+    justify-content: space-between;
+}
+
+.location input {
+    width: 47%;
+}
+
+.role-selection {
+    display: flex;
+    justify-content: center;
+    color: #F5EFE7;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.role-selection button {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background: #F7F9FB;
+    cursor: pointer;
+}
+
+.role-selection button.selected {
+    border: 2px solid #ccc;
+    border-color: #16423C;
+    background: #F5EFE7;
+}
+
+.signup-btn {
+    width: 388px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #0000000D;
+    color: #0000001A;
+    cursor: not-allowed;
+    margin-top: 10px;
+}
+
+.signup-btn.active {
+    background: #007bff;
+    cursor: pointer;
+}
+
+.signin-link {
+    margin-top: 10px;
+    color:#16423C;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+    background: #16423C;
+    color: #FFFFFF;
+    font-size: 14px;
+}
