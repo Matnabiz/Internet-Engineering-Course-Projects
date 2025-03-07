@@ -607,16 +607,16 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        User u_user = findUser(username);
-        if (u_user.getRole().equals("admin")) {
+        User customer = findUser(username);
+        if (customer.getRole().equals("admin")) {
             message = "This command isn't for admins!";
             return OutputToJson.generateJson(false, message, null);
         }
 
         ArrayList<Map<String, Object>> bookItems = new ArrayList<>();
-        for (int i = 0; i < u_user.getTransactionHistory().size() - 3; i++) {
-            if (u_user.getTransactionHistory().get(i) instanceof Order) {
-                Order order = (Order) u_user.getTransactionHistory().get(i); // Cast to Book
+        for (int i = 0; i < customer.getTransactionHistory().size() - 3; i++) {
+            if (customer.getTransactionHistory().get(i) instanceof Order) {
+                Order order = (Order) customer.getTransactionHistory().get(i); // Cast to Book
                 bookItems.add(Map.of("title", order.getBook().getTitle(),
                         "author", order.getBook().getAuthor(),
                         "publisher", order.getBook().getPublisher(),
@@ -629,9 +629,9 @@ public class Library {
         }
 
         Map<String, Object> purchaseHistory = Map.of(
-                "purchaseDate", u_user.getTransactionHistory().get(u_user.getTransactionHistory().size()- 1),
+                "purchaseDate", customer.getTransactionHistory().get(customer.getTransactionHistory().size()- 1),
                 "items", bookItems,
-                "totalCost", u_user.getTransactionHistory().get(u_user.getTransactionHistory().size() - 2));
+                "totalCost", customer.getTransactionHistory().get(customer.getTransactionHistory().size() - 2));
 
 
         Map<String, Object> finalPurchaseHistory = Map.of(
