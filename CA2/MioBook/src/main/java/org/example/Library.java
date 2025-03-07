@@ -382,34 +382,13 @@ public class Library {
 
         Author author = findAuthor(authorName);
         message = "Author details retrieved successfully.\n";
-        //Map<String, Object> authorData = Map.of();
 
-        System.out.println(author.getName());
-        System.out.println(author.getPenName());
-        System.out.println(author.getNationality());
-        System.out.println(author.getBirthDate());
-        System.out.println(author.getDeathDate());
-
-        //if(author.getDeathDate() == null) {
         Map<String, Object> authorData = Map.of(
                 "name", author.getName(),
                 "penName", author.getPenName(),
                 "nationality", author.getNationality(),
                 "born", author.getBirthDate()
             );
-        //    System.out.println(authorData);
-        //}
-
-        //else{
-         //   authorData = Map.of(
-          //      "name", author.getName(),
-           //     "penName", author.getPenName(),
-            //    "nationality", author.getNationality(),
-             //   "born", author.getBirthDate(),
-              //  "died", author.getDeathDate()
-
-            //);
-        //}
 
         return OutputToJson.generateJson(true, message, authorData);
     }
@@ -436,7 +415,7 @@ public class Library {
 
     public String showBookReviews (String bookTitle){
         if(!bookExists(bookTitle)){
-            message = "This book doesn't exist in system!\n";
+            message = "This book doesn't exist in system!";
             return OutputToJson.generateJson(false, message, null);
         }
 
@@ -566,9 +545,12 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
+        if (!findUser(username).userHasAccessToBook(findBook(bookTitle))) {
+            message = "You can't view this book!";
+            return OutputToJson.generateJson(false, message, null);
+        }
 
-
-        message = "Book Content retrieved successfully.\n";
+        message = "Book Content retrieved successfully.";
         Book bookToBeShown = findBook(bookTitle);
         Map<String, Object> bookContent = Map.of(
                 "title", bookTitle,
@@ -667,7 +649,7 @@ public class Library {
             message = "This command isn't for admins!";
             return OutputToJson.generateJson(false, message, null);
         }
-        //System.out.println(u_user.getTransactionHistory());
+
         ArrayList<Map<String, Object>> purchasedBooks = new ArrayList<>();
         for(int j=0;j<u_user.getTransactionHistory().size();j++) {
             for (int i = 0; i < u_user.getTransactionHistory().get(j).size() - 3; i++) {

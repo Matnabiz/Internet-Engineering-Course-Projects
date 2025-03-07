@@ -2,8 +2,10 @@ package org.example;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class User {
@@ -145,6 +147,24 @@ public class User {
         return false;
     }
 
+    public boolean userHasAccessToBook(Book book){
+        ArrayList<Book> accesibleBooks = new ArrayList<>();
+        for(int j=0; j<this.getTransactionHistory().size(); j++) {
+            for (int i = 0; i < this.getTransactionHistory().get(j).size() - 3; i++) {
+                if (this.getTransactionHistory().get(j).get(i) instanceof Order) {
+                    Order order = (Order) this.getTransactionHistory().get(j).get(i);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    LocalDateTime givenDate = LocalDateTime.parse(String.valueOf(this.getTransactionHistory().get(j).get(this.getTransactionHistory().get(j).size() - 1)), formatter);
+                    LocalDateTime now = LocalDateTime.now();
+                    long daysPassed = ChronoUnit.DAYS.between(givenDate, now);
+                    if (order.getBorrowDurationDays() > daysPassed || order.getBorrowDurationDays() == 0)
+                        accesibleBooks.add(order.getBook());
+                }
+            }
+        }
+
+        return accesibleBooks.contains(book);
+    }
 
 
 }
