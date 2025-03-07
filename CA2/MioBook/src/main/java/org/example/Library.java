@@ -137,7 +137,7 @@ public class Library {
 
     }
 
-    public String addOrderToCart (String username,String bookTitle, Order orderToBeAddedToCart) {
+    public String addOrderToCart (String username, String bookTitle, Order orderToBeAddedToCart) {
 
         if (!userExists(username)) {
             message = "User doesn't exist!";
@@ -151,6 +151,11 @@ public class Library {
 
         if (Validation.customerHasBookInCart(findUser(username), bookTitle)){
             message = "You already have this book in your cart!";
+            return OutputToJson.generateJson(false, message, null);
+        }
+
+        if(findUser(username).userHasAccessToBook(orderToBeAddedToCart.getBook())){
+            message = "You already have access to this book!";
             return OutputToJson.generateJson(false, message, null);
         }
 
