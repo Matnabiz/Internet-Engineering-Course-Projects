@@ -184,7 +184,6 @@ public class JsonToData {
 
     private void handleShowAuthorDetails(JsonNode rootNode) {
         String authorName = rootNode.get("name").asText();
-
         library.showAuthorDetails(authorName);
     }
 
@@ -194,7 +193,8 @@ public class JsonToData {
     }
 
     private void handleShowCart(JsonNode rootNode) {
-        //Pending
+        String username = rootNode.get("username").asText();
+        library.showCart(username);
     }
 
     private void handleSearchBooksByTitle(JsonNode rootNode) {
@@ -235,7 +235,8 @@ public class JsonToData {
     }
 
     private void handleShowPurchasedBooks(JsonNode rootNode) {
-        //Pending
+        String username = rootNode.get("username").asText();
+        library.showPurchasedBooks(username);
     }
 
     private void handleAddComment(JsonNode rootNode) {

@@ -15,12 +15,14 @@ public class OutputToJson {
         try {
             Map<String, Object> response = Map.of();
             if (data == null) {
+
                 response = Map.of(
                         "success", success,
                         "message", message
                 );
             }
             else {
+
                 response = Map.of(
                         "success", success,
                         "message", message,

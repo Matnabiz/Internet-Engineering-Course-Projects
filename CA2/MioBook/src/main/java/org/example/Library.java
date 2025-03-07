@@ -242,11 +242,11 @@ public class Library {
         }
 
         LocalDate deathDateParsed = null;
-        if (deathDate != null && !deathDate.isEmpty()) {
+        if (deathDate != null) {
             try {
-                deathDateParsed = LocalDate.parse(deathDate, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                deathDateParsed = LocalDate.parse(deathDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             } catch (DateTimeParseException e) {
-                message = "Invalid date of death format! Use dd-MM-yyyy.";
+                message = "Invalid date of death format! Use yyyy-MM-dd.";
                 return OutputToJson.generateJson(false, message, null);
             }
 
@@ -299,7 +299,7 @@ public class Library {
         User customer = findUser(username);
 
         if(!Validation.minimumBookCountInCartForCheckout(customer)){
-            message = "Card don't have any book!";
+            message = "Cart is empty!";
             return OutputToJson.generateJson(false, message, null);
         }
 
@@ -378,15 +378,30 @@ public class Library {
             message = "Author doesn't exist!";
             return OutputToJson.generateJson(false, message, null);
         }
+
         Author author = findAuthor(authorName);
         message = "Author details retrieved successfully.\n";
-        Map<String, Object> authorData = Map.of(
+        Map<String, Object> authorData = Map.of();
+
+        if(author.getDeathDate() == null) {
+            authorData = Map.of(
+                "name", author.getName(),
+                "penName", author.getPenName(),
+                "nationality", author.getNationality(),
+                "born", author.getBirthDate()
+            );
+        }
+
+        else{
+            authorData = Map.of(
                 "name", author.getName(),
                 "penName", author.getPenName(),
                 "nationality", author.getNationality(),
                 "born", author.getBirthDate(),
                 "died", author.getDeathDate()
-        );
+            );
+        }
+
         return OutputToJson.generateJson(true, message, authorData);
     }
 
@@ -434,10 +449,6 @@ public class Library {
     }
 
     public String searchBooksByTitle(String bookTitle){
-        if(!bookExists(bookTitle)){
-            message = "this book doesn't exist in system!";
-            return OutputToJson.generateJson(false,message,null);
-        }
 
         ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
                 .filter(book -> book.getTitle().toLowerCase().contains(bookTitle.toLowerCase()))
@@ -462,13 +473,10 @@ public class Library {
         return OutputToJson.generateJson(true,message,searchResult);
     }
 
-    public String searchBooksByAuthor(String authorName){
-        if(!authorExists(authorName)){
-            message = "this author doesn't exist in system!";
-            return OutputToJson.generateJson(false, message,null);
-        }
+    public String searchBooksByAuthor(String authorSearchQuery){
+
         ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
-                .filter(book -> book.getAuthor().toLowerCase().contains(authorName.toLowerCase()))
+                .filter(book -> book.getAuthor().trim().toLowerCase().contains(authorSearchQuery.toLowerCase()))
                 .collect(Collectors.toList());
 
         ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
@@ -483,11 +491,11 @@ public class Library {
         }
 
         Map<String, Object> searchResult = Map.of(
-                "search", authorName,
+                "search", authorSearchQuery,
                 "books",fBooks
         );
-        message = "Books by "+authorName;
-        return OutputToJson.generateJson(true,message,searchResult);
+        message = "Books by " + authorSearchQuery;
+        return OutputToJson.generateJson(true, message, searchResult);
     }
 
     public String searchBooksByGenre (String genre){
@@ -639,7 +647,7 @@ public class Library {
         return OutputToJson.generateJson(true, message, finalPurchaseHistory);
     }
 
-    public String showPurchasedBook (String username){
+    public String showPurchasedBooks (String username){
         if (!userExists(username)) {
             message = "User doesn't exist";
             return OutputToJson.generateJson(false, message, null);
@@ -651,7 +659,7 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        ArrayList<Map<String, Object>> purchasedBook = new ArrayList<>();
+        ArrayList<Map<String, Object>> purchasedBooks = new ArrayList<>();
         for (int i = 0; i < u_user.getTransactionHistory().size() - 3; i++) {
             if (u_user.getTransactionHistory().get(i) instanceof Order) {
                 Order order = (Order) u_user.getTransactionHistory().get(i);
@@ -659,8 +667,8 @@ public class Library {
                 LocalDateTime givenDate = LocalDateTime.parse(String.valueOf(u_user.getTransactionHistory().get(u_user.getTransactionHistory().size() - 1)));
                 LocalDateTime now = LocalDateTime.now();
                 long daysPassed = ChronoUnit.DAYS.between(givenDate, now);
-                if (order.getBorrowDurationDays() > daysPassed )  { // ----> check for bought book not borrowed
-                    purchasedBook.add(Map.of("title", order.getBook().getTitle(),
+                if (order.getBorrowDurationDays() > daysPassed || order.getBorrowDurationDays() == 0)  { // ----> check for bought book not borrowed
+                    purchasedBooks.add(Map.of("title", order.getBook().getTitle(),
                             "author", order.getBook().getAuthor(),
                             "publisher", order.getBook().getPublisher(),
                             "category", order.getBook().getGenres(),
@@ -673,10 +681,10 @@ public class Library {
 
         Map<String, Object> finalPurchasedBook = Map.of(
                 "username", username,
-                "books", purchasedBook
+                "books", purchasedBooks
         );
-        message="Purchased books retrieved successfully.";
-        return OutputToJson.generateJson(true,message,finalPurchasedBook);
+        message = "Purchased books retrieved successfully.";
+        return OutputToJson.generateJson(true, message, finalPurchasedBook);
     }
 
 }
