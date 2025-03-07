@@ -148,6 +148,11 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
+        if (Validation.customerHasBookInCart(findUser(username), bookTitle)){
+            message = "You already have this book in your cart!";
+            return OutputToJson.generateJson(false, message, null);
+        }
+
         Book bookToBeAddedToCart = findBook(bookTitle);
         orderToBeAddedToCart.setBook(bookToBeAddedToCart);
 

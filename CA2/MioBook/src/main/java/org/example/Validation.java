@@ -32,7 +32,7 @@ public class Validation {
 
     public static boolean customerHasBookInCart(User customer, String bookTitle){
         for (Order order : customer.getShoppingCart()) {
-            if (order.getBook().getTitle() == bookTitle) {
+            if (order.getBook().getTitle().equals(bookTitle)) {
                 return true;
             }
         }
