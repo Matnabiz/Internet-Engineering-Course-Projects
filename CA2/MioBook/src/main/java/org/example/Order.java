@@ -15,7 +15,7 @@ public class Order {
     public String getType() { return this.type; }
     public int getBorrowDurationDays() { return this.borrowDurationDays; }
     public void setBook(Book book) { this.book = book; }
-    public int getOrderPrice(){if(this.type.equals("buy")){return book.getPrice();}
-                                else{return (int) Math.floor(book.getPrice()*this.borrowDurationDays/10);}
+    public double getOrderPrice(){if(this.type.equals("buy")){return book.getPrice();}
+                                else{return book.getPrice()*this.borrowDurationDays/10;}
     }
 }

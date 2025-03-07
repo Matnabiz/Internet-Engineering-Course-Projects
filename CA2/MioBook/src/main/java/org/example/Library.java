@@ -58,9 +58,8 @@ public class Library {
 
     public String addUser(String username, String password, String email, Address address, String role) {
         
-        Validation validateData = null;
 
-        if (!validateData.validateUsername(username)) {
+        if (!Validation.validateUsername(username)) {
             message = "Invalid username! Only letters, numbers, underscore (_), and hyphen (-) are allowed.";
             return OutputToJson.generateJson(false, message, null);
         }
@@ -76,17 +75,17 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        if (validateData.validatePassword(password)) {
+        if (Validation.validatePassword(password)) {
             message = "Password must be at least 4 characters long!";
             return OutputToJson.generateJson(false, message, null);
         }
 
-        if (!validateData.validateEmail(email)) {
+        if (!Validation.validateEmail(email)) {
             message = "Invalid email format! Example: example@test.com";
             return OutputToJson.generateJson(false, message, null);
         }
 
-        if (!validateData.validateRole(role)) {
+        if (!Validation.validateRole(role)) {
             message = "Invalid role! Role must be either 'customer' or 'admin'.";
             return OutputToJson.generateJson(false, message, null);
         }
@@ -281,7 +280,7 @@ public class Library {
         Validation validateData = null;
 
         if(!validateData.minimumCreditForBalanceCharge(credit)){
-            message = "You should charge at least 1$ or 1000cent!";
+            message = "You should charge at least 1$ or 100 cents!";
             return OutputToJson.generateJson(false, message, null);
         }
 
@@ -312,16 +311,9 @@ public class Library {
             return OutputToJson.generateJson(false, message, null);
         }
 
-        List<Object> transaction = new ArrayList<>();
-        transaction.addAll(customer.getShoppingCart());
-        transaction.add(customer.getShoppingCart().size());
-        transaction.add(customer.getPayableAmount());
         LocalDateTime purchaseTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedTime = purchaseTime.format(formatter);
-        transaction.add(formattedTime);
-        customer.addTransactionHistory(transaction);
-
         message = "Purchase completed successfully.";
         Map<String, Object> userData = Map.of(
                 "bookCount", customer.getShoppingCart().size(),

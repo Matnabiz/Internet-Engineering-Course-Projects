@@ -1,5 +1,7 @@
 package org.example;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -106,7 +108,20 @@ public class User {
         }
     }
 
+    private void makeTransactionHistory(){
+        List<Object> transaction = new ArrayList<>();
+        transaction.addAll(this.getShoppingCart());
+        transaction.add(this.getShoppingCart().size());
+        transaction.add(this.getPayableAmount());
+        LocalDateTime purchaseTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedTime = purchaseTime.format(formatter);
+        transaction.add(formattedTime);
+        this.addTransactionHistory(transaction);
+    }
+
     public void updateInfoAfterCheckout() {
+        this.makeTransactionHistory();
         this.addPurchasedOrdersToShelf();
         this.shoppingCart.clear();
         this.balance -= this.getPayableAmount();

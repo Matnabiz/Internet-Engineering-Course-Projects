@@ -6,19 +6,19 @@ import java.util.regex.Pattern;
 
 public class Validation {
 
-    public boolean validateUsername(String username){
+    public static boolean validateUsername(String username){
         return Pattern.matches("^[a-zA-Z0-9_-]+$", username);
     }
 
-    public boolean validatePassword(String password){
+    public static boolean validatePassword(String password){
         return password.length() < 4;
     }
 
-    public boolean validateEmail(String email){
+    public static boolean validateEmail(String email){
         return Pattern.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", email);
     }
 
-    public boolean validateRole(String role){
+    public static boolean validateRole(String role){
         return role.equalsIgnoreCase("customer") && !role.equalsIgnoreCase("admin");
     }
 
