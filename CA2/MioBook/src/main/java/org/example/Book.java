@@ -26,6 +26,16 @@ public class Book {
 
     public String getTitle() { return title; }
 
+    public int getNumberOfComments() { return comments.size();}
+
+    public double getAverageRate() {
+        double averageRate = comments.stream()
+                .mapToInt(Comment::getRating)
+                .average()
+                .orElse(0);
+        return averageRate;
+    }
+
     public String getAuthor() { return author; }
 
     public String getPublisher() { return publisher; }

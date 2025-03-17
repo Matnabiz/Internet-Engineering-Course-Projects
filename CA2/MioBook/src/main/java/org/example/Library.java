@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.Comparator;
 
 public class Library {
     private ArrayList<Book> books = new ArrayList<>();
@@ -685,5 +686,70 @@ public class Library {
         return OutputToJson.generateJson(true, message, finalPurchasedBook);
     }
 
+    public String professionalSearch(String searchTitle,String searchAuthor,String searchGenre,
+                                     int searchFromYear,int searchEndYear,String arrangeResultBy,String arrangeMode){
 
+        ArrayList<Book> searchedBook = new ArrayList<Book>();
+
+        if(searchTitle!=null) {
+            searchedBook = (ArrayList<Book>) books.stream()
+                    .filter(book -> book.getTitle().trim().toLowerCase().contains(searchTitle.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if(searchAuthor!=null) {
+            searchedBook = (ArrayList<Book>) searchedBook.stream()
+                    .filter(book -> book.getAuthor().trim().toLowerCase().contains(searchAuthor.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if(searchGenre!=null) {
+            searchedBook = (ArrayList<Book>) searchedBook.stream()
+                    .filter(book -> book.getGenres().contains(searchGenre))
+                    .collect(Collectors.toList());
+        }
+        if(searchFromYear!=0){
+            searchedBook = (ArrayList<Book>) searchedBook.stream()
+                    .filter(book -> book.getPublicationYear() >= searchFromYear && book.getPublicationYear() <= searchEndYear)
+                    .collect(Collectors.toList());
+        }
+
+        if(arrangeResultBy!=null){
+            if(arrangeResultBy == "avergeRate"){
+                if(arrangeMode=="HighToLow") {
+                    ArrayList<Book> sortedBooks = new ArrayList<>(searchedBook);
+                    sortedBooks.sort(Comparator.comparingDouble(Book::getAverageRate).reversed());
+                } else if (arrangeMode=="LowToHigh") {
+                    ArrayList<Book> sortedBooks = new ArrayList<>(searchedBook);
+                    sortedBooks.sort(Comparator.comparingDouble(Book::getAverageRate));
+                }
+            }
+            if(arrangeResultBy == "NumberOfComments"){
+                if(arrangeMode=="HighToLow") {
+                    ArrayList<Book> sortedBooks = new ArrayList<>(searchedBook);
+                    sortedBooks.sort(Comparator.comparingDouble(Book::getNumberOfComments).reversed());
+                } else if (arrangeMode=="LowToHigh") {
+                    ArrayList<Book> sortedBooks = new ArrayList<>(searchedBook);
+                    sortedBooks.sort(Comparator.comparingDouble(Book::getNumberOfComments));
+                }
+            }
+        }
+
+        ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
+        for(Book book : searchedBook){
+            fBooks.add(Map.of("title",book.getTitle(),
+                    "author",book.getAuthor(),
+                    "publisher",book.getPublisher(),
+                    "genres",book.getGenres(),
+                    "year",book.getPublicationYear(),
+                    "price",book.getPrice(),
+                    "synopsis",book.getSynopsis()));
+        }
+
+        Map<String, Object> searchResult = Map.of(
+                "books",fBooks
+        );
+        message = "searched Success";
+        return OutputToJson.generateJson(true,message,searchResult);
+    }
 }
