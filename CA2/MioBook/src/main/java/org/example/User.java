@@ -130,23 +130,6 @@ public class User {
         this.payableAmount = 0;
     }
 
-    public boolean userHasBoughtBook(String bookTitle) {
-        for (Order order : this.boughtBooks) {
-            if (order.getBook().getTitle().equals(bookTitle))
-                return true;
-        }
-        return false;
-    }
-
-    public boolean userHasBorrowedBook(String bookTitle) {
-        for (Order order : this.borrowedBooks) {
-            //Check if the borrowing time has expired
-            if (order.getBook().getTitle().equals(bookTitle))
-                return true;
-        }
-        return false;
-    }
-
     public boolean userHasAccessToBook(String bookTitle){
         ArrayList<String> accesibleBooks = new ArrayList<>();
         for(int j=0; j<this.getTransactionHistory().size(); j++) {

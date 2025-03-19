@@ -40,7 +40,7 @@ public class Validation {
     }
 
     public static boolean minimumCreditForBalanceCharge(int credit){
-        return credit > 1000;
+        return credit > 100;
     }
 
     public static boolean minimumBookCountInCartForCheckout(User customer){

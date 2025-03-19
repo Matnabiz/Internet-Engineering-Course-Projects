@@ -334,12 +334,12 @@ public class Library {
         Book book = findBook(bookTitle);
 
         if(!userExists(username)){
-            message = "this username doesn't exist in system";
+            message = "This username doesn't exist in system";
             return OutputToJson.generateJson(false, message, null);
         }
 
         if(customer.getRole().equals("admin")) {
-            message = "An admin can't add credit!";
+            message = "As an admin, You can't submit a comment.";
             return OutputToJson.generateJson(false, message, null);
         }
 
@@ -349,7 +349,12 @@ public class Library {
         }
 
         if (!Validation.ratingInRange(rating)) {
-            message = "Rating can only be a natural number between 1 and 5!";
+            message = "Ratings can only be a natural number between 1 and 5!";
+            return OutputToJson.generateJson(false, message, null);
+        }
+
+        if(!customer.userHasAccessToBook(bookTitle)){
+            message = "You can't submit a comment for this book.";
             return OutputToJson.generateJson(false, message, null);
         }
 
