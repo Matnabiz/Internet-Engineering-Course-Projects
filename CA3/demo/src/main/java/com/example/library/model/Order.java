@@ -1,4 +1,4 @@
-package org.example;
+package com.example.library.model;
 
 public class Order {
     private Book book;

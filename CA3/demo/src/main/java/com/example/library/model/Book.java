@@ -1,4 +1,4 @@
-package org.example;
+package com.example.library.model;
 import java.util.ArrayList;
 
 public class Book {

@@ -1,19 +1,24 @@
-package com.example.service;
+package com.example.library.service;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
+import com.example.library.model.User;
+import com.example.library.model.Author;
+import com.example.library.model.Book;
+import com.example.library.model.Order;
+import com.example.library.model.Comment;
+import com.example.library.dto.ResponseWrapper;
+import com.example.library.model.Address;
 @Service
 
 public class Library {
@@ -61,75 +66,74 @@ public class Library {
                 .orElse(null);
     }
 
-    public String addUser(String username, String password, String email, Address address, String role) {
-        
+    public ResponseEntity<ResponseWrapper> addUser(String username, String password, String email, Address address, String role) {
 
         if (!Validation.validateUsername(username)) {
             message = "Invalid username! Only letters, numbers, underscore (_), and hyphen (-) are allowed.";
-            return ResponseEntity.badRequest().body(new ResponseWrapper(false, "Invalid username! Only letters, numbers, underscore (_), and hyphen (-) are allowed.", null));
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
 
         if (userExists(username)) {
             message = "Username already exists! Please choose a different one.";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (emailExists(email)) {
             message = "Email address already registered! Please use a different one.";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (Validation.validatePassword(password)) {
             message = "Password must be at least 4 characters long!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (!Validation.validateEmail(email)) {
             message = "Invalid email format! Example: example@test.com";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (!Validation.validateRole(role)) {
             message = "Invalid role! Role must be either 'customer' or 'admin'.";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         User newUser = new User(username, password, email, address, role.toLowerCase(), 0);
         users.add(newUser);
 
         message = "User successfully registered!";
-        return OutputToJson.generateJson(true, message, null);
+        return ResponseEntity.ok(new ResponseWrapper(true, message, null));
     }
 
-    public String addBook (String username, String bookTitle,
+    public ResponseEntity<ResponseWrapper> addBook (String username, String bookTitle,
                          String bookAuthor, String bookPublisher,
                          int publishYear, ArrayList<String> bookGenres,
                          String bookContent, String bookSynopsys, int bookPrice){
 
         if(!userExists(username)){
             message = "This username doesn't exist in system!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if(bookExists(bookTitle)){
             message = "This book already exist in system !";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
         if(!authorExists(bookAuthor)){
             message = "The author of this book doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         User bookAdder= findUser(username);
         if (!bookAdder.getRole().equals("admin")) {
             message = "Only an admin can add books!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if(!Validation.minimumGenreCount(bookGenres)){
             message = "A Book should at least have one genre!" ;
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         Book newBook = new Book(bookTitle, bookAuthor,
@@ -137,30 +141,30 @@ public class Library {
                 bookGenres,bookPrice,bookSynopsys,bookContent);
         books.add(newBook);
         message =  "Book added successfully.";
-        return OutputToJson.generateJson(true, message, null);
+        return ResponseEntity.ok(new ResponseWrapper(true, message, null));
 
     }
 
-    public String addOrderToCart (String username, String bookTitle, Order orderToBeAddedToCart) {
+    public ResponseEntity<ResponseWrapper> addOrderToCart (String username, String bookTitle, Order orderToBeAddedToCart) {
 
         if (!userExists(username)) {
             message = "User doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (!bookExists(bookTitle)) {
             message = "Book doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (Validation.customerHasBookInCart(findUser(username), bookTitle)){
             message = "You already have this book in your cart!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if(findUser(username).userHasAccessToBook(bookTitle)){
             message = "You already have access to this book!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         Book bookToBeAddedToCart = findBook(bookTitle);
@@ -169,40 +173,40 @@ public class Library {
         User customer = findUser(username);
         if (customer.getRole().equals("admin")) {
             message = "You are an admin, you can't buy!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         } else if (Validation.cartIsFull(customer)) {
             message = "Your cart is full!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (orderToBeAddedToCart.getType() == "buy") {
             customer.addOrderToCart(orderToBeAddedToCart);
             message = "Book added to cart.";
-            return OutputToJson.generateJson(true, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         else if (orderToBeAddedToCart.getType() == "borrow") {
             customer.addOrderToCart(orderToBeAddedToCart);
             message = "Book added to cart.";
-            return OutputToJson.generateJson(true, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         else {
             message = "Invalid purchase type.";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
         }
     }
 
-    public String removeOrderFromCart(String username, String bookTitle){
+    public ResponseEntity<ResponseWrapper> removeOrderFromCart(String username, String bookTitle){
 
         if(!userExists(username)){
             message = "User doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if(!bookExists(bookTitle)){
             message = "Book doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         User customer = findUser(username);
@@ -210,37 +214,37 @@ public class Library {
 
         if(customer.getRole().equals("admin")) {
             message = "You are admin, you can't do this!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         else if(!Validation.customerHasBookInCart(customer, bookToBeRemovedFromCart.getTitle())){
             message = "You don't have this book in your cart!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         else {
             customer.removeOrderFromCart(bookToBeRemovedFromCart);
             message = "Book removed from cart successfully!";
-            return OutputToJson.generateJson(true, message, null);
+            return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
         }
     }
 
-    public String addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
+    public ResponseEntity<ResponseWrapper> addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
 
         if (!userExists(adminUsername)) {
             message = "User doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
         User adminUser = findUser(adminUsername);
 
         if (!adminUser.getRole().equals("admin")) {
             message = "Only an admin can add authors!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (authorExists(authorName)) {
             message = "Author already exists!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         LocalDate birthDateParsed;
@@ -248,7 +252,7 @@ public class Library {
             birthDateParsed = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         } catch (DateTimeParseException e) {
             message = "Invalid date of birth format! Use yyyy-mm-dd.";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         LocalDate deathDateParsed = null;
@@ -257,13 +261,13 @@ public class Library {
                 deathDateParsed = LocalDate.parse(deathDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             } catch (DateTimeParseException e) {
                 message = "Invalid date of death format! Use yyyy-MM-dd.";
-                return OutputToJson.generateJson(false, message, null);
+                return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
             }
 
 
             if (!Validation.birthBeforeDeath(deathDateParsed, birthDateParsed)) {
                 message = "Date of death cannot be before date of birth!";
-                return OutputToJson.generateJson(false, message, null);
+                return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
             }
         }
 
@@ -271,51 +275,51 @@ public class Library {
         authors.add(newAuthor);
 
         message = "Author added successfully!";
-        return OutputToJson.generateJson(true, message, null);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
     }
 
-    public String addCredit(String username,int credit){
+    public ResponseEntity<ResponseWrapper> addCredit(String username,int credit){
         if(!userExists(username)){
             message = "This username doesn't exist in system!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         User customer = findUser(username);
         if(customer.getRole().equals("admin")) {
             message = "An admin can't add credit!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
 
         if(!Validation.minimumCreditForBalanceCharge(credit)){
             message = "You should charge at least 1$ or 100 cents!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         else {
             customer.increaseBalance(credit);
             message = "Credit added successfully.";
-            return OutputToJson.generateJson(true, message, null);
+            return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
         }
     }
 
-    public String purchaseCart(String username){
+    public ResponseEntity<ResponseWrapper> purchaseCart(String username){
 
         if(!userExists(username)){
             message = "this username doesn't exist in system";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         User customer = findUser(username);
 
         if(!Validation.minimumBookCountInCartForCheckout(customer)){
             message = "Cart is empty!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if(!Validation.enoughBalanceForCheckout(customer)){
             message = "Balance isn't enough for purchase!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         LocalDateTime purchaseTime = LocalDateTime.now();
@@ -328,50 +332,50 @@ public class Library {
                 "date", formattedTime
         );
         customer.updateInfoAfterCheckout();
-        return OutputToJson.generateJson(true, message, userData);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, userData));
     }
 
-    public String addComment(String username, String bookTitle, String commentBody, int rating) {
+    public ResponseEntity<ResponseWrapper> addComment(String username, String bookTitle, String commentBody, int rating) {
 
         User customer = findUser(username);
         Book book = findBook(bookTitle);
 
         if(!userExists(username)){
             message = "This username doesn't exist in system";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if(customer.getRole().equals("admin")) {
             message = "As an admin, You can't submit a comment.";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if(!bookExists(bookTitle)){
             message = "Book doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (!Validation.ratingInRange(rating)) {
             message = "Ratings can only be a natural number between 1 and 5!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if(!customer.userHasAccessToBook(bookTitle)){
             message = "You can't submit a comment for this book.";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         Comment newComment = new Comment(username, commentBody, rating);
         book.addComment(newComment);
         message = "Review added successfully.";
-        return OutputToJson.generateJson(true, message, null);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
     }
 
-    public String showUserDetails(String username) {
+    public ResponseEntity<ResponseWrapper> showUserDetails(String username) {
 
         if(!userExists(username)){
             message = "this username doesn't exist in system";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         message = "User details retrieved successfully.\n";
@@ -384,14 +388,14 @@ public class Library {
                 "balance", user.getBalance()
         );
 
-        return OutputToJson.generateJson(true, message, userData);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, userData));
     }
 
-    public String showAuthorDetails(String authorName){
+    public ResponseEntity<ResponseWrapper> showAuthorDetails(String authorName){
 
         if (!authorExists(authorName)) {
             message = "Author doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         Author author = findAuthor(authorName);
@@ -404,14 +408,14 @@ public class Library {
                 "born", author.getBirthDate()
             );
 
-        return OutputToJson.generateJson(true, message, authorData);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, authorData));
     }
 
-    public String showBookDetails(String bookTitle){
+    public ResponseEntity<ResponseWrapper> showBookDetails(String bookTitle){
 
         if (!bookExists(bookTitle)) {
             message = "Book doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         Book book = findBook(bookTitle);
@@ -424,13 +428,13 @@ public class Library {
                 "price", book.getPrice(),
                 "averageRating", book.computeAverageRating()
         );
-        return OutputToJson.generateJson(true, message, bookData);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, bookData));
     }
 
-    public String showBookReviews (String bookTitle){
+    public ResponseEntity<ResponseWrapper> showBookReviews (String bookTitle){
         if(!bookExists(bookTitle)){
             message = "This book doesn't exist in system!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         Book book = findBook(bookTitle);
@@ -447,10 +451,10 @@ public class Library {
                 "reviews", reviews,
                 "averageRating", averageRate
         );
-        return OutputToJson.generateJson(true, message, bookData);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, bookData));
     }
 
-    public String searchBooksByTitle(String bookTitle){
+    public ResponseEntity<ResponseWrapper> searchBooksByTitle(String bookTitle){
 
         ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
                 .filter(book -> book.getTitle().toLowerCase().contains(bookTitle.toLowerCase()))
@@ -472,10 +476,10 @@ public class Library {
                 "books",fBooks
         );
         message = "Books containing '" + bookTitle + "'  in their title:";
-        return OutputToJson.generateJson(true,message,searchResult);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
 
-    public String searchBooksByAuthor(String authorSearchQuery){
+    public ResponseEntity<ResponseWrapper> searchBooksByAuthor(String authorSearchQuery){
 
         ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
                 .filter(book -> book.getAuthor().trim().toLowerCase().contains(authorSearchQuery.toLowerCase()))
@@ -497,10 +501,10 @@ public class Library {
                 "books",fBooks
         );
         message = "Books by " + authorSearchQuery;
-        return OutputToJson.generateJson(true, message, searchResult);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
 
-    public String searchBooksByGenre (String genre){
+    public ResponseEntity<ResponseWrapper> searchBooksByGenre (String genre){
         ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
                 .filter(book -> book.getGenres().contains(genre))
                 .collect(Collectors.toList());
@@ -521,10 +525,10 @@ public class Library {
                 "books",fBooks
         );
         message = "Books in the '" + genre + "' genre:";
-        return OutputToJson.generateJson(true,message,searchResult);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
 
-    public String searchBooksByYear (int fromYear,int toYear){
+    public ResponseEntity<ResponseWrapper> searchBooksByYear (int fromYear,int toYear){
         ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
                 .filter(book -> book.getPublicationYear() >= fromYear && book.getPublicationYear() <= toYear)
                 .collect(Collectors.toList());
@@ -545,23 +549,23 @@ public class Library {
                 "books",fBooks
         );
         message = "Books published from '"+fromYear+"' to '"+toYear+"':";
-        return OutputToJson.generateJson(true,message,searchResult);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
 
-    public String showBookContent(String username, String bookTitle){
+    public ResponseEntity<ResponseWrapper> showBookContent(String username, String bookTitle){
         if (!userExists(username)) {
             message = "User doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (!bookExists(bookTitle)) {
             message = "Book doesn't exist!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         if (!findUser(username).userHasAccessToBook(bookTitle)) {
             message = "You can't view this book!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         message = "Book Content retrieved successfully.";
@@ -570,20 +574,20 @@ public class Library {
                 "title", bookTitle,
                 "content", bookToBeShown.getContent()
         );
-        return OutputToJson.generateJson(true, message, bookContent);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, bookContent));
 
     }
 
-    public String showCart(String username){
+    public ResponseEntity<ResponseWrapper> showCart(String username){
         if(!userExists(username)){
             message = "User doesn't exist";
-            return OutputToJson.generateJson(false,message,null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         User u_user= findUser(username);
         if (u_user.getRole().equals("admin")) {
             message = "This command isn't for admins!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         ArrayList<Map<String,Object>> bookInCard = new ArrayList<>();
@@ -605,21 +609,21 @@ public class Library {
                 "items",bookInCard
         );
         message="Buy cart retrieved successfully.";
-        return OutputToJson.generateJson(true,message,cartDetails);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, cartDetails));
 
     }
 
-    public String showPurchaseHistory(String username) {
+    public ResponseEntity<ResponseWrapper> showPurchaseHistory(String username) {
 
         if (!userExists(username)) {
             message = "User doesn't exist";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         User customer = findUser(username);
         if (customer.getRole().equals("admin")) {
             message = "This command isn't for admins!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         ArrayList<Map<String, Object>> bookItems = new ArrayList<>();
@@ -649,19 +653,19 @@ public class Library {
         );
 
         message = "Purchase history retrieved successfully.";
-        return OutputToJson.generateJson(true, message, finalPurchaseHistory);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, finalPurchaseHistory));
     }
 
-    public String showPurchasedBooks (String username){
+    public ResponseEntity<ResponseWrapper> showPurchasedBooks (String username){
         if (!userExists(username)) {
             message = "User doesn't exist";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         User u_user = findUser(username);
         if (u_user.getRole().equals("admin")) {
             message = "This command isn't for admins!";
-            return OutputToJson.generateJson(false, message, null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         ArrayList<Map<String, Object>> purchasedBooks = new ArrayList<>();
@@ -691,10 +695,10 @@ public class Library {
                 "books", purchasedBooks
         );
         message = "Purchased books retrieved successfully.";
-        return OutputToJson.generateJson(true, message, finalPurchasedBook);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, finalPurchasedBook));
     }
 
-    public String professionalSearch(String searchTitle,String searchAuthor,String searchGenre,
+    public ResponseEntity<ResponseWrapper> professionalSearch(String searchTitle,String searchAuthor,String searchGenre,
                                      int searchFromYear,int searchEndYear,String arrangeResultBy,String arrangeMode){
 
         ArrayList<Book> searchedBook = new ArrayList<Book>();
@@ -758,6 +762,6 @@ public class Library {
                 "books",fBooks
         );
         message = "searched Success";
-        return OutputToJson.generateJson(true,message,searchResult);
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
 }

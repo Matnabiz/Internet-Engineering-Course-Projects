@@ -1,4 +1,4 @@
-package org.example.api;
+package com.example.library.dto;
 
 import java.time.Instant;
 import java.util.Map;

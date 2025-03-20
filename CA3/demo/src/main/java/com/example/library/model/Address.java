@@ -1,4 +1,4 @@
-package org.example;
+package com.example.library.model;
 
 public class Address<Country, City> {
     public final Country userCountry;

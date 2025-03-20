@@ -1,4 +1,4 @@
-package org.example;
+package com.example.library.model;
 import java.time.LocalDateTime;
 
 public class Comment {

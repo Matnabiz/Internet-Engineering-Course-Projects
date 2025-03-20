@@ -1,4 +1,4 @@
-package org.example;
+package com.example.library.model;
 
 import java.time.LocalDate;
 import java.util.Date;
