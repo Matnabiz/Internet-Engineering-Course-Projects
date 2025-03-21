@@ -59,7 +59,6 @@ public class UserService {
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));
     }
 
-
     public ResponseEntity<ResponseWrapper> addCredit(String username,int credit){
         if(!systemData.userExists(username)){
             message = "This username doesn't exist in system!";

@@ -115,8 +115,11 @@ public class SearchService {
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
 
-    public ResponseEntity<ResponseWrapper> professionalSearch(String searchTitle,String searchAuthor,String searchGenre,
-                                                              int searchFromYear,int searchEndYear,String arrangeResultBy,String arrangeMode){
+    public ResponseEntity<ResponseWrapper> professionalSearch(String searchTitle,
+                                                              String searchAuthor, String searchGenre,
+                                                              int searchFromYear, int searchEndYear,
+                                                              String arrangeResultBy,
+                                                              String arrangeMode){
 
         ArrayList<Book> searchedBook = new ArrayList<Book>();
 
@@ -181,6 +184,6 @@ public class SearchService {
         message = "searched Success";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
-    
+
 
 }
