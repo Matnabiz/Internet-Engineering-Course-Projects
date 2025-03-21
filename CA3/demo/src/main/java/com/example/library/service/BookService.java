@@ -6,10 +6,11 @@ import com.example.library.model.Comment;
 import com.example.library.model.User;
 import com.example.library.repository.Repository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Map;
-
+@Service
 public class BookService {
 
     private final Repository systemData;

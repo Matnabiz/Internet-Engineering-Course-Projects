@@ -5,12 +5,13 @@ import com.example.library.model.Author;
 import com.example.library.model.User;
 import com.example.library.repository.Repository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
-
+@Service
 public class AuthorService {
 
     private final Repository systemData;

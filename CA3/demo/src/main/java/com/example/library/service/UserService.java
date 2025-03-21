@@ -4,13 +4,14 @@ import com.example.library.dto.ResponseWrapper;
 import com.example.library.model.*;
 import com.example.library.repository.Repository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Map;
-
+@Service
 public class UserService {
 
     private final Repository systemData;
