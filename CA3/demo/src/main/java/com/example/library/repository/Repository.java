@@ -3,6 +3,7 @@ package com.example.library.repository;
 import com.example.library.model.Author;
 import com.example.library.model.Book;
 import com.example.library.model.User;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 @Component
