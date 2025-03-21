@@ -1,5 +1,6 @@
 package com.example.library.service;
 
+import com.example.library.repository.Repository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -22,49 +23,12 @@ import com.example.library.model.Address;
 @Service
 
 public class Library {
-    private ArrayList<Book> books = new ArrayList<>();
-    private ArrayList<User> users = new ArrayList<>();
-    private ArrayList<Author> authors = new ArrayList<>();
+
+    private Repository systemData;
     private boolean success;
     private  String message;
     private List<Object> data;
 
-    private boolean userExists(String username){
-        return users.stream().anyMatch(user -> user.getUsername().equals(username));
-    }
-
-    private boolean bookExists(String bookTitle){
-        return books.stream().anyMatch(book -> book.getTitle().equals(bookTitle));
-    }
-
-    private boolean authorExists(String name){
-        return authors.stream().anyMatch(a -> a.getName().equals(name));
-    }
-
-    private boolean emailExists(String email){
-        return users.stream().anyMatch(user -> user.getEmail().equals(email));
-    }
-
-    private User findUser(String username){
-        return this.users.stream()
-                .filter(user -> user.getUsername().equals(username))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private Author findAuthor(String name){
-        return this.authors.stream()
-                .filter(u -> u.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private Book findBook(String bookTitle){
-        return this.books.stream()
-                .filter(b -> b.getTitle().equals(bookTitle))
-                .findFirst()
-                .orElse(null);
-    }
 
     public ResponseEntity<ResponseWrapper> addUser(String username, String password, String email, Address address, String role) {
 
@@ -74,12 +38,12 @@ public class Library {
         }
 
 
-        if (userExists(username)) {
+        if (systemData.userExists(username)) {
             message = "Username already exists! Please choose a different one.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if (emailExists(email)) {
+        if (systemData.emailExists(email)) {
             message = "Email address already registered! Please use a different one.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -100,7 +64,7 @@ public class Library {
         }
 
         User newUser = new User(username, password, email, address, role.toLowerCase(), 0);
-        users.add(newUser);
+        systemData.users.add(newUser);
 
         message = "User successfully registered!";
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));
@@ -111,21 +75,21 @@ public class Library {
                          int publishYear, ArrayList<String> bookGenres,
                          String bookContent, String bookSynopsys, int bookPrice){
 
-        if(!userExists(username)){
+        if(!systemData.userExists(username)){
             message = "This username doesn't exist in system!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if(bookExists(bookTitle)){
+        if(systemData.bookExists(bookTitle)){
             message = "This book already exist in system !";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        if(!authorExists(bookAuthor)){
+        if(!systemData.authorExists(bookAuthor)){
             message = "The author of this book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        User bookAdder= findUser(username);
+        User bookAdder= systemData.findUser(username);
         if (!bookAdder.getRole().equals("admin")) {
             message = "Only an admin can add books!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -139,7 +103,7 @@ public class Library {
         Book newBook = new Book(bookTitle, bookAuthor,
                 bookPublisher, publishYear,
                 bookGenres,bookPrice,bookSynopsys,bookContent);
-        books.add(newBook);
+        systemData.books.add(newBook);
         message =  "Book added successfully.";
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));
 
@@ -147,30 +111,30 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> addOrderToCart (String username, String bookTitle, Order orderToBeAddedToCart) {
 
-        if (!userExists(username)) {
+        if (!systemData.userExists(username)) {
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if (!bookExists(bookTitle)) {
+        if (!systemData.bookExists(bookTitle)) {
             message = "Book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if (Validation.customerHasBookInCart(findUser(username), bookTitle)){
+        if (Validation.customerHasBookInCart(systemData.findUser(username), bookTitle)){
             message = "You already have this book in your cart!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if(findUser(username).userHasAccessToBook(bookTitle)){
+        if(systemData.findUser(username).userHasAccessToBook(bookTitle)){
             message = "You already have access to this book!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        Book bookToBeAddedToCart = findBook(bookTitle);
+        Book bookToBeAddedToCart = systemData.findBook(bookTitle);
         orderToBeAddedToCart.setBook(bookToBeAddedToCart);
 
-        User customer = findUser(username);
+        User customer = systemData.findUser(username);
         if (customer.getRole().equals("admin")) {
             message = "You are an admin, you can't buy!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -199,18 +163,18 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> removeOrderFromCart(String username, String bookTitle){
 
-        if(!userExists(username)){
+        if(!systemData.userExists(username)){
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if(!bookExists(bookTitle)){
+        if(!systemData.bookExists(bookTitle)){
             message = "Book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        User customer = findUser(username);
-        Book bookToBeRemovedFromCart = findBook(bookTitle);
+        User customer = systemData.findUser(username);
+        Book bookToBeRemovedFromCart = systemData.findBook(bookTitle);
 
         if(customer.getRole().equals("admin")) {
             message = "You are admin, you can't do this!";
@@ -231,18 +195,18 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
 
-        if (!userExists(adminUsername)) {
+        if (!systemData.userExists(adminUsername)) {
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        User adminUser = findUser(adminUsername);
+        User adminUser = systemData.findUser(adminUsername);
 
         if (!adminUser.getRole().equals("admin")) {
             message = "Only an admin can add authors!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if (authorExists(authorName)) {
+        if (systemData.authorExists(authorName)) {
             message = "Author already exists!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -272,19 +236,19 @@ public class Library {
         }
 
         Author newAuthor = new Author(authorName, penName, nationality, birthDateParsed, deathDateParsed);
-        authors.add(newAuthor);
+        systemData.authors.add(newAuthor);
 
         message = "Author added successfully!";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
     }
 
     public ResponseEntity<ResponseWrapper> addCredit(String username,int credit){
-        if(!userExists(username)){
+        if(!systemData.userExists(username)){
             message = "This username doesn't exist in system!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        User customer = findUser(username);
+        User customer = systemData.findUser(username);
         if(customer.getRole().equals("admin")) {
             message = "An admin can't add credit!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -305,12 +269,12 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> purchaseCart(String username){
 
-        if(!userExists(username)){
+        if(!systemData.userExists(username)){
             message = "this username doesn't exist in system";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        User customer = findUser(username);
+        User customer = systemData.findUser(username);
 
         if(!Validation.minimumBookCountInCartForCheckout(customer)){
             message = "Cart is empty!";
@@ -337,10 +301,10 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> addComment(String username, String bookTitle, String commentBody, int rating) {
 
-        User customer = findUser(username);
-        Book book = findBook(bookTitle);
+        User customer = systemData.findUser(username);
+        Book book = systemData.findBook(bookTitle);
 
-        if(!userExists(username)){
+        if(!systemData.userExists(username)){
             message = "This username doesn't exist in system";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -350,7 +314,7 @@ public class Library {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if(!bookExists(bookTitle)){
+        if(!systemData.bookExists(bookTitle)){
             message = "Book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -373,13 +337,13 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> showUserDetails(String username) {
 
-        if(!userExists(username)){
+        if(!systemData.userExists(username)){
             message = "this username doesn't exist in system";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         message = "User details retrieved successfully.\n";
-        User user = findUser(username);
+        User user = systemData.findUser(username);
         Map<String, Object> userData = Map.of(
                 "username", user.getUsername(),
                 "email", user.getEmail(),
@@ -393,12 +357,12 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> showAuthorDetails(String authorName){
 
-        if (!authorExists(authorName)) {
+        if (!systemData.authorExists(authorName)) {
             message = "Author doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        Author author = findAuthor(authorName);
+        Author author = systemData.findAuthor(authorName);
         message = "Author details retrieved successfully.\n";
 
         Map<String, Object> authorData = Map.of(
@@ -413,12 +377,12 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> showBookDetails(String bookTitle){
 
-        if (!bookExists(bookTitle)) {
+        if (!systemData.bookExists(bookTitle)) {
             message = "Book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        Book book = findBook(bookTitle);
+        Book book = systemData.findBook(bookTitle);
         message = "Book details retrieved successfully.\n";
         Map<String, Object> bookData = Map.of(
                 "author", book.getAuthor(),
@@ -432,12 +396,12 @@ public class Library {
     }
 
     public ResponseEntity<ResponseWrapper> showBookReviews (String bookTitle){
-        if(!bookExists(bookTitle)){
+        if(!systemData.bookExists(bookTitle)){
             message = "This book doesn't exist in system!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        Book book = findBook(bookTitle);
+        Book book = systemData.findBook(bookTitle);
 
         ArrayList<Map<String,Object>> reviews = new ArrayList<>();
         for(Comment comment : book.getComments()){
@@ -456,7 +420,7 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> searchBooksByTitle(String bookTitle){
 
-        ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
+        ArrayList<Book> searchedBook = (ArrayList<Book>) systemData.books.stream()
                 .filter(book -> book.getTitle().toLowerCase().contains(bookTitle.toLowerCase()))
                 .collect(Collectors.toList());
 
@@ -481,7 +445,7 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> searchBooksByAuthor(String authorSearchQuery){
 
-        ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
+        ArrayList<Book> searchedBook = (ArrayList<Book>) systemData.books.stream()
                 .filter(book -> book.getAuthor().trim().toLowerCase().contains(authorSearchQuery.toLowerCase()))
                 .collect(Collectors.toList());
 
@@ -505,7 +469,7 @@ public class Library {
     }
 
     public ResponseEntity<ResponseWrapper> searchBooksByGenre (String genre){
-        ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
+        ArrayList<Book> searchedBook = (ArrayList<Book>) systemData.books.stream()
                 .filter(book -> book.getGenres().contains(genre))
                 .collect(Collectors.toList());
 
@@ -529,7 +493,7 @@ public class Library {
     }
 
     public ResponseEntity<ResponseWrapper> searchBooksByYear (int fromYear,int toYear){
-        ArrayList<Book> searchedBook = (ArrayList<Book>) books.stream()
+        ArrayList<Book> searchedBook = (ArrayList<Book>) systemData.books.stream()
                 .filter(book -> book.getPublicationYear() >= fromYear && book.getPublicationYear() <= toYear)
                 .collect(Collectors.toList());
 
@@ -553,23 +517,23 @@ public class Library {
     }
 
     public ResponseEntity<ResponseWrapper> showBookContent(String username, String bookTitle){
-        if (!userExists(username)) {
+        if (!systemData.userExists(username)) {
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if (!bookExists(bookTitle)) {
+        if (!systemData.bookExists(bookTitle)) {
             message = "Book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if (!findUser(username).userHasAccessToBook(bookTitle)) {
+        if (!systemData.findUser(username).userHasAccessToBook(bookTitle)) {
             message = "You can't view this book!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         message = "Book Content retrieved successfully.";
-        Book bookToBeShown = findBook(bookTitle);
+        Book bookToBeShown = systemData.findBook(bookTitle);
         Map<String, Object> bookContent = Map.of(
                 "title", bookTitle,
                 "content", bookToBeShown.getContent()
@@ -579,12 +543,12 @@ public class Library {
     }
 
     public ResponseEntity<ResponseWrapper> showCart(String username){
-        if(!userExists(username)){
+        if(!systemData.userExists(username)){
             message = "User doesn't exist";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        User u_user= findUser(username);
+        User u_user= systemData.findUser(username);
         if (u_user.getRole().equals("admin")) {
             message = "This command isn't for admins!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -615,12 +579,12 @@ public class Library {
 
     public ResponseEntity<ResponseWrapper> showPurchaseHistory(String username) {
 
-        if (!userExists(username)) {
+        if (!systemData.userExists(username)) {
             message = "User doesn't exist";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        User customer = findUser(username);
+        User customer = systemData.findUser(username);
         if (customer.getRole().equals("admin")) {
             message = "This command isn't for admins!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -657,24 +621,24 @@ public class Library {
     }
 
     public ResponseEntity<ResponseWrapper> showPurchasedBooks (String username){
-        if (!userExists(username)) {
+        if (!systemData.userExists(username)) {
             message = "User doesn't exist";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        User u_user = findUser(username);
-        if (u_user.getRole().equals("admin")) {
+        User user = systemData.findUser(username);
+        if (user.getRole().equals("admin")) {
             message = "This command isn't for admins!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         ArrayList<Map<String, Object>> purchasedBooks = new ArrayList<>();
-        for(int j=0;j<u_user.getTransactionHistory().size();j++) {
-            for (int i = 0; i < u_user.getTransactionHistory().get(j).size() - 3; i++) {
-                if (u_user.getTransactionHistory().get(j).get(i) instanceof Order) {
-                    Order order = (Order) u_user.getTransactionHistory().get(j).get(i);
+        for(int j=0;j<user.getTransactionHistory().size();j++) {
+            for (int i = 0; i < user.getTransactionHistory().get(j).size() - 3; i++) {
+                if (user.getTransactionHistory().get(j).get(i) instanceof Order) {
+                    Order order = (Order) user.getTransactionHistory().get(j).get(i);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    LocalDateTime givenDate = LocalDateTime.parse(String.valueOf(u_user.getTransactionHistory().get(j).get(u_user.getTransactionHistory().get(j).size() - 1)), formatter);
+                    LocalDateTime givenDate = LocalDateTime.parse(String.valueOf(user.getTransactionHistory().get(j).get(user.getTransactionHistory().get(j).size() - 1)), formatter);
                     LocalDateTime now = LocalDateTime.now();
                     long daysPassed = ChronoUnit.DAYS.between(givenDate, now);
                     if (order.getBorrowDurationDays() > daysPassed || order.getBorrowDurationDays() == 0) { // ----> check for bought book not borrowed
@@ -704,7 +668,7 @@ public class Library {
         ArrayList<Book> searchedBook = new ArrayList<Book>();
 
         if(searchTitle!=null) {
-            searchedBook = (ArrayList<Book>) books.stream()
+            searchedBook = (ArrayList<Book>) systemData.books.stream()
                     .filter(book -> book.getTitle().trim().toLowerCase().contains(searchTitle.toLowerCase()))
                     .collect(Collectors.toList());
         }

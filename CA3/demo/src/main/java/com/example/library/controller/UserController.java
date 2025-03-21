@@ -1,8 +1,8 @@
-package com.example.controller;
+package com.example.library.controller;
 
-import com.example.model.User;
-import com.example.dto.ResponseWrapper;
-import com.example.service.UserService;
+import com.example.library.model.User;
+import com.example.library.dto.ResponseWrapper;
+import com.example.library.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
