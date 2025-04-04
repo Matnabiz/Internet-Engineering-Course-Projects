@@ -27,7 +27,7 @@ public class AuthorController {
         return authorService.addAuthor(adminUsername, authorName, penName, nationality, birthDate, deathDate);
     }
 
-    @GetMapping("/details")
+    @GetMapping("/details/{authorName}")
     public ResponseEntity<ResponseWrapper> getAuthorDetails(@RequestParam String authorName) {
         return authorService.showAuthorDetails(authorName);
     }
