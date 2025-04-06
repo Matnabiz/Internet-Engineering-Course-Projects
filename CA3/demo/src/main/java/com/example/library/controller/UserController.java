@@ -6,6 +6,8 @@ import com.example.library.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -17,23 +19,32 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseWrapper> addUser(
-            @RequestParam String username,
-            @RequestParam String password,
-            @RequestParam String email,
-            @RequestBody Address address,
-            @RequestParam String role) {
-        return userService.addUser(username, password, email, address, role);
+    public ResponseEntity<ResponseWrapper> addUser(@RequestBody Map<String, Object> body){
+        Map<String, String> addressMap = (Map<String, String>) body.get("address");
+
+        Address address = new Address(
+                addressMap.get("country"),
+                addressMap.get("city")
+        );
+
+        return userService.addUser(
+                (String) body.get("username"),
+                (String) body.get("password"),
+                (String) body.get("email"),
+                address,
+                (String) body.get("role")
+        );
     }
 
-    @PostMapping("/{username}/credit")
+
+    @PostMapping("/{username}/add-credit")
     public ResponseEntity<ResponseWrapper> addCredit(
             @PathVariable String username,
             @RequestParam int credit) {
         return userService.addCredit(username, credit);
     }
 
-    @PostMapping("/{username}/comment")
+    @PostMapping("/{username}/add-comment")
     public ResponseEntity<ResponseWrapper> addComment(
             @PathVariable String username,
             @RequestParam String bookTitle,

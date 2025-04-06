@@ -5,6 +5,8 @@ import com.example.library.service.AuthorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/authors")
 public class AuthorController {
@@ -16,19 +18,20 @@ public class AuthorController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseWrapper> addAuthor(
-            @RequestParam String adminUsername,
-            @RequestParam String authorName,
-            @RequestParam(required = false) String penName,
-            @RequestParam String nationality,
-            @RequestParam String birthDate,
-            @RequestParam(required = false) String deathDate) {
-
-        return authorService.addAuthor(adminUsername, authorName, penName, nationality, birthDate, deathDate);
+    public ResponseEntity<ResponseWrapper> addAuthor(@RequestBody Map<String, String> body) {
+        return authorService.addAuthor(
+                body.get("adminUsername"),
+                body.get("authorName"),
+                body.get("penName"),
+                body.get("nationality"),
+                body.get("birthDate"),
+                body.get("deathDate")
+        );
     }
 
+
     @GetMapping("/details/{authorName}")
-    public ResponseEntity<ResponseWrapper> getAuthorDetails(@RequestParam String authorName) {
+    public ResponseEntity<ResponseWrapper> getAuthorDetails(@PathVariable String authorName) {
         return authorService.showAuthorDetails(authorName);
     }
 }
