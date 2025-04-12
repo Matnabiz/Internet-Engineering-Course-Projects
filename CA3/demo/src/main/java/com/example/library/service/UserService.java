@@ -28,13 +28,16 @@ public class UserService {
                     .body(new ResponseWrapper(false, "User not found!", null));
         }
 
-        if (!user.getPassword().equals(password)) {
+        User userAskingToLogIn = systemData.findUser(username);
+
+        if (Validation.authenticatePassword(password, userAskingToLogIn)) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseWrapper("Invalid credentials", false));
+                    .body(new ResponseWrapper(false, "Invalid credentials.", null);
         }
 
-        return ResponseEntity.ok(new ResponseWrapper("Login successful", true));
+        systemData.loggedInUsers.add(username);
+        return ResponseEntity.ok(new ResponseWrapper(true, "Login Successful", null));
     }
 
 

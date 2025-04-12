@@ -7,8 +7,12 @@ import java.util.regex.Pattern;
 
 public class Validation {
 
+    public static boolean authenticatePassword(String givenPassword, User user){
+        return user.autheticatePassword(givenPassword);
+    }
+
     public static boolean authenticatePassword(User user, String givenPassword){
-            return user.
+            return user.autheticatePassword(givenPassword);
     }
 
     public static boolean validateUsername(String username){
@@ -49,7 +53,7 @@ public class Validation {
     }
 
     public static boolean minimumBookCountInCartForCheckout(User customer){
-        return customer.getShoppingCart().size() >= 1;
+        return !customer.getShoppingCart().isEmpty();
     }
 
     public static boolean enoughBalanceForCheckout(User customer){
