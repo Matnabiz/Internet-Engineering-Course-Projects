@@ -36,6 +36,12 @@ public class UserController {
         );
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<ResponseWrapper> loginUser(
+            @RequestParam String username,
+            @RequestParam String password) {
+        return userService.loginUser(username, password);
+    }
 
     @PostMapping("/{username}/add-credit")
     public ResponseEntity<ResponseWrapper> addCredit(

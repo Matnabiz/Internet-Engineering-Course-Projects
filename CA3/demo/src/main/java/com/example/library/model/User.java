@@ -5,8 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 
 public class User {
@@ -39,7 +37,7 @@ public class User {
 
     public String getUsername() { return this.username; }
 
-    public String getPassword() { return this.password; }
+    public boolean autheticatePassword(String password) { return this.password.equals(password)}
 
     public String getEmail() { return this.email; }
 

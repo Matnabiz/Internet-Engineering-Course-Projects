@@ -7,6 +7,10 @@ import java.util.regex.Pattern;
 
 public class Validation {
 
+    public static boolean authenticatePassword(User user, String givenPassword){
+            return user.
+    }
+
     public static boolean validateUsername(String username){
         return Pattern.matches("^[a-zA-Z0-9_-]+$", username);
     }

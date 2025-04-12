@@ -3,6 +3,7 @@ package com.example.library.service;
 import com.example.library.dto.ResponseWrapper;
 import com.example.library.model.*;
 import com.example.library.repository.Repository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,23 @@ public class UserService {
     public UserService(Repository systemData) {
         this.systemData = systemData;
     }
+
+    public ResponseEntity<ResponseWrapper> loginUser(String username, String password) {
+        if (!systemData.userExists(username)) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseWrapper(false, "User not found!", null));
+        }
+
+        if (!user.getPassword().equals(password)) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseWrapper("Invalid credentials", false));
+        }
+
+        return ResponseEntity.ok(new ResponseWrapper("Login successful", true));
+    }
+
 
     public ResponseEntity<ResponseWrapper> addUser(String username, String password, String email, Address address, String role) {
 
