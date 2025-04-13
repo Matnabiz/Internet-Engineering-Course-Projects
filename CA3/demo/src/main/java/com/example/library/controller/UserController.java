@@ -43,6 +43,12 @@ public class UserController {
         return userService.loginUser(username, password);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseWrapper> logoutUser(@RequestParam String username) {
+        return userService.logoutUser(username);
+    }
+
+
     @PostMapping("/{username}/add-credit")
     public ResponseEntity<ResponseWrapper> addCredit(
             @PathVariable String username,

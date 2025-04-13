@@ -37,7 +37,7 @@ public class User {
 
     public String getUsername() { return this.username; }
 
-    public boolean autheticatePassword(String password) { return this.password.equals(password)}
+    public boolean autheticatePassword(String password) { return this.password.equals(password); }
 
     public String getEmail() { return this.email; }
 

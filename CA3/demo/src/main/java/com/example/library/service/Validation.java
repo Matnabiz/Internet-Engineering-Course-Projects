@@ -1,18 +1,17 @@
 package com.example.library.service;
 import com.example.library.model.Order;
 import com.example.library.model.User;
+import com.example.library.repository.Repository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Validation {
 
+
+
     public static boolean authenticatePassword(String givenPassword, User user){
         return user.autheticatePassword(givenPassword);
-    }
-
-    public static boolean authenticatePassword(User user, String givenPassword){
-            return user.autheticatePassword(givenPassword);
     }
 
     public static boolean validateUsername(String username){

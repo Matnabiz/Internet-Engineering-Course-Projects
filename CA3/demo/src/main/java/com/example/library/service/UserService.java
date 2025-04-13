@@ -21,19 +21,30 @@ public class UserService {
         this.systemData = systemData;
     }
 
+    public ResponseEntity<ResponseWrapper> logoutUser(String username) {
+        if (systemData.isLoggedIn(username)) {
+            message = "This user is not signed in.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
+        systemData.loggedInUsers.remove(username);
+        message = "Logout successful.";
+        return ResponseEntity.ok(new ResponseWrapper(true, message, null));
+
+    }
+
     public ResponseEntity<ResponseWrapper> loginUser(String username, String password) {
         if (!systemData.userExists(username)) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(new ResponseWrapper(false, "User not found!", null));
         }
-
+        //   mahsa gogoli and matin bolbol
         User userAskingToLogIn = systemData.findUser(username);
 
         if (Validation.authenticatePassword(password, userAskingToLogIn)) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseWrapper(false, "Invalid credentials.", null);
+                    .body(new ResponseWrapper(false, "Invalid credentials.", null));
         }
 
         systemData.loggedInUsers.add(username);

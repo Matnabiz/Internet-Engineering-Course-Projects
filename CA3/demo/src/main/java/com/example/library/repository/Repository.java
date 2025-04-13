@@ -15,7 +15,7 @@ public class Repository {
     public ArrayList<Book> books = new ArrayList<>();
     public ArrayList<User> users = new ArrayList<>();
     public ArrayList<Author> authors = new ArrayList<>();
-    private final Set<String> loggedInUsers = new HashSet<>();
+    public final Set<String> loggedInUsers = new HashSet<>();
 
     public boolean userExists(String username){
         return users.stream().anyMatch(user -> user.getUsername().equals(username));
@@ -54,5 +54,8 @@ public class Repository {
                 .orElse(null);
     }
 
+    public boolean isLoggedIn(String username) {
+        return this.loggedInUsers.contains(username);
+    }
 
 }
