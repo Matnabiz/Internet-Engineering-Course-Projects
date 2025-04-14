@@ -36,7 +36,7 @@ function SignInPage() {
           </button>
         </form>
         <p className="signup-link">
-          Not a member yet? <a href="#">Sign Up</a>
+          Not a member yet? <a href="http://localhost:3000/users/register">Sign Up</a>
         </p>
       </div>
       <footer>
