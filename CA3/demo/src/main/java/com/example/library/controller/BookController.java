@@ -1,11 +1,13 @@
 package com.example.library.controller;
-
+import java.util.List;
+import java.util.ArrayList;
 import com.example.library.dto.ResponseWrapper;
 import com.example.library.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/books")
@@ -18,34 +20,33 @@ public class BookController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseWrapper> addBook(
-            @RequestParam String username,
-            @RequestParam String bookTitle,
-            @RequestParam String bookAuthor,
-            @RequestParam String bookPublisher,
-            @RequestParam int publishYear,
-            @RequestParam ArrayList<String> bookGenres,
-            @RequestParam String bookContent,
-            @RequestParam String bookSynopsys,
-            @RequestParam int bookPrice) {
-
-        return bookService.addBook(username, bookTitle, bookAuthor, bookPublisher, publishYear, bookGenres, bookContent, bookSynopsys, bookPrice);
+    public ResponseEntity<ResponseWrapper> addBook(@RequestBody Map<String, Object> body) {
+        List<String> genres = (List<String>) body.get("Genres");
+        return bookService.addBook(
+                (String) body.get("username"),
+                (String) body.get("Title"),
+                (String) body.get("Author"),
+                (String) body.get("Publisher"),
+                (Integer) body.get("Year"),
+                new ArrayList<>(genres),
+                (String) body.get("Content"),
+                (String) body.get("Synopsis"),
+                (Integer) body.get("Price")
+                );
     }
 
-    @GetMapping("/details")
-    public ResponseEntity<ResponseWrapper> getBookDetails(@RequestParam String bookTitle) {
+    @GetMapping("/details/{bookTitle}")
+    public ResponseEntity<ResponseWrapper> getBookDetails(@PathVariable String bookTitle) {
         return bookService.showBookDetails(bookTitle);
     }
 
-    @GetMapping("/reviews")
-    public ResponseEntity<ResponseWrapper> getBookReviews(@RequestParam String bookTitle) {
+    @GetMapping("/reviews/{bookTitle}")
+    public ResponseEntity<ResponseWrapper> getBookReviews(@PathVariable String bookTitle) {
         return bookService.showBookReviews(bookTitle);
     }
 
     @GetMapping("/content")
-    public ResponseEntity<ResponseWrapper> getBookContent(
-            @RequestParam String username,
-            @RequestParam String bookTitle) {
-        return bookService.showBookContent(username, bookTitle);
+    public ResponseEntity<ResponseWrapper> getBookContent(@RequestBody Map<String, Object> body) {
+        return bookService.showBookContent((String) body.get("username"), (String) body.get("Title"));
     }
 }
