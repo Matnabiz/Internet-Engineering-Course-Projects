@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import AddAuthorPage from './pages/AddAuthorPage';
 import LoginPage from './pages/LoginPage';
 import Signup from './pages/Signup';
+import Homepage from './pages/Homepage'
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/authors/add" element={<AddAuthorPage />} />
         <Route path="/users/login" element={<LoginPage />} />
         <Route path="/users/register" element={<Signup />} />
+        <Route path="/users/homepage" element={<Homepage />} />
         {/* Add more routes as you go */}
       </Routes>
     </Router>
