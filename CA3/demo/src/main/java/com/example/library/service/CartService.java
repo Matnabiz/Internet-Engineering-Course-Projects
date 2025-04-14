@@ -21,7 +21,10 @@ public class CartService {
     public CartService(Repository systemData){ this.systemData = systemData; }
 
     public ResponseEntity<ResponseWrapper> addOrderToCart (String username, String bookTitle, Order orderToBeAddedToCart) {
-
+        if (!systemData.isLoggedIn(username)) {
+            message = "Unauthorized: You should log into your account in order to access this.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
         if (!systemData.userExists(username)) {
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -73,7 +76,10 @@ public class CartService {
     }
 
     public ResponseEntity<ResponseWrapper> removeOrderFromCart(String username, String bookTitle){
-
+        if (!systemData.isLoggedIn(username)) {
+            message = "Unauthorized: You should log into your account in order to access this.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
         if(!systemData.userExists(username)){
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -105,7 +111,10 @@ public class CartService {
     }
 
     public ResponseEntity<ResponseWrapper> purchaseCart(String username){
-
+        if (!systemData.isLoggedIn(username)) {
+            message = "Unauthorized: You should log into your account in order to access this.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
         if(!systemData.userExists(username)){
             message = "this username doesn't exist in system";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -137,6 +146,10 @@ public class CartService {
     }
 
     public ResponseEntity<ResponseWrapper> showCart(String username){
+        if (!systemData.isLoggedIn(username)) {
+            message = "Unauthorized: You should log into your account in order to access this.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
         if(!systemData.userExists(username)){
             message = "User doesn't exist";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));

@@ -23,6 +23,10 @@ public class BookService {
                                                     int publishYear, ArrayList<String> bookGenres,
                                                     String bookContent, String bookSynopsys, int bookPrice){
 
+        if (!systemData.isLoggedIn(username)) {
+            message = "Unauthorized: You should log into your account in order to access this.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
         if(!systemData.userExists(username)){
             message = "This username doesn't exist in system!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -101,6 +105,10 @@ public class BookService {
     }
 
     public ResponseEntity<ResponseWrapper> showBookContent(String username, String bookTitle){
+        if (!systemData.isLoggedIn(username)) {
+            message = "Unauthorized: You should log into your account in order to access this.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
         if (!systemData.userExists(username)) {
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));

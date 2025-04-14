@@ -22,14 +22,13 @@ public class UserService {
     }
 
     public ResponseEntity<ResponseWrapper> logoutUser(String username) {
-        if (systemData.isLoggedIn(username)) {
+        if (!systemData.isLoggedIn(username)) {
             message = "This user is not signed in.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
         systemData.loggedInUsers.remove(username);
         message = "Logout successful.";
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));
-
     }
 
     public ResponseEntity<ResponseWrapper> loginUser(String username, String password) {
@@ -38,10 +37,15 @@ public class UserService {
                     .status(HttpStatus.NOT_FOUND)
                     .body(new ResponseWrapper(false, "User not found!", null));
         }
+
+        if (systemData.isLoggedIn(username)) {
+            message = "This user has already signed in.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
         //   mahsa gogoli and matin bolbol
         User userAskingToLogIn = systemData.findUser(username);
 
-        if (Validation.authenticatePassword(password, userAskingToLogIn)) {
+        if (!Validation.authenticatePassword(password, userAskingToLogIn)) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseWrapper(false, "Invalid credentials.", null));
@@ -93,6 +97,10 @@ public class UserService {
     }
 
     public ResponseEntity<ResponseWrapper> addCredit(String username,int credit){
+        if (!systemData.isLoggedIn(username)) {
+            message = "Unauthorized: You should log into your account in order to access this.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
         if(!systemData.userExists(username)){
             message = "This username doesn't exist in system!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -118,7 +126,10 @@ public class UserService {
     }
 
     public ResponseEntity<ResponseWrapper> addComment(String username, String bookTitle, String commentBody, int rating) {
-
+        if (!systemData.isLoggedIn(username)) {
+            message = "Unauthorized: You should log into your account in order to access this.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
         User customer = systemData.findUser(username);
         Book book = systemData.findBook(bookTitle);
 

@@ -37,14 +37,15 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseWrapper> loginUser(
-            @RequestParam String username,
-            @RequestParam String password) {
-        return userService.loginUser(username, password);
+    public ResponseEntity<ResponseWrapper> loginUser(@RequestBody Map<String, Object> body) {
+        return userService.loginUser(
+                (String) body.get("username"),
+                (String) body.get("password")
+        );
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<ResponseWrapper> logoutUser(@RequestParam String username) {
+    @PostMapping("/logout/{username}")
+    public ResponseEntity<ResponseWrapper> logoutUser(@PathVariable String username) {
         return userService.logoutUser(username);
     }
 

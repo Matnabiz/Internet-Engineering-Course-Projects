@@ -20,7 +20,10 @@ public class AuthorService {
     public AuthorService(Repository systemData){ this.systemData = systemData; }
 
     public ResponseEntity<ResponseWrapper> addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
-
+        if (!systemData.isLoggedIn(adminUsername)) {
+            message = "Unauthorized: You should log into your account in order to access this.";
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+        }
         if (!systemData.userExists(adminUsername)) {
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
