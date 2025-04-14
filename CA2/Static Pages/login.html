@@ -1,27 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - MioBook</title>
-    <link rel="stylesheet" href="login.css">
-</head>
-<body>
-    <div class="container">
-        <div class="login-box">
-            <h2>Sign in</h2>
-            <p>MioBook</p>
-            <form>
-                <input type="text" placeholder="Username" required>
-                <input type="password" placeholder="Password" required>
+import React, { useState } from 'react';
+import './login.css'; // Make sure this file is in the same folder or adjust the path
 
-                <button type="submit" class="login-btn" disabled>Sign in</button>
-            </form>
-            <p class="login-link">Not a member yet? <a href="#">Sign Up</a></p>
-        </div>
-    </div>
-    <footer>
+function SignInPage() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // You can integrate login logic here (API call, validation, etc.)
+    console.log("Username:", username);
+    console.log("Password:", password);
+  };
+
+  return (
+    <div className="container">
+      <div className="login-box">
+        <h2>Sign in</h2>
+        <p>MioBook</p>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            required
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            required
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit" className="login-btn" disabled={!username || !password}>
+            Sign in
+          </button>
+        </form>
+        <p className="login-link">
+          Not a member yet? <a href="#">Sign Up</a>
+        </p>
+      </div>
+      <footer>
         <p>Copyright © 2025 - MioBook</p>
-    </footer>
-</body>
-</html>
+      </footer>
+    </div>
+  );
+}
+
+export default SignInPage;
