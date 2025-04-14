@@ -36,6 +36,19 @@ public class UserController {
         );
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<ResponseWrapper> loginUser(@RequestBody Map<String, Object> body) {
+        return userService.loginUser(
+                (String) body.get("username"),
+                (String) body.get("password")
+        );
+    }
+
+    @PostMapping("/logout/{username}")
+    public ResponseEntity<ResponseWrapper> logoutUser(@PathVariable String username) {
+        return userService.logoutUser(username);
+    }
+
 
     @PostMapping("/{username}/add-credit")
     public ResponseEntity<ResponseWrapper> addCredit(

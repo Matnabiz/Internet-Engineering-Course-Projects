@@ -1,11 +1,18 @@
 package com.example.library.service;
 import com.example.library.model.Order;
 import com.example.library.model.User;
+import com.example.library.repository.Repository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Validation {
+
+
+
+    public static boolean authenticatePassword(String givenPassword, User user){
+        return user.autheticatePassword(givenPassword);
+    }
 
     public static boolean validateUsername(String username){
         return Pattern.matches("^[a-zA-Z0-9_-]+$", username);
@@ -45,7 +52,7 @@ public class Validation {
     }
 
     public static boolean minimumBookCountInCartForCheckout(User customer){
-        return customer.getShoppingCart().size() >= 1;
+        return !customer.getShoppingCart().isEmpty();
     }
 
     public static boolean enoughBalanceForCheckout(User customer){

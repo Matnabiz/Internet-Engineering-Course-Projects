@@ -19,15 +19,16 @@ public class AuthorController {
 
     @PostMapping("/add")
     public ResponseEntity<ResponseWrapper> addAuthor(@RequestBody Map<String, String> body) {
-        return authorService.addAuthor(
-                body.get("adminUsername"),
-                body.get("authorName"),
-                body.get("penName"),
-                body.get("nationality"),
-                body.get("birthDate"),
-                body.get("deathDate")
-        );
+        String adminUsername = body.get("adminUsername");
+        String authorName = body.get("authorName");
+        String penName = body.getOrDefault("penName", null);
+        String nationality = body.get("nationality");
+        String birthDate = body.get("birthDate");
+        String deathDate = body.getOrDefault("deathDate", null);
+
+        return authorService.addAuthor(adminUsername, authorName, penName, nationality, birthDate, deathDate);
     }
+
 
 
     @GetMapping("/details/{authorName}")

@@ -6,12 +6,16 @@ import com.example.library.model.User;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 @Component
 
 public class Repository {
     public ArrayList<Book> books = new ArrayList<>();
     public ArrayList<User> users = new ArrayList<>();
     public ArrayList<Author> authors = new ArrayList<>();
+    public final Set<String> loggedInUsers = new HashSet<>();
 
     public boolean userExists(String username){
         return users.stream().anyMatch(user -> user.getUsername().equals(username));
@@ -50,5 +54,8 @@ public class Repository {
                 .orElse(null);
     }
 
+    public boolean isLoggedIn(String username) {
+        return this.loggedInUsers.contains(username);
+    }
 
 }
