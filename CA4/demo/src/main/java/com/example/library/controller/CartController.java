@@ -6,8 +6,10 @@ import com.example.library.service.CartService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/user/cart")
 public class CartController {
 
     private final CartService cartService;
@@ -16,12 +18,20 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<ResponseWrapper> addOrderToCart(
-            @RequestParam String username,
-            @RequestParam String bookTitle,
-            @RequestBody Order order) {
-        return cartService.addOrderToCart(username, bookTitle, order);
+    @PostMapping("/buy/add")
+    public ResponseEntity<ResponseWrapper> addBuyingOrderToCart(@RequestBody Map<String, Object> body) {
+
+        Order orderToBeAddedToCart = new Order(null, "buy", 0);
+
+        return cartService.addOrderToCart((String) body.get("username"), (String) body.get("bookTitle"), orderToBeAddedToCart);
+    }
+
+    @PostMapping("/borrow/add")
+    public ResponseEntity<ResponseWrapper> addBorrowingOrderToCart(@RequestBody Map<String, Object> body) {
+
+        Order orderToBeAddedToCart = new Order(null, "borrow", (Integer) body.get("days"));
+
+        return cartService.addOrderToCart((String) body.get("username"), (String) body.get("bookTitle"), orderToBeAddedToCart);
     }
 
     @DeleteMapping("/remove")

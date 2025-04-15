@@ -57,13 +57,7 @@ public class CartService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if (orderToBeAddedToCart.getType() == "buy") {
-            customer.addOrderToCart(orderToBeAddedToCart);
-            message = "Book added to cart.";
-            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
-        }
-
-        else if (orderToBeAddedToCart.getType() == "borrow") {
+        if (orderToBeAddedToCart.getType().equals("buy") || orderToBeAddedToCart.getType().equals("borrow")) {
             customer.addOrderToCart(orderToBeAddedToCart);
             message = "Book added to cart.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
