@@ -29,12 +29,10 @@ public class CartService {
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-
         if (!systemData.bookExists(bookTitle)) {
             message = "Book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-
         if (Validation.customerHasBookInCart(systemData.findUser(username), bookTitle)){
             message = "You already have this book in your cart!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
@@ -60,7 +58,7 @@ public class CartService {
         if (orderToBeAddedToCart.getType().equals("buy") || orderToBeAddedToCart.getType().equals("borrow")) {
             customer.addOrderToCart(orderToBeAddedToCart);
             message = "Book added to cart.";
-            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
+            return ResponseEntity.badRequest().body(new ResponseWrapper(true, message, null));
         }
 
         else {
