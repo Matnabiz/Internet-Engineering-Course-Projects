@@ -55,7 +55,6 @@ public class UserService {
         return ResponseEntity.ok(new ResponseWrapper(true, "Login Successful", null));
     }
 
-
     public ResponseEntity<ResponseWrapper> addUser(String username, String password, String email, Address address, String role) {
 
         if (!Validation.validateUsername(username)) {
@@ -111,7 +110,6 @@ public class UserService {
             message = "An admin can't add credit!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-
 
         if(!Validation.minimumCreditForBalanceCharge(credit)){
             message = "You should charge at least 1$ or 100 cents!";
