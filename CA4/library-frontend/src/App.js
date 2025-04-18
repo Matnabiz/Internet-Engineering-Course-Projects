@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import Signup from './pages/Signup';
 import Homepage from './pages/Homepage'
 import ShowCartPage from './pages/ShowCartPage'
+import BookDetails from './pages/BookDetails'
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/users/register" element={<Signup />} />
         <Route path="/users/homepage" element={<Homepage />} />
         <Route path="/cart/show/:username" element={<ShowCartPage />} />
+        <Route path="/books/details/:title" element={<BookDetails />} />
         {/* Add more routes as you go */}
       </Routes>
     </Router>

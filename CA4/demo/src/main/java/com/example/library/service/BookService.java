@@ -76,32 +76,20 @@ public class BookService {
                 "genres", book.getGenres(),
                 "year", book.getPublicationYear(),
                 "price", book.getPrice(),
+                "reviews", this.gatherBookReviews(bookTitle),
                 "averageRating", book.computeAverageRating()
         );
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, bookData));
     }
 
-    public ResponseEntity<ResponseWrapper> showBookReviews (String bookTitle){
-        if(!systemData.bookExists(bookTitle)){
-            message = "This book doesn't exist in system!";
-            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
-        }
+    public ArrayList<Map<String,Object>> gatherBookReviews (String bookTitle){
 
         Book book = systemData.findBook(bookTitle);
-
         ArrayList<Map<String,Object>> reviews = new ArrayList<>();
         for(Comment comment : book.getComments()){
             reviews.add(Map.of("username",comment.getUsername(),"rate",comment.getRating(),"comment",comment.getBody()));
         }
-        double averageRate = book.computeAverageRating();
-        message = "Book reviews retrieved successfully.\n";
-
-        Map<String, Object> bookData = Map.of(
-                "title", bookTitle,
-                "reviews", reviews,
-                "averageRating", averageRate
-        );
-        return ResponseEntity.ok().body(new ResponseWrapper(true, message, bookData));
+        return  reviews;
     }
 
     public ResponseEntity<ResponseWrapper> showBookContent(String username, String bookTitle){

@@ -40,10 +40,10 @@ public class BookController {
         return bookService.showBookDetails(bookTitle);
     }
 
-    @GetMapping("/reviews/{bookTitle}")
+    /*@GetMapping("/reviews/{bookTitle}")
     public ResponseEntity<ResponseWrapper> getBookReviews(@PathVariable String bookTitle) {
         return bookService.showBookReviews(bookTitle);
-    }
+    }*/
 
     @GetMapping("/content")
     public ResponseEntity<ResponseWrapper> getBookContent(@RequestBody Map<String, Object> body) {

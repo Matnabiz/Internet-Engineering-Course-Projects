@@ -1,0 +1,172 @@
+.book-details-container {
+    font-family: 'Segoe UI', sans-serif !important;
+    padding: 2rem !important;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+  
+  /* Book Card */
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease !important;
+    background-color: #F5EFE7 !important;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px) !important;
+  }
+  
+  .card img {
+    object-fit: cover !important;
+    height: 350px !important;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+  }
+  
+  .card-body {
+    padding: 1.2rem !important;
+  }
+  
+  .card-title {
+    font-weight: 600 !important;
+    font-size: 1.4rem !important;
+    color: #16423C !important;
+  }
+  
+  .card-subtitle {
+    color: #16423C !important;
+    font-size: 0.95rem !important; 
+  }
+  
+  .card-text {
+    font-size: 0.95rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  .card-footer {
+    background-color: #fff !important;
+    border-top: none;
+    padding: 0.75rem 1.2rem !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Badge for Book Status */
+  .badge {
+    font-size: 0.8rem;
+    padding: 0.5em 0.75em;
+    border-radius: 20px;
+    font-weight: 500;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+  }
+  
+  .badge-available {
+    background-color: #d1e7dd;
+    color: #0f5132;
+  }
+  
+  .badge-owned {
+    background-color: #cff4fc;
+    color: #055160;
+  }
+  
+  .badge-borrowed {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+  
+  /* Reviews Section */
+  .reviews-section {
+    margin-top: 2rem;
+    background-color: #b05c5c !important;
+    padding: 2rem !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+  }
+  
+  .review {
+    border-bottom: 1px solid #e9ecef !important;
+    padding: 1rem 0 !important;
+  }
+  
+  .review:last-child {
+    border-bottom: none;
+  }
+  
+  .review-username {
+    font-weight: 600;
+    color: #16423C !important;
+  }
+  
+  .review-text {
+    font-size: 0.95rem !important;
+    color: #16423C !important;
+  }
+  
+  .review-rating {
+    font-size: 0.85rem;
+    color: #ffc107 !important;
+  }
+  
+  /* Pagination */
+  .pagination  {
+    margin-top: 1rem;
+    justify-content: center !important;
+  }
+  
+  /* Modals */
+  .modal-content {
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+  
+  .modal-header {
+    border-bottom: none;
+  }
+  
+  .modal-footer {
+    border-top: none;
+  }
+  
+  /* Borrowing Options */
+  .borrow-options {
+    margin-top: 1rem;
+  }
+  
+  .borrow-days-radio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Toast Container */
+  .Toastify__toast {
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  /* Buttons */
+  .btn-primary {
+    background-color: #c81717 !important;
+    border-color: #c88227 !important;
+  }
+  
+  .btn-primary:hover {
+    background-color: #1a252f !important;
+    border-color: #1a252f !important;
+  }
+  
+  .btn-danger {
+    background-color: #e74c3c !important;
+    border-color: #e74c3c !important;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+  }
+  
