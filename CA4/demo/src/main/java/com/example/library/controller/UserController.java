@@ -26,12 +26,15 @@ public class UserController {
                 addressMap.get("country"),
                 addressMap.get("city")
         );
-
+        //String country = (String) body.get("country");
+        //String city = (String) body.get("city");
+        //Address address = new Address(country, city);
         return userService.addUser(
                 (String) body.get("username"),
                 (String) body.get("password"),
                 (String) body.get("email"),
-                address,
+                //address,
+                (Address) address ,
                 (String) body.get("role")
         );
     }

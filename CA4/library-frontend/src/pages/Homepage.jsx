@@ -1,15 +1,11 @@
 import React from 'react';
 import './HomepageStyle.css';
-
+import NavBar from './x/NavBar';
 function UserPage() {
   return (
+    <>
+    <NavBar/>
     <div className="user-page-container">
-      <header>
-        <div className="nav">
-          <input type="text" placeholder="Search" />
-          <button className="buy-now">Buy now</button>
-        </div>
-      </header>
 
       <main>
         <section className="balance-section">
@@ -46,7 +42,9 @@ function UserPage() {
         <p>© 2025 - MioBook</p>
       </footer>
     </div>
+    </>
   );
+
 }
 
 export default UserPage;

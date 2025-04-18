@@ -9,14 +9,30 @@ function SignupPage() {
     username: '',
     password: '',
     email: '',
-    country: '',
-    city: '',
-    role: 'Customer'
+    role: 'Customer',
+    address: {
+      country: '',
+      city: ''
+    }
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+
+    if (name === 'country' || name === 'city') {
+      setFormData(prev => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          [name]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleRoleSelect = (selectedRole) => {
@@ -24,7 +40,14 @@ function SignupPage() {
   };
 
   const isFormValid = () => {
-    return Object.values(formData).every(val => val.trim() !== '');
+    return (
+      formData.username.trim() !== '' &&
+      formData.password.trim() !== '' &&
+      formData.email.trim() !== '' &&
+      formData.role.trim() !== '' &&
+      formData.address.country.trim() !== '' &&
+      formData.address.city.trim() !== ''
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -35,15 +58,18 @@ function SignupPage() {
     }
 
     try {
+      console.log(formData);
       const res = await axios.post('http://localhost:9090/users/register', formData);
       toast.success(res.data.message || 'Successfully signed up!');
       setFormData({
         username: '',
         password: '',
         email: '',
-        country: '',
-        city: '',
-        role: 'Customer'
+        role: 'Customer',
+        address: {
+          country: '',
+          city: ''
+        }
       });
     } catch (err) {
       toast.error(err.response?.data?.message || 'Something went wrong.');
@@ -86,7 +112,7 @@ function SignupPage() {
               type="text"
               name="country"
               placeholder="Country"
-              value={formData.country}
+              value={formData.address.country}
               onChange={handleChange}
               required
             />
@@ -94,7 +120,7 @@ function SignupPage() {
               type="text"
               name="city"
               placeholder="City"
-              value={formData.city}
+              value={formData.address.city}
               onChange={handleChange}
               required
             />
