@@ -97,7 +97,7 @@ public class BookService {
         message = "Book reviews retrieved successfully.\n";
 
         Map<String, Object> bookData = Map.of(
-                "title", book.getTitle(),
+                "title", bookTitle,
                 "reviews", reviews,
                 "averageRating", averageRate
         );

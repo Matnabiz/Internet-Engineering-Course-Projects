@@ -26,15 +26,12 @@ public class UserController {
                 addressMap.get("country"),
                 addressMap.get("city")
         );
-        //String country = (String) body.get("country");
-        //String city = (String) body.get("city");
-        //Address address = new Address(country, city);
+
         return userService.addUser(
                 (String) body.get("username"),
                 (String) body.get("password"),
                 (String) body.get("email"),
-                //address,
-                (Address) address ,
+                address,
                 (String) body.get("role")
         );
     }
@@ -62,11 +59,8 @@ public class UserController {
 
     @PostMapping("/{username}/add-comment")
     public ResponseEntity<ResponseWrapper> addComment(
-            @PathVariable String username,
-            @RequestParam String bookTitle,
-            @RequestParam String commentBody,
-            @RequestParam int rating) {
-        return userService.addComment(username, bookTitle, commentBody, rating);
+            @PathVariable String username, @RequestBody Map<String, Object> body) {
+        return userService.addComment(username, (String) body.get("bookTitle"), (String) body.get("commentBody"), (Integer) body.get("rating"));
     }
 
     @GetMapping("/{username}")

@@ -58,12 +58,12 @@ public class CartService {
         if (orderToBeAddedToCart.getType().equals("buy") || orderToBeAddedToCart.getType().equals("borrow")) {
             customer.addOrderToCart(orderToBeAddedToCart);
             message = "Book added to cart.";
-            return ResponseEntity.badRequest().body(new ResponseWrapper(true, message, null));
+            return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
         }
 
         else {
             message = "Invalid purchase type.";
-            return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
+            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
     }
 
@@ -173,7 +173,6 @@ public class CartService {
         );
         message="Buy cart retrieved successfully.";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, cartDetails));
-
     }
 
 }

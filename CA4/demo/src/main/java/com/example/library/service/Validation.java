@@ -29,15 +29,12 @@ public class Validation {
     public static boolean validateRole(String role){
         return role.equalsIgnoreCase("customer") || role.equalsIgnoreCase("admin");
     }
-
     public static boolean birthBeforeDeath(LocalDate deathDate, LocalDate birthDate){
         return birthDate.isBefore(deathDate);
     }
-
     public static boolean minimumGenreCount(ArrayList<String> bookGenres){
         return bookGenres.size() > 1;
     }
-
     public static boolean customerHasBookInCart(User customer, String bookTitle){
         for (Order order : customer.getShoppingCart()) {
             if (order.getBook().getTitle().equals(bookTitle)) {
@@ -46,23 +43,18 @@ public class Validation {
         }
         return false;
     }
-
     public static boolean minimumCreditForBalanceCharge(int credit){
         return credit >= 100;
     }
-
     public static boolean minimumBookCountInCartForCheckout(User customer){
         return !customer.getShoppingCart().isEmpty();
     }
-
     public static boolean enoughBalanceForCheckout(User customer){
         return customer.getBalance() >= customer.getPayableAmount();
     }
-
     public static boolean ratingInRange(int rating){
-        return rating > 1 && rating < 5;
+        return rating > 0 && rating <= 5;
     }
-
     public static boolean cartIsFull(User customer){
         return customer.getShoppingCart().size() >= 10;
     }
