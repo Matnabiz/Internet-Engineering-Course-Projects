@@ -42,7 +42,6 @@ public class UserService {
             message = "This user has already signed in.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        //   mahsa gogoli and matin bolbol
         User userAskingToLogIn = systemData.findUser(username);
 
         if (!Validation.authenticatePassword(password, userAskingToLogIn)) {

@@ -10,6 +10,7 @@ import Signup from './pages/Signup';
 import Homepage from './pages/Homepage'
 import ShowCartPage from './pages/ShowCartPage'
 import BookDetails from './pages/BookDetails'
+import ShowAuthorPage from './pages/ShowAuthorPage'
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/users/homepage" element={<Homepage />} />
         <Route path="/cart/show/:username" element={<ShowCartPage />} />
         <Route path="/books/details/:title" element={<BookDetails />} />
+        <Route path="/authors/details/:authorName" element={<ShowAuthorPage />} />
         {/* Add more routes as you go */}
       </Routes>
     </Router>

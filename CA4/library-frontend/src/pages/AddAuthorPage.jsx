@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
-import './AddAuthorPageStyle.css';
+//import './AddAuthorPageStyle.css';
 
 
 function AddAuthorPage() {

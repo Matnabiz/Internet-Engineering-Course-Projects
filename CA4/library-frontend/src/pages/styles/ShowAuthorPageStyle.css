@@ -1,0 +1,33 @@
+.author-page {
+    font-family: 'Segoe UI', sans-serif;
+    margin-top: 2rem;
+  }
+  
+  .author-profile {
+    background-color: #f9f9f9 !important;
+    padding: 20px !important;
+    border-radius: 8px !important;
+    border-left: 5px solid #007bff !important;
+  }
+  
+  .book-card {
+    border: 1px solid #ddd !important;
+    border-radius: 10px !important;
+    transition: transform 0.2s ease-in-out !important;
+  }
+  
+  .book-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .genre-badge {
+    display: inline-block !important;
+    background-color: #e0f0ff !important;
+    color: #007bff !important;
+    font-size: 0.8rem !important;
+    padding: 3px 8px !important;
+    border-radius: 12px !important;
+    margin-right: 5px !important;
+  }
+  

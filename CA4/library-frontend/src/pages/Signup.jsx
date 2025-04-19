@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './SignupStyle.css';
+//import './SignupStyle.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -127,7 +127,7 @@ function SignupPage() {
           </div>
           <p className="role-label">I am</p>
           <div className="role-selection">
-            {['Customer', 'Manager'].map(role => (
+            {['Customer', 'Admin'].map(role => (
               <button
                 key={role}
                 type="button"
@@ -146,7 +146,7 @@ function SignupPage() {
             Sign Up
           </button>
         </form>
-        <p className="signin-link">Already have an account? <a href="#">Sign in</a></p>
+        <p className="signin-link">Already have an account? <a href="http://localhost:3000/users/login">Sign in</a></p>
       </div>
       <footer>
         <p>© 2025 - MioBook</p>

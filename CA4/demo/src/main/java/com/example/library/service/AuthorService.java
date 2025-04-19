@@ -2,6 +2,7 @@ package com.example.library.service;
 
 import com.example.library.dto.ResponseWrapper;
 import com.example.library.model.Author;
+import com.example.library.model.Book;
 import com.example.library.model.User;
 import com.example.library.repository.Repository;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 public class AuthorService {
 
@@ -81,11 +85,25 @@ public class AuthorService {
         Author author = systemData.findAuthor(authorName);
         message = "Author details retrieved successfully.\n";
 
+        ArrayList<Book> searchedBook = (ArrayList<Book>) systemData.books.stream()
+                .filter(book -> book.getAuthor().trim().toLowerCase().contains(authorName.toLowerCase()))
+                .collect(Collectors.toList());
+        ArrayList<Map<String,Object>> authorBooks = new ArrayList<>();
+        for(Book book : searchedBook){
+            authorBooks.add(Map.of("title",book.getTitle(),
+                    "publisher",book.getPublisher(),
+                    "genres",book.getGenres(),
+                    "year",book.getPublicationYear(),
+                    "price",book.getPrice(),
+                    "synopsis",book.getSynopsis()));
+        }
+
         Map<String, Object> authorData = Map.of(
                 "name", author.getName(),
                 "penName", author.getPenName(),
                 "nationality", author.getNationality(),
-                "born", author.getBirthDate()
+                "born", author.getBirthDate(),
+                "books", authorBooks
         );
 
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, authorData));

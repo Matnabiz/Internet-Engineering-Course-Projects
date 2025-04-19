@@ -1,5 +1,5 @@
 import React from 'react';
-import './HomepageStyle.css';
+//import './HomepageStyle.css';
 import NavBar from './x/NavBar';
 function UserPage() {
   return (

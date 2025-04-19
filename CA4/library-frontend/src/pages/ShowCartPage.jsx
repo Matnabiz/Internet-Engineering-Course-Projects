@@ -3,7 +3,7 @@
   import { useParams, useNavigate } from 'react-router-dom';
   import { Container, Row, Col, Card, Button, Alert, Spinner } from 'react-bootstrap';
   import { ToastContainer, toast } from 'react-toastify';
-  import './ShowCartPage.css';
+  //import './ShowCartPage.css';
 
   function ShowCartPage() {
     const { username } = useParams();
