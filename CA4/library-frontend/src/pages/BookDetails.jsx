@@ -7,7 +7,7 @@ import {
   Form, Pagination
 } from 'react-bootstrap';
 import axios from 'axios';
-//import './BookDetailsStyle.css';
+import './styles/BookDetailsStyle.css';
 
 function BookDetailsPage() {
   const { title } = useParams();

@@ -236,27 +236,7 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        ArrayList<Map<String, Object>> purchasedBooks = new ArrayList<>();
-        for(int j=0;j<user.getTransactionHistory().size();j++) {
-            for (int i = 0; i < user.getTransactionHistory().get(j).size() - 3; i++) {
-                if (user.getTransactionHistory().get(j).get(i) instanceof Order) {
-                    Order order = (Order) user.getTransactionHistory().get(j).get(i);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    LocalDateTime givenDate = LocalDateTime.parse(String.valueOf(user.getTransactionHistory().get(j).get(user.getTransactionHistory().get(j).size() - 1)), formatter);
-                    LocalDateTime now = LocalDateTime.now();
-                    long daysPassed = ChronoUnit.DAYS.between(givenDate, now);
-                    if (order.getBorrowDurationDays() > daysPassed || order.getBorrowDurationDays() == 0) { // ----> check for bought book not borrowed
-                        purchasedBooks.add(Map.of("title", order.getBook().getTitle(),
-                                "author", order.getBook().getAuthor(),
-                                "publisher", order.getBook().getPublisher(),
-                                "category", order.getBook().getGenres(),
-                                "year", order.getBook().getPublicationYear(),
-                                "price", order.getBook().getPrice(),
-                                "isBorrowed", order.getType().equals("borrow")));
-                    }
-                }
-            }
-        }
+
 
         Map<String, Object> finalPurchasedBook = Map.of(
                 "username", username,
