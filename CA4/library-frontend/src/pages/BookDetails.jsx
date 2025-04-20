@@ -116,7 +116,7 @@ function BookDetailsPage() {
           <p><strong>Summary:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
           <p><strong>Avg. Rating:</strong> ⭐ {book.averageRating.toFixed(1)}</p>
           <div className="mt-3">
-            <Button variant="info" className="me-2" onClick={() => setShowCartModal(true)}
+            <Button className="alaki text-black border-2 rounded-2 me-5" onClick={() => setShowCartModal(true)}
               disabled={status !== 'Available'}>
               Add to Cart
             </Button>

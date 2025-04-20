@@ -2,25 +2,22 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 
-
-// Import your pages/components
 import AddAuthorPage from './pages/AddAuthorPage';
 import LoginPage from './pages/LoginPage';
 import Signup from './pages/Signup';
-import Homepage from './pages/Homepage'
-import ShowCartPage from './pages/ShowCartPage'
-import BookDetails from './pages/BookDetails'
-import ShowAuthorPage from './pages/ShowAuthorPage'
-import NavBar from './pages/Navbar'
-import Test from './pages/test'
-
-
+import Homepage from './pages/Homepage';
+import ShowCartPage from './pages/ShowCartPage';
+import BookDetails from './pages/BookDetails';
+import ShowAuthorPage from './pages/ShowAuthorPage';
+import NavBar from './pages/Navbar';
+import Test from './pages/test';
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/authors/add" element={<AddAuthorPage />} />
+        {/* Public Routes */}
         <Route path="/users/login" element={<LoginPage />} />
         <Route path="/users/register" element={<Signup />} />
         <Route path="/users/homepage" element={<Homepage />} />
@@ -29,7 +26,17 @@ function App() {
         <Route path="/authors/details/:authorName" element={<ShowAuthorPage />} />
         <Route path="/navbar" element={<NavBar />} />
         <Route path="/test" element={<Test />} />
-        {/* Add more routes as you go */}
+
+        {/* Admin-only Route */}
+        <Route
+          path="/authors/add"
+          element={
+            <ProtectedRoute
+              element={<AddAuthorPage />}
+              allowedRole="admin"
+            />
+          }
+        />
       </Routes>
     </Router>
   );
