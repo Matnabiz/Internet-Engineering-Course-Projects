@@ -9,6 +9,7 @@ import Homepage from './pages/Homepage';
 import ShowCartPage from './pages/ShowCartPage';
 import BookDetails from './pages/BookDetails';
 import ShowAuthorPage from './pages/ShowAuthorPage';
+import ShowUserDetails from './pages/ShowUserDetails';
 import NavBar from './pages/Navbar';
 import Test from './pages/test';
 import ProtectedRoute from './ProtectedRoute';
@@ -24,6 +25,7 @@ function App() {
         <Route path="/cart/show/:username" element={<ShowCartPage />} />
         <Route path="/books/details/:bookTitle" element={<BookDetails />} />
         <Route path="/authors/details/:authorName" element={<ShowAuthorPage />} />
+        <Route path="/users/:username" element={<ShowUserDetails />} />
         <Route path="/navbar" element={<NavBar />} />
         <Route path="/test" element={<Test />} />
 

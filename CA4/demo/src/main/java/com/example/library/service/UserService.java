@@ -169,6 +169,11 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
+        ArrayList<Map<String, Object>> booksInAccess = systemData.retrieveUserBooks(username);
+        Map<String, Object> finalPurchasedBook = Map.of(
+                "books", booksInAccess
+        );
+
         message = "User details retrieved successfully.\n";
         User user = systemData.findUser(username);
         Map<String, Object> userData = Map.of(
@@ -176,7 +181,8 @@ public class UserService {
                 "email", user.getEmail(),
                 "address", user.getAddress(),
                 "role", user.getRole(),
-                "balance", user.getBalance()
+                "balance", user.getBalance(),
+                "books", booksInAccess
         );
 
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, userData));

@@ -71,9 +71,7 @@ function BookDetailsPage() {
     try {
       await axios.post(`http://localhost:9090/cart/buy/add`, {
         username,
-        bookTitle,
-        borrow: borrowChecked,
-        borrowDays
+        bookTitle
       });
       toast.success("Book added to cart!");
       setShowCartModal(false);
