@@ -15,10 +15,10 @@ public class User {
     private String role;
     private int balance;
     private ArrayList<Order> shoppingCart;
-    private ArrayList<Order> borrowedBooks;
-    private ArrayList<Order> boughtBooks;
+    private final ArrayList<Order> borrowedBooks;
+    private final ArrayList<Order> boughtBooks;
     private double payableAmount;
-    private ArrayList<Transaction> transactionHistory; // every arrayList is a history , start with books
+    private final ArrayList<Transaction> transactionHistory; // every arrayList is a history , start with books
                                                             // and three last elements are number of books and total price and time
                                                             // { books , numberOfBooks , totalPrice , Time }
 
