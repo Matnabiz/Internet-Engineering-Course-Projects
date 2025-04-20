@@ -103,9 +103,9 @@ function UserPage() {
             <div className="text-center mt-4">
               <p className="text-muted">You don't have any books yet!</p>
               <img
-                src="/images/empty-bookshelf.png"
+                src="/images/NoResult.png"
                 alt="No books"
-                style={{ maxWidth: '250px', opacity: 0.7 }}
+                style={{ maxWidth: '1000px', opacity: 0.9}}
               />
             </div>
           )}
