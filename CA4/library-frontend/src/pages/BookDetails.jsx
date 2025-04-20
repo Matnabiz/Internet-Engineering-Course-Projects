@@ -8,6 +8,7 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import './styles/BookDetailsStyle.css';
+import NavBar from './Navbar';
 
 function BookDetailsPage() {
   const { title } = useParams();
@@ -93,6 +94,8 @@ function BookDetailsPage() {
   const currentReviews = book.reviews.slice(startIndex, startIndex + reviewsPerPage);
 
   return (
+    <>
+    <NavBar/>
     <Container className="book-details-container my-4">
       <ToastContainer position="top-center" />
       <Row>
@@ -237,6 +240,7 @@ function BookDetailsPage() {
         </Modal.Footer>
       </Modal>
     </Container>
+    </>
   );
 }
 

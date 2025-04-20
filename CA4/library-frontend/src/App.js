@@ -13,6 +13,9 @@ import BookDetails from './pages/BookDetails'
 import ShowAuthorPage from './pages/ShowAuthorPage'
 import NavBar from './pages/Navbar'
 import Test from './pages/test'
+import Search from './pages/SearchResult'
+import BookCard from './pages/BookCard'
+
 
 
 
@@ -29,6 +32,8 @@ function App() {
         <Route path="/authors/details/:authorName" element={<ShowAuthorPage />} />
         <Route path="/navbar" element={<NavBar />} />
         <Route path="/test" element={<Test />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/bookcard" element={<BookCard />} />
         {/* Add more routes as you go */}
       </Routes>
     </Router>

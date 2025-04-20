@@ -1,36 +1,38 @@
+// Navbar.jsx
 import React from 'react';
 import './styles/NavbarStyle.css';
 
-function Navbar() {
+function Navbar({ onFilterChange, onQueryChange }) {
   return (
     <header className="navbar">
       <div className="container-fluid d-flex align-items-center justify-content-between">
-
-        {/* Left (optional spacer or logo) */}
         <div className="flex-grow-1" />
 
-        {/* Center: Search */}
         <div className="d-flex justify-content-center" style={{ width: '70vw' }}>
-            <div className="search-section d-flex align-items-start">
-              <select className="search-select">
-                <option>Author</option>
-                <option>Title</option>
-                <option>Genre</option>
-              </select>
-            <input type="text" className="search-input" placeholder="Search" />
-         </div>
+          <div className="search-section d-flex align-items-start">
+            <select
+              className="search-select"
+              onChange={(e) => onFilterChange(e.target.value)}
+            >
+              <option value="author">Author</option>
+              <option value="title">Title</option>
+              <option value="genre">Genre</option>
+            </select>
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search"
+              onChange={(e) => onQueryChange(e.target.value)}
+            />
+          </div>
         </div>
 
-
-        {/* Right: Button */}
         <div className="d-flex justify-content-end" style={{ width: '8vw' }}>
-            <button className="btn btn-dark w-100">Buy now</button>
+          <button className="btn btn-dark w-100">Buy now</button>
         </div>
-
       </div>
     </header>
   );
 }
 
 export default Navbar;
-
