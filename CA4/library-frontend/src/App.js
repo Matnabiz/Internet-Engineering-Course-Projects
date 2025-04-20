@@ -11,6 +11,9 @@ import Homepage from './pages/Homepage'
 import ShowCartPage from './pages/ShowCartPage'
 import BookDetails from './pages/BookDetails'
 import ShowAuthorPage from './pages/ShowAuthorPage'
+import NavBar from './pages/Navbar'
+import Test from './pages/test'
+
 
 
 function App() {
@@ -24,6 +27,8 @@ function App() {
         <Route path="/cart/show/:username" element={<ShowCartPage />} />
         <Route path="/books/details/:title" element={<BookDetails />} />
         <Route path="/authors/details/:authorName" element={<ShowAuthorPage />} />
+        <Route path="/navbar" element={<NavBar />} />
+        <Route path="/test" element={<Test />} />
         {/* Add more routes as you go */}
       </Routes>
     </Router>
