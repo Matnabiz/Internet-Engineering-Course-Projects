@@ -12,7 +12,7 @@ public class Transaction {
     String time;
 
     public Transaction(ArrayList<Order> orders, double totalPrice){
-        this.orders = orders;
+        this.orders = new ArrayList<>(orders);
         this.numberOfBooks = orders.size();
         this.totalPrice = totalPrice;
         LocalDateTime purchaseTime = LocalDateTime.now();
