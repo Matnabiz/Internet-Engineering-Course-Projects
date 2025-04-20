@@ -10,7 +10,7 @@ import axios from 'axios';
 import './styles/BookDetailsStyle.css';
 
 function BookDetailsPage() {
-  const { title } = useParams();
+  const { bookTitle } = useParams();
   const username = 'mat123'; // Replace with actual logged-in user
   const [book, setBook] = useState(null);
   const [status, setStatus] = useState('Available'); // Available, Owned, Borrowed
@@ -29,12 +29,12 @@ function BookDetailsPage() {
 
   const fetchBookDetails = async () => {
     try {
-      const res = await axios.get(`http://localhost:9090/books/details/${title}`);
+      const res = await axios.get(`http://localhost:9090/books/details/${bookTitle}`);
       setBook(res.data.data);
       setFinalPrice(res.data.data.price);
 
       // Simulate ownership (replace with actual backend logic)
-      const ownershipRes = await axios.get(`http://localhost:9090/book/status/${username}/${title}`);
+      const ownershipRes = await axios.get(`http://localhost:9090/book/status/${username}/${bookTitle}`);
       setStatus(ownershipRes.data.status); // Owned | Borrowed | Available
       setUserCanReview(ownershipRes.data.canReview);
     } catch (err) {
@@ -44,11 +44,11 @@ function BookDetailsPage() {
 
   useEffect(() => {
     fetchBookDetails();
-  }, [title]);
+  }, [bookTitle]);
 
   const handleSubmitReview = async () => {
     try {
-      const res = await axios.post(`http://localhost:9090/review/${title}`, {
+      const res = await axios.post(`http://localhost:9090/review/${bookTitle}`, {
         username,
         rate: parseInt(rating),
         comment
@@ -69,9 +69,9 @@ function BookDetailsPage() {
 
   const handleAddToCart = async () => {
     try {
-      await axios.post(`http://localhost:9090/cart/add`, {
+      await axios.post(`http://localhost:9090/cart/buy/add`, {
         username,
-        title,
+        bookTitle,
         borrow: borrowChecked,
         borrowDays
       });
@@ -99,7 +99,7 @@ function BookDetailsPage() {
         <Col md={4}>
           <Card>
             <div className="position-relative">
-              <Card.Img src={`/images/${title}.jpg`} alt="Book" />
+              <Card.Img src={`/images/${bookTitle}.jpg`} alt="Book" />
               <Badge bg={status === 'Owned' ? 'success' : status === 'Borrowed' ? 'warning' : 'secondary'}
                 className="position-absolute top-0 start-0 m-2">
                 {status}
@@ -108,7 +108,7 @@ function BookDetailsPage() {
           </Card>
         </Col>
         <Col md={8}>
-          <h2>{title}</h2>
+          <h2>{bookTitle}</h2>
           <p><strong>Author:</strong> {book.author}</p>
           <p><strong>Publisher:</strong> {book.publisher} ({book.year})</p>
           <p><strong>Genres:</strong> {book.genres.join(', ')}</p>
