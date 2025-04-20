@@ -18,7 +18,7 @@ public class User {
     private ArrayList<Order> borrowedBooks;
     private ArrayList<Order> boughtBooks;
     private double payableAmount;
-    private ArrayList<List<Object>> transactionHistory; // every arrayList is a history , start with books
+    private ArrayList<Transaction> transactionHistory; // every arrayList is a history , start with books
                                                             // and three last elements are number of books and total price and time
                                                             // { books , numberOfBooks , totalPrice , Time }
 
@@ -30,14 +30,14 @@ public class User {
         this.role = role;
         this.balance = balance;
         this.shoppingCart = new ArrayList<>();
-        this.transactionHistory = new ArrayList<List<Object>>();
+        this.transactionHistory = new ArrayList<Transaction>();
         this.borrowedBooks = new ArrayList<>();
         this.boughtBooks = new ArrayList<>();
     }
 
     public String getUsername() { return this.username; }
 
-    public boolean autheticatePassword(String password) { return this.password.equals(password); }
+    public boolean authenticatePassword(String password) { return this.password.equals(password); }
 
     public String getEmail() { return this.email; }
 
@@ -49,7 +49,7 @@ public class User {
 
     public double getPayableAmount() { return this.payableAmount; }
 
-    public ArrayList<List<Object>> getTransactionHistory() { return this.transactionHistory; }
+    public ArrayList<Transaction> getTransactionHistory() { return this.transactionHistory; }
 
     public ArrayList<Order> getShoppingCart() { return this.shoppingCart; }
 
@@ -72,7 +72,7 @@ public class User {
         return null;
     }
 
-    public void addTransactionHistory(List<Object> newTransaction) {this.transactionHistory.add(newTransaction);}
+    public void addTransactionHistory(Transaction newTransaction) {this.transactionHistory.add(newTransaction);}
 
     public void increaseBalance(int balanceToBeAdded) { this.balance += balanceToBeAdded; }
 
@@ -83,16 +83,17 @@ public class User {
         if(orderToBeAddedToCart.getType().equals("buy"))
             this.increasePayableAmount(orderToBeAddedToCart.getBook().getPrice());
         else if(orderToBeAddedToCart.getType().equals("borrow"))
-            this.increasePayableAmount(orderToBeAddedToCart.getBook().getPrice() * orderToBeAddedToCart.getBorrowDurationDays() / 10);
+            this.increasePayableAmount((double) (orderToBeAddedToCart.getBook().getPrice() * orderToBeAddedToCart.getBorrowDurationDays()) / 10);
     }
 
     public void removeOrderFromCart(Book bookToBeRemovedFromCart) {
         Order orderToBeRemovedFromCart = findOrder(bookToBeRemovedFromCart.getTitle());
         this.shoppingCart.remove(orderToBeRemovedFromCart);
-        if(orderToBeRemovedFromCart.getType() == "buy")
+        assert orderToBeRemovedFromCart != null;
+        if(orderToBeRemovedFromCart.getType().equals("buy"))
             this.decreasePayableAmount(orderToBeRemovedFromCart.getBook().getPrice());
-        else if(orderToBeRemovedFromCart.getType() == "borrow")
-            this.decreasePayableAmount(orderToBeRemovedFromCart.getBook().getPrice() * orderToBeRemovedFromCart.getBorrowDurationDays() / 10);
+        else if(orderToBeRemovedFromCart.getType().equals("borrow"))
+            this.decreasePayableAmount((double) (orderToBeRemovedFromCart.getBook().getPrice() * orderToBeRemovedFromCart.getBorrowDurationDays()) / 10);
     }
 
     private void increasePayableAmount(double amount) { this.payableAmount += amount;}
@@ -110,14 +111,7 @@ public class User {
     }
 
     private void makeTransactionHistory(){
-        List<Object> transaction = new ArrayList<>();
-        transaction.addAll(this.getShoppingCart());
-        transaction.add(this.getShoppingCart().size());
-        transaction.add(this.getPayableAmount());
-        LocalDateTime purchaseTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedTime = purchaseTime.format(formatter);
-        transaction.add(formattedTime);
+        Transaction transaction = new Transaction(this.getShoppingCart(), this.getPayableAmount());
         this.addTransactionHistory(transaction);
     }
 
@@ -129,24 +123,32 @@ public class User {
         this.payableAmount = 0;
     }
 
-    public boolean userHasAccessToBook(String bookTitle){
-        ArrayList<String> accesibleBooks = new ArrayList<>();
-        for(int j=0; j<this.getTransactionHistory().size(); j++) {
-            for (int i = 0; i < this.getTransactionHistory().get(j).size() - 3; i++) {
-                if (this.getTransactionHistory().get(j).get(i) instanceof Order) {
-                    Order order = (Order) this.getTransactionHistory().get(j).get(i);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    LocalDateTime givenDate = LocalDateTime.parse(String.valueOf(this.getTransactionHistory().get(j).get(this.getTransactionHistory().get(j).size() - 1)), formatter);
-                    LocalDateTime now = LocalDateTime.now();
-                    long daysPassed = ChronoUnit.DAYS.between(givenDate, now);
-                    if (order.getBorrowDurationDays() > daysPassed || order.getBorrowDurationDays() == 0)
-                        accesibleBooks.add(order.getBook().getTitle());
+    public boolean userHasAccessToBook(String bookTitle) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Transaction transaction : this.getTransactionHistory()) {
+            LocalDateTime transactionDate = LocalDateTime.parse(transaction.getTime(), formatter);
+
+            for (Order order : transaction.getOrders()) {
+                if (order == null) continue;
+
+                long daysPassed = ChronoUnit.DAYS.between(transactionDate, now);
+                int borrowDays = order.getBorrowDurationDays();
+
+                boolean isOwned = borrowDays == 0; // Purchased
+                boolean isWithinBorrowTime = borrowDays > daysPassed;
+
+                if (order.getBook().getTitle().equalsIgnoreCase(bookTitle)
+                        && (isOwned || isWithinBorrowTime)) {
+                    return true;
                 }
             }
         }
 
-        return accesibleBooks.contains(bookTitle);
+        return false;
     }
+
 
 
 }

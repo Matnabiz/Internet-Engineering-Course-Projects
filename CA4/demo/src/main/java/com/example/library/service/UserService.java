@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 @Service
 public class UserService {
@@ -194,34 +195,40 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        ArrayList<Map<String, Object>> bookItems = new ArrayList<>();
-        for (int i = 0; i < customer.getTransactionHistory().size() - 3; i++) {
-            if (customer.getTransactionHistory().get(i) instanceof Order) {
-                Order order = (Order) customer.getTransactionHistory().get(i); // Cast to Book
-                bookItems.add(Map.of("title", order.getBook().getTitle(),
+        List<Map<String, Object>> purchaseHistoryList = new ArrayList<>();
+        List<Transaction> history = customer.getTransactionHistory();
+        for (Transaction transaction : history) {
+            List<Map<String, Object>> orderItems = new ArrayList<>();
+
+            for (Order order : transaction.getOrders()) {
+                orderItems.add(Map.of(
+                        "title", order.getBook().getTitle(),
                         "author", order.getBook().getAuthor(),
                         "publisher", order.getBook().getPublisher(),
                         "genres", order.getBook().getGenres(),
                         "year", order.getBook().getPublicationYear(),
-                        "isBorrowed", order.getType().equals("borrow"),
+                        "isBorrowed", order.getType().equalsIgnoreCase("borrow"),
                         "price", order.getBook().getPrice(),
-                        "finalPrice", order.getOrderPrice()));
+                        "finalPrice", order.getOrderPrice()
+                ));
             }
+
+            Map<String, Object> transactionData = Map.of(
+                    "purchaseDate", transaction.getTime(),
+                    "items", orderItems,
+                    "totalCost", transaction.getTotalPrice()
+            );
+
+            purchaseHistoryList.add(transactionData);
         }
 
-        Map<String, Object> purchaseHistory = Map.of(
-                "purchaseDate", customer.getTransactionHistory().get(customer.getTransactionHistory().size()- 1),
-                "items", bookItems,
-                "totalCost", customer.getTransactionHistory().get(customer.getTransactionHistory().size() - 2));
-
-
-        Map<String, Object> finalPurchaseHistory = Map.of(
+        Map<String, Object> responseData = Map.of(
                 "username", username,
-                "purchaseHistory", purchaseHistory
+                "purchaseHistory", purchaseHistoryList
         );
 
         message = "Purchase history retrieved successfully.";
-        return ResponseEntity.ok().body(new ResponseWrapper(true, message, finalPurchaseHistory));
+        return ResponseEntity.ok().body(new ResponseWrapper(true, message, responseData));
     }
 
     public ResponseEntity<ResponseWrapper> showPurchasedBooks (String username){
@@ -229,18 +236,16 @@ public class UserService {
             message = "User doesn't exist";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-
         User user = systemData.findUser(username);
         if (user.getRole().equals("admin")) {
             message = "This command isn't for admins!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-
-
+        ArrayList<Map<String, Object>> booksInAccess = systemData.retrieveUserBooks(username);
         Map<String, Object> finalPurchasedBook = Map.of(
                 "username", username,
-                "books", purchasedBooks
+                "books", booksInAccess
         );
         message = "Purchased books retrieved successfully.";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, finalPurchasedBook));

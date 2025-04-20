@@ -4,10 +4,12 @@ import com.example.library.model.Author;
 import com.example.library.model.Book;
 import com.example.library.model.Order;
 import com.example.library.model.User;
+import com.example.library.model.Transaction;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -62,30 +64,45 @@ public class Repository {
     public boolean isLoggedIn(String username) {
         return this.loggedInUsers.contains(username);
     }
-    public ArrayList<Map<String, Object>> retrieveUserBooks(String username){
+    public ArrayList<Map<String, Object>> retrieveUserBooks(String username) {
         User user = this.findUser(username);
         ArrayList<Map<String, Object>> purchasedBooks = new ArrayList<>();
-        for(int j=0;j<user.getTransactionHistory().size();j++) {
-            for (int i = 0; i < user.getTransactionHistory().get(j).size() - 3; i++) {
-                if (user.getTransactionHistory().get(j).get(i) instanceof Order) {
-                    Order order = (Order) user.getTransactionHistory().get(j).get(i);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    LocalDateTime givenDate = LocalDateTime.parse(String.valueOf(user.getTransactionHistory().get(j).get(user.getTransactionHistory().get(j).size() - 1)), formatter);
-                    LocalDateTime now = LocalDateTime.now();
-                    long daysPassed = ChronoUnit.DAYS.between(givenDate, now);
-                    if (order.getBorrowDurationDays() > daysPassed || order.getBorrowDurationDays() == 0) { // ----> check for bought book not borrowed
-                        purchasedBooks.add(Map.of("title", order.getBook().getTitle(),
-                                "author", order.getBook().getAuthor(),
-                                "publisher", order.getBook().getPublisher(),
-                                "category", order.getBook().getGenres(),
-                                "year", order.getBook().getPublicationYear(),
-                                "price", order.getBook().getPrice(),
-                                "isBorrowed", order.getType().equals("borrow")));
-                    }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Transaction transaction : user.getTransactionHistory()) {
+            LocalDateTime transactionTime;
+            try {
+                transactionTime = LocalDateTime.parse(transaction.getTime(), formatter);
+            } catch (DateTimeParseException e) {
+                continue; // Skip this transaction if time is malformed
+            }
+
+            for (Order order : transaction.getOrders()) {
+                if (order == null) continue;
+
+                int borrowDays = order.getBorrowDurationDays();
+                long daysPassed = ChronoUnit.DAYS.between(transactionTime, now);
+
+                boolean isOwned = borrowDays == 0;
+                boolean isStillBorrowed = borrowDays > daysPassed;
+                if (isOwned || isStillBorrowed) {
+                    Map<String, Object> bookInfo = Map.of(
+                            "title", order.getBook().getTitle(),
+                            "author", order.getBook().getAuthor(),
+                            "publisher", order.getBook().getPublisher(),
+                            "category", order.getBook().getGenres(),
+                            "year", order.getBook().getPublicationYear(),
+                            "price", order.getBook().getPrice(),
+                            "isBorrowed", order.getType().equals("borrow")
+                    );
+                    purchasedBooks.add(bookInfo);
                 }
             }
         }
+
         return purchasedBooks;
     }
+
 
 }
