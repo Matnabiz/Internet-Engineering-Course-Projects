@@ -5,6 +5,12 @@
     color: #333;
   }
   
+  .alaki{
+
+    background-color: #72bac8 !important;
+  }
+  
+
   /* Book Card */
   .card {
     border: none;
@@ -150,10 +156,7 @@
   }
   
   /* Buttons */
-  .btn-primary {
-    background-color: #c81717 !important;
-    border-color: #c88227 !important;
-  }
+
   
   .btn-primary:hover {
     background-color: #1a252f !important;

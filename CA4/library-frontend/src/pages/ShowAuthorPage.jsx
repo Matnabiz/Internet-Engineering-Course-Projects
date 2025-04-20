@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-//import './ShowAuthorPageStyle.css';
+import './styles/ShowAuthorPageStyle.css';
 import { Container, Row, Col, Card, Spinner } from 'react-bootstrap';
 
 function ShowAuthor() {
