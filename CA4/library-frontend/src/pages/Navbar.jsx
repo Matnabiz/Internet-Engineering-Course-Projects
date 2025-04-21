@@ -8,10 +8,10 @@ function Navbar({ onFilterChange, onQueryChange }) {
       <div className="container-fluid d-flex align-items-center justify-content-between">
         <div className="flex-grow-1" />
 
-        <div className="d-flex justify-content-center" style={{ width: '70vw' }}>
-          <div className="search-section d-flex align-items-start">
+        <div className="d-flex justify-content-start" style={{ width: '80vw' }}>
+          <div className="search-section d-flex align-items-start col-6">
             <select
-              className="search-select"
+              className="my-search-select col"
               onChange={(e) => onFilterChange(e.target.value)}
             >
               <option value="author">Author</option>
@@ -20,15 +20,15 @@ function Navbar({ onFilterChange, onQueryChange }) {
             </select>
             <input
               type="text"
-              className="search-input"
+              className="search-input col-11"
               placeholder="Search"
               onChange={(e) => onQueryChange(e.target.value)}
             />
           </div>
         </div>
 
-        <div className="d-flex justify-content-end" style={{ width: '8vw' }}>
-          <button className="btn btn-dark w-100">Buy now</button>
+        <div className="navbar-right" style={{ width: '8vw' }}>
+          <button className="my-btn">Buy now</button>
         </div>
       </div>
     </header>
