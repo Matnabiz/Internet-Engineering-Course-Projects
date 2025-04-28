@@ -55,7 +55,7 @@ public class BookService {
         Book newBook = new Book(bookTitle, bookAuthor,
                 bookPublisher, publishYear,
                 bookGenres,bookPrice,bookSynopsys,bookContent);
-        systemData.books.add(newBook);
+        systemData.addBook(newBook);
         message =  "Book added successfully.";
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));
 

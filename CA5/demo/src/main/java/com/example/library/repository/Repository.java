@@ -24,6 +24,9 @@ public class Repository {
     public ArrayList<Author> authors = new ArrayList<>();
     public final Set<String> loggedInUsers = new HashSet<>();
 
+    public void addAuthor(Author author) { this.authors.add(author); }
+    public void addUser(User user){ this.users.add(user); }
+    public void addBook(Book book){ this.books.add(book); }
     public boolean userExists(String username){
         return users.stream().anyMatch(user -> user.getUsername().equals(username));
     }

@@ -89,7 +89,7 @@ public class UserService {
         }
 
         User newUser = new User(username, password, email, address, role.toLowerCase(), 0);
-        systemData.users.add(newUser);
+        systemData.addUser(newUser);
 
         message = "User successfully registered!";
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));

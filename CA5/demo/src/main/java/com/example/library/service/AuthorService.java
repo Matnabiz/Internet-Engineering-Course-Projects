@@ -69,7 +69,7 @@ public class AuthorService {
         }
 
         Author newAuthor = new Author(authorName, penName, nationality, birthDateParsed, deathDateParsed);
-        systemData.authors.add(newAuthor);
+        systemData.addAuthor(newAuthor);
 
         message = "Author added successfully!";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
