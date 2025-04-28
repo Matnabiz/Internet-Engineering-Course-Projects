@@ -18,7 +18,6 @@ public class AuthorDataLoader {
             AuthorEntity[] authors = restTemplate.getForObject(API_URL, AuthorEntity[].class);
 
             for (AuthorEntity author : authors) {
-                // Prevent duplicates (e.g., check by name and pen name, or define an ID if available)
                 if (!authorRepository.existsByNameAndPenName(author.getName(), author.getPenName())) {
                     authorRepository.save(author);
                 }
