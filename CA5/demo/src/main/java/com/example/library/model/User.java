@@ -1,5 +1,7 @@
 package com.example.library.model;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -8,16 +10,24 @@ import java.util.List;
 
 
 public class User {
+    @Getter
     private String username;
     private String password;
+    @Getter
     private String email;
+    @Getter
     private Address address;
+    @Getter
     private String role;
+    @Getter
     private int balance;
+    @Getter
     private ArrayList<Order> shoppingCart;
     private final ArrayList<Order> borrowedBooks;
     private final ArrayList<Order> boughtBooks;
+    @Getter
     private double payableAmount;
+    @Getter
     private final ArrayList<Transaction> transactionHistory; // every arrayList is a history , start with books
                                                             // and three last elements are number of books and total price and time
                                                             // { books , numberOfBooks , totalPrice , Time }
@@ -35,23 +45,7 @@ public class User {
         this.boughtBooks = new ArrayList<>();
     }
 
-    public String getUsername() { return this.username; }
-
     public boolean authenticatePassword(String password) { return this.password.equals(password); }
-
-    public String getEmail() { return this.email; }
-
-    public Address getAddress() { return this.address; }
-
-    public String getRole() { return this.role; }
-
-    public int getBalance() { return this.balance; }
-
-    public double getPayableAmount() { return this.payableAmount; }
-
-    public ArrayList<Transaction> getTransactionHistory() { return this.transactionHistory; }
-
-    public ArrayList<Order> getShoppingCart() { return this.shoppingCart; }
 
     public void setUsername(String username) { this.username = username; }
 
@@ -136,7 +130,7 @@ public class User {
                 long daysPassed = ChronoUnit.DAYS.between(transactionDate, now);
                 int borrowDays = order.getBorrowDurationDays();
 
-                boolean isOwned = borrowDays == 0; // Purchased
+                boolean isOwned = (borrowDays == 0); // Purchased
                 boolean isWithinBorrowTime = borrowDays > daysPassed;
 
                 if (order.getBook().getTitle().equalsIgnoreCase(bookTitle)
