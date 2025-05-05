@@ -1,12 +1,13 @@
 package com.example.library.model;
 
-import lombok.Getter;
-
+import com.example.library.repository.*;
+import com.example.library.entity.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
 
 
 public class User {
@@ -23,14 +24,14 @@ public class User {
     private int balance;
     @Getter
     private ArrayList<Order> shoppingCart;
+    @Getter
     private final ArrayList<Order> borrowedBooks;
+    @Getter
     private final ArrayList<Order> boughtBooks;
     @Getter
     private double payableAmount;
     @Getter
-    private final ArrayList<Transaction> transactionHistory; // every arrayList is a history , start with books
-                                                            // and three last elements are number of books and total price and time
-                                                            // { books , numberOfBooks , totalPrice , Time }
+    private final ArrayList<Transaction> transactionHistory;
 
     public User(String username, String password, String email, Address address, String role, int balance) {
         this.username = username;
@@ -95,13 +96,7 @@ public class User {
     private void decreasePayableAmount(double amount) { this.payableAmount -= amount;}
 
     private void addPurchasedOrdersToShelf() {
-        for (Order order : this.shoppingCart) {
-            if ("buy".equals(order.getType())) {
-                this.boughtBooks.add(order);
-            } else if ("borrow".equals(order.getType())) {
-                this.borrowedBooks.add(order);
-            }
-        }
+
     }
 
     private void makeTransactionHistory(){
@@ -111,7 +106,6 @@ public class User {
 
     public void updateInfoAfterCheckout() {
         this.makeTransactionHistory();
-        this.addPurchasedOrdersToShelf();
         this.shoppingCart.clear();
         this.balance -= this.getPayableAmount();
         this.payableAmount = 0;
@@ -142,7 +136,5 @@ public class User {
 
         return false;
     }
-
-
 
 }

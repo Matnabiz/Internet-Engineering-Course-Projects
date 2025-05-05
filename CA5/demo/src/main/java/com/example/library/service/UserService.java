@@ -1,8 +1,12 @@
 package com.example.library.service;
 
 import com.example.library.dto.ResponseWrapper;
+import com.example.library.entity.AddressEmbeddable;
+import com.example.library.entity.UserEntity;
 import com.example.library.model.*;
+import com.example.library.repository.*;
 import com.example.library.repository.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,12 +19,22 @@ import java.util.List;
 import java.util.Map;
 @Service
 public class UserService {
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
+    private final UserBooksRepository userBooksRepository;
 
-    private final Repository systemData;
-    private String message;
-    public UserService(Repository systemData) {
+    @Autowired
+    public UserService(UserRepository userRepository,
+                               BookRepository bookRepository,
+                               UserBooksRepository userBooksRepository, Repository systemData) {
+        this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
+        this.userBooksRepository = userBooksRepository;
         this.systemData = systemData;
     }
+    private final Repository systemData;
+    private String message;
+
 
     public ResponseEntity<ResponseWrapper> logoutUser(String username) {
         if (!systemData.isLoggedIn(username)) {
@@ -63,12 +77,12 @@ public class UserService {
         }
 
 
-        if (systemData.userExists(username)) {
+        if (userRepository.existsByUsername(username)) {
             message = "Username already exists! Please choose a different one.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if (systemData.emailExists(email)) {
+        if (userRepository.existsByEmail(email)) {
             message = "Email address already registered! Please use a different one.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -90,6 +104,8 @@ public class UserService {
 
         User newUser = new User(username, password, email, address, role.toLowerCase(), 0);
         systemData.addUser(newUser);
+        UserEntity newUserEntity = new UserEntity(username, password, email, role, 0, new AddressEmbeddable((String) address.userCountry, (String) address.userCity));
+        userRepository.save(newUserEntity);
 
         message = "User successfully registered!";
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));

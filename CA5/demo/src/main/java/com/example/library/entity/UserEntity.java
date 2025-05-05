@@ -18,5 +18,13 @@ public class UserEntity {
 
     @Embedded
     private AddressEmbeddable address;
-
+    public UserEntity() {}
+    public UserEntity(String username, String password, String email, String role, int balance, AddressEmbeddable address) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.balance = balance;
+        this.address = address;
+    }
 }

@@ -1,10 +1,10 @@
 package com.example.library.service;
 
 import com.example.library.dto.ResponseWrapper;
-import com.example.library.model.Book;
-import com.example.library.model.Order;
-import com.example.library.model.User;
-import com.example.library.repository.Repository;
+import com.example.library.entity.*;
+import com.example.library.model.*;
+import com.example.library.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +14,21 @@ import java.util.ArrayList;
 import java.util.Map;
 @Service
 public class CartService {
-
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
+    private final UserBooksRepository userBooksRepository;
     private final Repository systemData;
     private String message;
 
-    public CartService(Repository systemData){ this.systemData = systemData; }
+    @Autowired
+    public CartService(UserRepository userRepository,
+                       BookRepository bookRepository,
+                       UserBooksRepository userBooksRepository, Repository systemData) {
+        this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
+        this.userBooksRepository = userBooksRepository;
+        this.systemData = systemData;
+    }
 
     public ResponseEntity<ResponseWrapper> addOrderToCart (String username, String bookTitle, Order orderToBeAddedToCart) {
         if (!systemData.isLoggedIn(username)) {
@@ -107,7 +117,7 @@ public class CartService {
             message = "Unauthorized: You should log into your account in order to access this.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        if(!systemData.userExists(username)){
+        if(!userRepository.existsByUsername(username)){
             message = "this username doesn't exist in system";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -133,7 +143,24 @@ public class CartService {
                 "totalCost", customer.getPayableAmount(),
                 "date", formattedTime
         );
+
+        String formattedPurchaseTime = purchaseTime.format(formatter);
+        for (Order order : customer.getShoppingCart()) {
+
+            UserEntity fetchedUser = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            BookEntity fetchedBook = bookRepository.findByTitle(order.getBook().getTitle())
+                    .orElseThrow(() -> new RuntimeException("Book not found"));
+            UserBooksEntity userBooks = new UserBooksEntity(
+                    fetchedUser, fetchedBook,
+                    order.getType().equals("borrow"),
+                    order.getType().equals("borrow") ? order.getBorrowDurationDays() : null,
+                    order.getType().equals("borrow") ? formattedPurchaseTime : null
+            );
+            userBooksRepository.save(userBooks);
+        }
         customer.updateInfoAfterCheckout();
+
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, userData));
     }
 

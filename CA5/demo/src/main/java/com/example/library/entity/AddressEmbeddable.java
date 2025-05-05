@@ -6,8 +6,12 @@ import jakarta.persistence.Embeddable;
 public class AddressEmbeddable {
     private String country;
     private String city;
+    public AddressEmbeddable () {}
+    public AddressEmbeddable(String country, String city) {
+        this.country = country;
+        this.city = city;
+    }
 
-    // Getters & Setters
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
 
