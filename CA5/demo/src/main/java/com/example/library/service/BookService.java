@@ -45,7 +45,7 @@ public class BookService {
     public ResponseEntity<ResponseWrapper> addBook (String username, String bookTitle,
                                                     String bookAuthor, String bookPublisher,
                                                     int publishYear, ArrayList<String> bookGenres,
-                                                    String bookContent, String bookSynopsys, int bookPrice){
+                                                    String bookContent, String bookSynopsis, int bookPrice){
 
         if (!systemData.isLoggedIn(username)) {
             message = "Unauthorized: You should log into your account in order to access this.";
@@ -57,7 +57,7 @@ public class BookService {
         }
 
         if(bookRepository.existsByTitle(bookTitle)){
-            message = "This book already exist in system !";
+            message = "This book already exist in system!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
         if(!authorRepository.existsByName(bookAuthor)){
@@ -80,9 +80,13 @@ public class BookService {
 
         Book newBook = new Book(bookTitle, bookAuthor,
                 bookPublisher, publishYear,
-                bookGenres,bookPrice,bookSynopsys,bookContent);
+                bookGenres,bookPrice,bookSynopsis,bookContent);
         BookEntity bookToBeAdded = new BookEntity(
-                bookTitle, bookAuthor, bookPublisher, publishYear, bookGenres, bookPrice, bookSynopsys, bookContent);
+                userAddingBook.getUsername() ,bookTitle, bookAuthor, bookPublisher,
+                publishYear, bookPrice, bookSynopsis, bookContent);
+        bookToBeAdded.setGenresFromList(bookGenres);
+
+        bookRepository.save(bookToBeAdded);
         systemData.addBook(newBook);
         message =  "Book added successfully.";
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));

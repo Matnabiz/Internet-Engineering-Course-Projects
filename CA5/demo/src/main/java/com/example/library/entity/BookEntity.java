@@ -30,11 +30,9 @@ public class BookEntity {
     private String genres;
 
     public BookEntity
-            (Long id,
-             String username, String title, String author,
+            (String username, String title, String author,
              String publisher, int year, int price,
-             String synopsis, String content, String genres) {
-        this.id = id;
+             String synopsis, String content) {
         this.username = username;
         this.title = title;
         this.author = author;
@@ -43,7 +41,6 @@ public class BookEntity {
         this.price = price;
         this.synopsis = synopsis;
         this.content = content;
-        this.genres = genres;
     }
 
     @JsonSetter("genres")
