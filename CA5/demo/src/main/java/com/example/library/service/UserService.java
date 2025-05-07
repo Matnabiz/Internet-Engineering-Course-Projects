@@ -5,28 +5,33 @@ import com.example.library.entity.AddressEmbeddable;
 import com.example.library.entity.UserEntity;
 import com.example.library.model.*;
 import com.example.library.repository.*;
+import com.example.library.entity.*;
 import com.example.library.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 @Service
 public class UserService {
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
     private final BookRepository bookRepository;
+    @Autowired
     private final UserBooksRepository userBooksRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository,
-                               BookRepository bookRepository,
-                               UserBooksRepository userBooksRepository, Repository systemData) {
+    public UserService(
+            UserRepository userRepository,
+            BookRepository bookRepository,
+            UserBooksRepository userBooksRepository,
+            Repository systemData) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
         this.userBooksRepository = userBooksRepository;
@@ -47,7 +52,7 @@ public class UserService {
     }
 
     public ResponseEntity<ResponseWrapper> loginUser(String username, String password) {
-        if (!systemData.userExists(username)) {
+        if (!userRepository.existsByUsername(username)) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(new ResponseWrapper(false, "User not found!", null));
@@ -57,9 +62,9 @@ public class UserService {
             message = "This user has already signed in.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        User userAskingToLogIn = systemData.findUser(username);
+        UserEntity userLoggingIn = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!Validation.authenticatePassword(password, userAskingToLogIn)) {
+        if (!Validation.authenticatePassword(password, userLoggingIn)) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseWrapper(false, "Invalid credentials.", null));
@@ -116,13 +121,14 @@ public class UserService {
             message = "Unauthorized: You should log into your account in order to access this.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        if(!systemData.userExists(username)){
+        if(!userRepository.existsByUsername(username)){
             message = "This username doesn't exist in system!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         User customer = systemData.findUser(username);
-        if(customer.getRole().equals("admin")) {
+        UserEntity userAddingCredit = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        if(userAddingCredit.getRole().equals("admin")) {
             message = "An admin can't add credit!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -134,6 +140,7 @@ public class UserService {
 
         else {
             customer.increaseBalance(credit);
+            userAddingCredit.setBalance(userAddingCredit.getBalance() + credit);
             message = "Credit added successfully.";
             return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
         }
@@ -180,18 +187,20 @@ public class UserService {
 
     public ResponseEntity<ResponseWrapper> showUserDetails(String username) {
 
-        if(!systemData.userExists(username)){
+        if(!userRepository.existsByUsername(username)){
             message = "this username doesn't exist in system";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        ArrayList<Map<String, Object>> booksInAccess = systemData.retrieveUserBooks(username);
-        Map<String, Object> finalPurchasedBook = Map.of(
-                "books", booksInAccess
-        );
+        List<UserBooksEntity> booksInAccess = UserBooksRepository.findByUserUsername(username);
+        if (booksInAccess == null || booksInAccess.isEmpty()) {
+            throw new RuntimeException("No books");
+        }
 
+
+        Map<String, Object> finalPurchasedBook = Map.of("books", booksInAccess);
         message = "User details retrieved successfully.\n";
-        User user = systemData.findUser(username);
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         Map<String, Object> userData = Map.of(
                 "username", user.getUsername(),
                 "email", user.getEmail(),

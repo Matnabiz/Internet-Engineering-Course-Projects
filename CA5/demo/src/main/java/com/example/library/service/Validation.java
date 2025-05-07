@@ -1,4 +1,5 @@
 package com.example.library.service;
+import com.example.library.entity.UserEntity;
 import com.example.library.model.Order;
 import com.example.library.model.User;
 
@@ -9,9 +10,8 @@ import java.util.regex.Pattern;
 public class Validation {
 
 
-
-    public static boolean authenticatePassword(String givenPassword, User user){
-        return user.authenticatePassword(givenPassword);
+    public static boolean authenticatePassword(String givenPassword, UserEntity user){
+        return givenPassword.equals(user.getPassword());
     }
 
     public static boolean validateUsername(String username){
