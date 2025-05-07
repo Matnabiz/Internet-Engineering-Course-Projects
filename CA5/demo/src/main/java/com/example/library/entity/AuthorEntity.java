@@ -18,4 +18,14 @@ public class AuthorEntity {
     private String nationality;
     private LocalDate born;
     private LocalDate died;
+
+    public AuthorEntity(String username, String name, String penName,
+                        String nationality, LocalDate born, LocalDate died) {
+        this.username = username;
+        this.name = name;
+        this.penName = penName;
+        this.nationality = nationality;
+        this.born = born;
+        this.died = died;
+    }
 }

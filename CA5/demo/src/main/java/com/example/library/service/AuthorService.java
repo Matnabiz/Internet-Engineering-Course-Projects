@@ -1,10 +1,13 @@
 package com.example.library.service;
 
 import com.example.library.dto.ResponseWrapper;
+import com.example.library.entity.AuthorEntity;
+import com.example.library.entity.UserEntity;
 import com.example.library.model.Author;
 import com.example.library.model.Book;
 import com.example.library.model.User;
-import com.example.library.repository.Repository;
+import com.example.library.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,29 +20,49 @@ import java.util.stream.Collectors;
 
 @Service
 public class AuthorService {
-
+    @Autowired
+    private final UserRepository userRepository;
+    @Autowired
+    private final AuthorRepository authorRepository;
+    @Autowired
+    private final BookRepository bookRepository;
+    @Autowired
+    private final UserBooksRepository userBooksRepository;
     private final Repository systemData;
     private String message;
 
-    public AuthorService(Repository systemData){ this.systemData = systemData; }
+    public AuthorService(
+            Repository systemData,
+            AuthorRepository authorRepository,
+            UserRepository userRepository,
+            BookRepository bookRepository,
+            UserBooksRepository userBooksRepository){
+        this.systemData = systemData;
+        this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
+        this.userBooksRepository = userBooksRepository;
+        this.authorRepository = authorRepository;
+    }
 
-    public ResponseEntity<ResponseWrapper> addAuthor(String adminUsername, String authorName, String penName, String nationality, String birthDate, String deathDate) {
+    public ResponseEntity<ResponseWrapper> addAuthor(
+            String adminUsername, String authorName, String authorPenName,
+            String nationality, String birthDate, String deathDate) {
         if (!systemData.isLoggedIn(adminUsername)) {
             message = "Unauthorized: You should log into your account in order to access this.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        if (!systemData.userExists(adminUsername)) {
+        if (!userRepository.existsByUsername(adminUsername)) {
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        User adminUser = systemData.findUser(adminUsername);
+        UserEntity adminUser = userRepository.findByUsername(adminUsername).orElseThrow(() -> new RuntimeException("Admin not found."));
 
         if (!adminUser.getRole().equals("admin")) {
             message = "Only an admin can add authors!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if (systemData.authorExists(authorName)) {
+        if (authorRepository.existsByName(authorName)) {
             message = "Author already exists!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -68,8 +91,8 @@ public class AuthorService {
             }
         }
 
-        Author newAuthor = new Author(authorName, penName, nationality, birthDateParsed, deathDateParsed);
-        systemData.addAuthor(newAuthor);
+        AuthorEntity newAuthor = new AuthorEntity(adminUsername, authorName, authorPenName, nationality, birthDateParsed, deathDateParsed);
+        authorRepository.save(newAuthor);
 
         message = "Author added successfully!";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
