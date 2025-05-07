@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AuthorRepository extends JpaRepository<AuthorEntity, Long> {
     boolean existsByNameAndPenName(String name, String penName);
-
+    boolean existsByName(String authorName);
 }

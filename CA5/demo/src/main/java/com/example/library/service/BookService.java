@@ -1,22 +1,46 @@
 package com.example.library.service;
 
 import com.example.library.dto.ResponseWrapper;
+import com.example.library.entity.BookEntity;
+import com.example.library.entity.UserEntity;
 import com.example.library.model.Book;
 import com.example.library.model.Comment;
 import com.example.library.model.User;
-import com.example.library.repository.Repository;
+import com.example.library.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
+
 @Service
 public class BookService {
 
     private final Repository systemData;
     private String message;
 
-    public BookService(Repository systemData){ this.systemData = systemData; }
+    @Autowired
+    private final UserRepository userRepository;
+    @Autowired
+    private final AuthorRepository authorRepository;
+    @Autowired
+    private final BookRepository bookRepository;
+    @Autowired
+    private final UserBooksRepository userBooksRepository;
+
+    public BookService(Repository systemData,
+                       AuthorRepository authorRepository,
+                       UserRepository userRepository,
+                       BookRepository bookRepository,
+                       UserBooksRepository userBooksRepository){
+        this.systemData = systemData;
+        this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
+        this.userBooksRepository = userBooksRepository;
+        this.authorRepository = authorRepository;
+    }
 
     public ResponseEntity<ResponseWrapper> addBook (String username, String bookTitle,
                                                     String bookAuthor, String bookPublisher,
@@ -27,22 +51,24 @@ public class BookService {
             message = "Unauthorized: You should log into your account in order to access this.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        if(!systemData.userExists(username)){
+        if(!userRepository.existsByUsername(username)){
             message = "This username doesn't exist in system!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if(systemData.bookExists(bookTitle)){
+        if(bookRepository.existsByTitle(bookTitle)){
             message = "This book already exist in system !";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        if(!systemData.authorExists(bookAuthor)){
+        if(!authorRepository.existsByName(bookAuthor)){
             message = "The author of this book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
         User bookAdder= systemData.findUser(username);
-        if (!bookAdder.getRole().equals("admin")) {
+        UserEntity userAddingBook = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));;
+
+        if (!userAddingBook.getRole().equals("admin")) {
             message = "Only an admin can add books!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -55,6 +81,8 @@ public class BookService {
         Book newBook = new Book(bookTitle, bookAuthor,
                 bookPublisher, publishYear,
                 bookGenres,bookPrice,bookSynopsys,bookContent);
+        BookEntity bookToBeAdded = new BookEntity(
+                bookTitle, bookAuthor, bookPublisher, publishYear, bookGenres, bookPrice, bookSynopsys, bookContent);
         systemData.addBook(newBook);
         message =  "Book added successfully.";
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));
