@@ -193,12 +193,7 @@ public class UserService {
         }
 
         List<UserBooksEntity> booksInAccess = UserBooksRepository.findByUserUsername(username);
-        if (booksInAccess == null || booksInAccess.isEmpty()) {
-            throw new RuntimeException("No books");
-        }
-
-
-        Map<String, Object> finalPurchasedBook = Map.of("books", booksInAccess);
+        if (booksInAccess == null) { booksInAccess = new ArrayList<>(); }
         message = "User details retrieved successfully.\n";
         UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         Map<String, Object> userData = Map.of(

@@ -1,11 +1,9 @@
 package com.example.library.service;
 
 import com.example.library.dto.ResponseWrapper;
-import com.example.library.entity.AuthorEntity;
-import com.example.library.entity.UserEntity;
+import com.example.library.entity.*;
 import com.example.library.model.Author;
 import com.example.library.model.Book;
-import com.example.library.model.User;
 import com.example.library.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -105,6 +103,7 @@ public class AuthorService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
+        AuthorEntity intendedAuthor = authorRepository.findByName(authorName).orElseThrow(() -> new RuntimeException("Author not found."));
         Author author = systemData.findAuthor(authorName);
         message = "Author details retrieved successfully.\n";
 
