@@ -126,7 +126,6 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        User customer = systemData.findUser(username);
         UserEntity userAddingCredit = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         if(userAddingCredit.getRole().equals("admin")) {
             message = "An admin can't add credit!";
@@ -139,8 +138,9 @@ public class UserService {
         }
 
         else {
-            customer.increaseBalance(credit);
-            userAddingCredit.setBalance(userAddingCredit.getBalance() + credit);
+            int balanceToBeAdded = userAddingCredit.getBalance();
+            userAddingCredit.setBalance(balanceToBeAdded + credit);
+            userRepository.save(userAddingCredit);
             message = "Credit added successfully.";
             return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
         }
