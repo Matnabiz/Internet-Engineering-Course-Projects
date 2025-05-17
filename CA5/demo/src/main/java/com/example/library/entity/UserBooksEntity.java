@@ -15,7 +15,7 @@ public class UserBooksEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_username", referencedColumnName = "username", nullable = false)
     private UserEntity user;
 
     @ManyToOne
