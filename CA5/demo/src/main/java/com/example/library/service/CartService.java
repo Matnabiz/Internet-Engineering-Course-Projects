@@ -97,7 +97,7 @@ public class CartService {
 
         for (Order order : cart) {
             BookEntity book = order.getBook();
-            int finalPrice = order.getOrderPrice();
+            int finalPrice = (int) order.getOrderPrice();
             totalCost += finalPrice;
 
             items.add(Map.of(

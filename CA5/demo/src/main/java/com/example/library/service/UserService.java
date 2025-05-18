@@ -232,7 +232,7 @@ public class UserService {
                         "author", order.getBook().getAuthor(),
                         "publisher", order.getBook().getPublisher(),
                         "genres", order.getBook().getGenres(),
-                        "year", order.getBook().getPublicationYear(),
+                        "year", order.getBook().getYear(),
                         "isBorrowed", order.getType().equalsIgnoreCase("borrow"),
                         "price", order.getBook().getPrice(),
                         "finalPrice", order.getOrderPrice()

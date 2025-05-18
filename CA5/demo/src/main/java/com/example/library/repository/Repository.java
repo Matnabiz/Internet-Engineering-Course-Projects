@@ -95,7 +95,7 @@ public class Repository {
                             "author", order.getBook().getAuthor(),
                             "publisher", order.getBook().getPublisher(),
                             "category", order.getBook().getGenres(),
-                            "year", order.getBook().getPublicationYear(),
+                            "year", order.getBook().getYear(),
                             "price", order.getBook().getPrice(),
                             "isBorrowed", order.getType().equals("borrow")
                     );
