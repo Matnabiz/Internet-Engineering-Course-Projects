@@ -29,6 +29,8 @@ public class BookEntity {
 
     private String genres;
 
+    public BookEntity() {}
+
     public BookEntity
             (String username, String title, String author,
              String publisher, int year, int price,
