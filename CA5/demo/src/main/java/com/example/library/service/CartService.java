@@ -55,7 +55,6 @@ public class CartService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, "Book already in cart!", null));
         }
 
-        // Check if already purchased or borrowed
         boolean alreadyOwned = userBooksRepository.existsByUserAndBook(user, book);
         if (alreadyOwned) {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, "You already have this book!", null));
@@ -145,7 +144,7 @@ public class CartService {
 
         for (Order order : cart) {
             BookEntity book = order.getBook();
-            UserBooksEntity userBook = new UserBooksEntity(
+            OrderEntity userBook = new OrderEntity(
                     user, book,
                     order.getType().equals("borrow"),
                     order.getType().equals("borrow") ? order.getBorrowDurationDays() : null,

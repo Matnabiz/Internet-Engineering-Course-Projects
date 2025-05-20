@@ -192,7 +192,7 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        List<UserBooksEntity> booksInAccess = UserBooksRepository.findByUserUsername(username);
+        List<OrderEntity> booksInAccess = UserBooksRepository.findByUserUsername(username);
         if (booksInAccess == null) { booksInAccess = new ArrayList<>(); }
         message = "User details retrieved successfully.\n";
         UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
