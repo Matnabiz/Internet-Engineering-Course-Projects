@@ -37,4 +37,12 @@ public class OrderEntity {
         this.borrowDays = loanDays;
         this.startDate = startDate;
     }
+
+    public double computeOrderPrice(){
+        if(!this.borrowed){
+            return this.book.getPrice();
+        }
+        return this.book.getPrice() * ((double) borrowDays /10);
+
+    }
 }

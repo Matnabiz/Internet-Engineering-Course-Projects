@@ -259,17 +259,17 @@ public class UserService {
     }
 
     public ResponseEntity<ResponseWrapper> showPurchasedBooks (String username){
-        if (!systemData.userExists(username)) {
+        if (!userRepository.existsByUsername(username)) {
             message = "User doesn't exist";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        User user = systemData.findUser(username);
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User doesn't exist"));
         if (user.getRole().equals("admin")) {
             message = "This command isn't for admins!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        ArrayList<Map<String, Object>> booksInAccess = systemData.retrieveUserBooks(username);
+        ArrayList<OrderEntity> booksInAccess = orderRepository.retrieveUserBooks(username);
         Map<String, Object> finalPurchasedBook = Map.of(
                 "username", username,
                 "books", booksInAccess
