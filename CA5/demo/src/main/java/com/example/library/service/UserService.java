@@ -24,18 +24,21 @@ public class UserService {
     @Autowired
     private final BookRepository bookRepository;
     @Autowired
-    private final UserBooksRepository userBooksRepository;
-
+    private final CommentRepository commentRepository;
+    @Autowired
+    private final OrderRepository orderRepository;
     @Autowired
     public UserService(
             UserRepository userRepository,
             BookRepository bookRepository,
-            UserBooksRepository userBooksRepository,
+            CommentRepository commentRepository,
+            OrderRepository orderRepository,
             Repository systemData) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
-        this.userBooksRepository = userBooksRepository;
         this.systemData = systemData;
+        this.commentRepository = commentRepository;
+        this.orderRepository = orderRepository;
     }
     private final Repository systemData;
     private String message;
@@ -107,8 +110,6 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        User newUser = new User(username, password, email, address, role.toLowerCase(), 0);
-        systemData.addUser(newUser);
         UserEntity newUserEntity = new UserEntity(username, password, email, role, 0, new AddressEmbeddable((String) address.userCountry, (String) address.userCity));
         userRepository.save(newUserEntity);
 
@@ -151,10 +152,10 @@ public class UserService {
             message = "Unauthorized: You should log into your account in order to access this.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        User customer = systemData.findUser(username);
-        Book book = systemData.findBook(bookTitle);
+        UserEntity customer = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found."));
+        BookEntity book = bookRepository.findByTitle(bookTitle).orElseThrow(() -> new RuntimeException("Book not found."));
 
-        if(!systemData.userExists(username)){
+        if(!userRepository.existsByUsername(username)){
             message = "This username doesn't exist in system";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -164,7 +165,7 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if(!systemData.bookExists(bookTitle)){
+        if(!bookRepository.existsByTitle(bookTitle)){
             message = "Book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -174,13 +175,13 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if(!customer.userHasAccessToBook(bookTitle)){
+        if(!userHasAccessToBook(customer, book)){
             message = "You can't submit a comment for this book.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        Comment newComment = new Comment(username, commentBody, rating);
-        book.addComment(newComment);
+        CommentEntity newComment = new CommentEntity(customer, book, rating, commentBody);
+
         message = "Review added successfully.";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
     }
@@ -192,7 +193,7 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        List<OrderEntity> booksInAccess = UserBooksRepository.findByUserUsername(username);
+        List<OrderEntity> booksInAccess = OrderRepository.findByUserUsername(username);
         if (booksInAccess == null) { booksInAccess = new ArrayList<>(); }
         message = "User details retrieved successfully.\n";
         UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
@@ -275,6 +276,10 @@ public class UserService {
         );
         message = "Purchased books retrieved successfully.";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, finalPurchasedBook));
+    }
+
+    public boolean userHasAccessToBook(UserEntity user, BookEntity book){
+        return orderRepository.existsByUserAndBook(user, book);
     }
 
 }

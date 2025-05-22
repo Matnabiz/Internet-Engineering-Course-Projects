@@ -4,7 +4,7 @@ import com.example.library.dto.ResponseWrapper;
 import com.example.library.entity.*;
 import com.example.library.model.Order;
 import com.example.library.repository.BookRepository;
-import com.example.library.repository.UserBooksRepository;
+import com.example.library.repository.OrderRepository;
 import com.example.library.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +19,17 @@ public class CartService {
 
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
-    private final UserBooksRepository userBooksRepository;
+    private final OrderRepository orderRepository;
     private final Map<String, List<Order>> userCarts = new HashMap<>(); // Simulated in-memory cart
     private String message;
 
     @Autowired
     public CartService(UserRepository userRepository,
                        BookRepository bookRepository,
-                       UserBooksRepository userBooksRepository) {
+                       OrderRepository orderRepository) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
-        this.userBooksRepository = userBooksRepository;
+        this.orderRepository = orderRepository;
     }
 
     public ResponseEntity<ResponseWrapper> addOrderToCart(String username, String bookTitle, Order order) {
@@ -55,7 +55,7 @@ public class CartService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, "Book already in cart!", null));
         }
 
-        boolean alreadyOwned = userBooksRepository.existsByUserAndBook(user, book);
+        boolean alreadyOwned = orderRepository.existsByUserAndBook(user, book);
         if (alreadyOwned) {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, "You already have this book!", null));
         }
@@ -150,7 +150,7 @@ public class CartService {
                     order.getType().equals("borrow") ? order.getBorrowDurationDays() : null,
                     order.getType().equals("borrow") ? formattedDate : null
             );
-            userBooksRepository.save(userBook);
+            orderRepository.save(userBook);
         }
 
         user.setBalance(user.getBalance() - totalCost);

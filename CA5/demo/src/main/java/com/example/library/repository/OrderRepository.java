@@ -7,10 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserBooksRepository extends JpaRepository<OrderEntity, String> {
+public interface OrderRepository extends JpaRepository<OrderEntity, String> {
     static List<OrderEntity> findByUserUsername(String username) {
         return null;
     }
-
     boolean existsByUserAndBook(UserEntity user, BookEntity book);
 }

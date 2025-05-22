@@ -25,7 +25,7 @@ public class AuthorService {
     @Autowired
     private final BookRepository bookRepository;
     @Autowired
-    private final UserBooksRepository userBooksRepository;
+    private final OrderRepository userBooksRepository;
     private final Repository systemData;
     private String message;
 
@@ -34,7 +34,7 @@ public class AuthorService {
             AuthorRepository authorRepository,
             UserRepository userRepository,
             BookRepository bookRepository,
-            UserBooksRepository userBooksRepository){
+            OrderRepository userBooksRepository){
         this.systemData = systemData;
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;

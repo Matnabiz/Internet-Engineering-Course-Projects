@@ -2,18 +2,18 @@ package com.example.library.service;
 
 import com.example.library.dto.ResponseWrapper;
 import com.example.library.entity.BookEntity;
+import com.example.library.entity.CommentEntity;
 import com.example.library.entity.UserEntity;
 import com.example.library.model.Book;
 import com.example.library.model.Comment;
-import com.example.library.model.User;
 import com.example.library.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class BookService {
@@ -28,18 +28,22 @@ public class BookService {
     @Autowired
     private final BookRepository bookRepository;
     @Autowired
-    private final UserBooksRepository userBooksRepository;
+    private final OrderRepository orderRepository;
+    @Autowired
+    private final CommentRepository commentRepository;
 
     public BookService(Repository systemData,
                        AuthorRepository authorRepository,
                        UserRepository userRepository,
                        BookRepository bookRepository,
-                       UserBooksRepository userBooksRepository){
+                       OrderRepository userBooksRepository,
+                       CommentRepository commentRepository){
         this.systemData = systemData;
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
-        this.userBooksRepository = userBooksRepository;
+        this.orderRepository = userBooksRepository;
         this.authorRepository = authorRepository;
+        this.commentRepository = commentRepository;
     }
 
     public ResponseEntity<ResponseWrapper> addBook (String username, String bookTitle,
@@ -65,7 +69,6 @@ public class BookService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        User bookAdder= systemData.findUser(username);
         UserEntity userAddingBook = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));;
 
         if (!userAddingBook.getRole().equals("admin")) {
@@ -87,7 +90,6 @@ public class BookService {
         bookToBeAdded.setGenresFromList(bookGenres);
 
         bookRepository.save(bookToBeAdded);
-        systemData.addBook(newBook);
         message =  "Book added successfully.";
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));
 
@@ -95,21 +97,22 @@ public class BookService {
 
     public ResponseEntity<ResponseWrapper> showBookDetails(String bookTitle){
 
-        if (!systemData.bookExists(bookTitle)) {
+        if (!bookRepository.existsByTitle(bookTitle)) {
             message = "Book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        Book book = systemData.findBook(bookTitle);
+        BookEntity book = bookRepository.findByTitle(bookTitle).orElseThrow(() -> new RuntimeException("Book not found."));
+
         message = "Book details retrieved successfully.\n";
         Map<String, Object> bookData = Map.of(
                 "author", book.getAuthor(),
                 "publisher", book.getPublisher(),
                 "genres", book.getGenres(),
-                "year", book.getPublicationYear(),
+                "year", book.getYear(),
                 "price", book.getPrice(),
                 "reviews", this.gatherBookReviews(bookTitle),
-                "averageRating", book.computeAverageRating()
+                "averageRating", computeAverageRating(book)
         );
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, bookData));
     }
@@ -152,6 +155,21 @@ public class BookService {
         );
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, bookContent));
 
+    }
+
+    public double computeAverageRating(BookEntity book){
+        List<CommentEntity> comments = commentRepository.findByBook(book);
+
+        if (comments.isEmpty()) {
+            return 0.0;
+        }
+
+        int totalRating = 0;
+        for (CommentEntity comment : comments) {
+            totalRating += comment.getRating();
+        }
+
+        return (double) totalRating / comments.size();
     }
 
 
