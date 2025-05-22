@@ -2,188 +2,140 @@ package com.example.library.service;
 
 import com.example.library.dto.ResponseWrapper;
 import com.example.library.model.Book;
-import com.example.library.repository.Repository;
+import com.example.library.entity.BookEntity;
+import com.example.library.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 @Service
 public class SearchService {
+    @Autowired
+    private final UserRepository userRepository;
+    @Autowired
+    private final BookRepository bookRepository;
+    @Autowired
+    private final ReviewRepository reviewRepository;
+    @Autowired
+    private final OrderRepository orderRepository;
+    @Autowired
+    public SearchService(
+            UserRepository userRepository,
+            BookRepository bookRepository,
+            ReviewRepository reviewRepository,
+            OrderRepository orderRepository,
+            Repository systemData) {
+        this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
+        this.reviewRepository = reviewRepository;
+        this.orderRepository = orderRepository;
+    }
 
-    private final Repository systemData;
-    private String message;
 
-    public SearchService(Repository systemData){ this.systemData = systemData; }
-
-    public ResponseEntity<ResponseWrapper> searchBooksByTitle(String bookTitle){
-
-        ArrayList<Book> searchedBook = (ArrayList<Book>) systemData.books.stream()
-                .filter(book -> book.getTitle().toLowerCase().contains(bookTitle.toLowerCase()))
-                .collect(Collectors.toList());
-
-        ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
-        for(Book book : searchedBook){
-            fBooks.add(Map.of("title",book.getTitle(),
-                    "author",book.getAuthor(),
-                    "publisher",book.getPublisher(),
-                    "genres",book.getGenres(),
-                    "year",book.getPublicationYear(),
-                    "price",book.getPrice(),
-                    "synopsis",book.getSynopsis()));
-        }
-
+    public ResponseEntity<ResponseWrapper> searchBooksByTitle(String bookTitle) {
+        List<BookEntity> books = bookRepository.findByTitleContainingIgnoreCase(bookTitle);
+        List<Map<String, Object>> fBooks = this.bookListToHashMap(books);
         Map<String, Object> searchResult = Map.of(
                 "search", bookTitle,
-                "books",fBooks
+                "books", fBooks
         );
-        message = "Books containing '" + bookTitle + "'  in their title:";
+        String message = "Books containing '" + bookTitle + "' in their title:";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
-
-    public ResponseEntity<ResponseWrapper> searchBooksByAuthor(String authorSearchQuery){
-
-        ArrayList<Book> searchedBook = (ArrayList<Book>) systemData.books.stream()
-                .filter(book -> book.getAuthor().trim().toLowerCase().contains(authorSearchQuery.toLowerCase()))
-                .collect(Collectors.toList());
-
-        ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
-        for(Book book : searchedBook){
-            fBooks.add(Map.of("title",book.getTitle(),
-                    "author",book.getAuthor(),
-                    "publisher",book.getPublisher(),
-                    "genres",book.getGenres(),
-                    "year",book.getPublicationYear(),
-                    "price",book.getPrice(),
-                    "synopsis",book.getSynopsis()));
-        }
-
+    public ResponseEntity<ResponseWrapper> searchBooksByAuthor(String author) {
+        List<BookEntity> books = bookRepository.findByAuthorContainingIgnoreCase(author);
+        List<Map<String, Object>> fBooks = this.bookListToHashMap(books);
         Map<String, Object> searchResult = Map.of(
-                "search", authorSearchQuery,
-                "books",fBooks
+                "search", author,
+                "books", fBooks
         );
-        message = "Books by " + authorSearchQuery;
+        String message = "Books by " + author;
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
-
-    public ResponseEntity<ResponseWrapper> searchBooksByGenre (String genre){
-        ArrayList<Book> searchedBook = (ArrayList<Book>) systemData.books.stream()
-                .filter(book -> book.getGenres().contains(genre))
-                .collect(Collectors.toList());
-
-        ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
-        for(Book book : searchedBook){
-            fBooks.add(Map.of("title",book.getTitle(),
-                    "author",book.getAuthor(),
-                    "publisher",book.getPublisher(),
-                    "genres",book.getGenres(),
-                    "year",book.getPublicationYear(),
-                    "price",book.getPrice(),
-                    "synopsis",book.getSynopsis()));
-        }
-
+    public ResponseEntity<ResponseWrapper> searchBooksByGenre(String genre) {
+        List<BookEntity> books = bookRepository.findByGenresContainingIgnoreCase(genre);
+        List<Map<String, Object>> fBooks = this.bookListToHashMap(books);
         Map<String, Object> searchResult = Map.of(
                 "search", genre,
-                "books",fBooks
+                "books", fBooks
         );
-        message = "Books in the '" + genre + "' genre:";
+        String message = "Books in the '" + genre + "' genre:";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
-
-    public ResponseEntity<ResponseWrapper> searchBooksByYear (int fromYear,int toYear){
-        ArrayList<Book> searchedBook = (ArrayList<Book>) systemData.books.stream()
-                .filter(book -> book.getPublicationYear() >= fromYear && book.getPublicationYear() <= toYear)
-                .collect(Collectors.toList());
-
-        ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
-        for(Book book : searchedBook){
-            fBooks.add(Map.of("title",book.getTitle(),
-                    "author",book.getAuthor(),
-                    "publisher",book.getPublisher(),
-                    "genres",book.getGenres(),
-                    "year",book.getPublicationYear(),
-                    "price",book.getPrice(),
-                    "synopsis",book.getSynopsis()));
-        }
-
+    public ResponseEntity<ResponseWrapper> searchBooksByYear(int fromYear, int toYear) {
+        List<BookEntity> books = bookRepository.findByYearBetween(fromYear, toYear);
+        List<Map<String, Object>> fBooks = this.bookListToHashMap(books);
         Map<String, Object> searchResult = Map.of(
-                "search", fromYear+"-"+toYear,
-                "books",fBooks
+                "search", fromYear + "-" + toYear,
+                "books", fBooks
         );
-        message = "Books published from '"+fromYear+"' to '"+toYear+"':";
+
+        String message = "Books published from '" + fromYear + "' to '" + toYear + "':";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
     }
-
     public ResponseEntity<ResponseWrapper> professionalSearch(String searchTitle,
-                                                              String searchAuthor, String searchGenre,
-                                                              int searchFromYear, int searchEndYear,
+                                                              String searchAuthor,
+                                                              String searchGenre,
+                                                              int searchFromYear,
+                                                              int searchEndYear,
                                                               String arrangeResultBy,
-                                                              String arrangeMode){
+                                                              String arrangeMode) {
 
-        ArrayList<Book> searchedBook = new ArrayList<Book>();
+        Specification<BookEntity> spec = Specification.where(null);
 
-        if(searchTitle!=null) {
-            searchedBook = (ArrayList<Book>) systemData.books.stream()
-                    .filter(book -> book.getTitle().trim().toLowerCase().contains(searchTitle.toLowerCase()))
-                    .collect(Collectors.toList());
+        if (searchTitle != null && !searchTitle.isBlank()) {
+            spec = spec.and(BookSpecifications.titleContains(searchTitle));
         }
 
-        if(searchAuthor!=null) {
-            searchedBook = (ArrayList<Book>) searchedBook.stream()
-                    .filter(book -> book.getAuthor().trim().toLowerCase().contains(searchAuthor.toLowerCase()))
-                    .collect(Collectors.toList());
+        if (searchAuthor != null && !searchAuthor.isBlank()) {
+            spec = spec.and(BookSpecifications.authorContains(searchAuthor));
         }
 
-        if(searchGenre!=null) {
-            searchedBook = (ArrayList<Book>) searchedBook.stream()
-                    .filter(book -> book.getGenres().contains(searchGenre))
-                    .collect(Collectors.toList());
-        }
-        if(searchFromYear!=0){
-            searchedBook = (ArrayList<Book>) searchedBook.stream()
-                    .filter(book -> book.getPublicationYear() >= searchFromYear && book.getPublicationYear() <= searchEndYear)
-                    .collect(Collectors.toList());
+        if (searchGenre != null && !searchGenre.isBlank()) {
+            spec = spec.and(BookSpecifications.genreEquals(searchGenre));
         }
 
-        if(arrangeResultBy!=null){
-            if(arrangeResultBy == "avergeRate"){
-                if(arrangeMode=="HighToLow") {
-                    ArrayList<Book> sortedBooks = new ArrayList<>(searchedBook);
-                    sortedBooks.sort(Comparator.comparingDouble(Book::getAverageRate).reversed());
-                } else if (arrangeMode=="LowToHigh") {
-                    ArrayList<Book> sortedBooks = new ArrayList<>(searchedBook);
-                    sortedBooks.sort(Comparator.comparingDouble(Book::getAverageRate));
-                }
-            }
-            if(arrangeResultBy == "NumberOfComments"){
-                if(arrangeMode=="HighToLow") {
-                    ArrayList<Book> sortedBooks = new ArrayList<>(searchedBook);
-                    sortedBooks.sort(Comparator.comparingDouble(Book::getNumberOfComments).reversed());
-                } else if (arrangeMode=="LowToHigh") {
-                    ArrayList<Book> sortedBooks = new ArrayList<>(searchedBook);
-                    sortedBooks.sort(Comparator.comparingDouble(Book::getNumberOfComments));
-                }
-            }
+        if (searchFromYear != 0 && searchEndYear != 0) {
+            spec = spec.and(BookSpecifications.yearBetween(searchFromYear, searchEndYear));
         }
 
-        ArrayList<Map<String,Object>> fBooks = new ArrayList<>();
-        for(Book book : searchedBook){
-            fBooks.add(Map.of("title",book.getTitle(),
-                    "author",book.getAuthor(),
-                    "publisher",book.getPublisher(),
-                    "genres",book.getGenres(),
-                    "year",book.getPublicationYear(),
-                    "price",book.getPrice(),
-                    "synopsis",book.getSynopsis()));
+        Sort sort = Sort.unsorted();
+
+        if ("averageRate".equals(arrangeResultBy)) {
+            sort = Sort.by("averageRate");
+        } else if ("numberOfComments".equals(arrangeResultBy)) {
+            sort = Sort.by("numberOfComments");
         }
 
-        Map<String, Object> searchResult = Map.of(
-                "books",fBooks
-        );
-        message = "searched Success";
-        return ResponseEntity.ok().body(new ResponseWrapper(true, message, searchResult));
+        if ("HighToLow".equals(arrangeMode)) {
+            sort = sort.descending();
+        } else if ("LowToHigh".equals(arrangeMode)) {
+            sort = sort.ascending();
+        }
+
+        List<BookEntity> results = bookRepository.findAll(spec, sort);
+        List<Map<String, Object>> fBooks = this.bookListToHashMap(results);
+        String message = "Search successful";
+        return ResponseEntity.ok(new ResponseWrapper(true, message, fBooks));
+    }
+    private List<Map<String, Object>> bookListToHashMap(List<BookEntity> books){
+        return books.stream()
+                .map(book -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("title", book.getTitle());
+                    map.put("author", book.getAuthor());
+                    map.put("publisher", book.getPublisher());
+                    map.put("genres", book.getGenres());
+                    map.put("year", book.getYear());
+                    map.put("price", book.getPrice());
+                    map.put("synopsis", book.getSynopsis());
+                    return map;
+                })
+                .toList();
     }
 
 
