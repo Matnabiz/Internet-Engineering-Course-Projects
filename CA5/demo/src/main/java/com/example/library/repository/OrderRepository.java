@@ -14,8 +14,9 @@ import java.util.Map;
 public interface OrderRepository extends JpaRepository<OrderEntity, String> {
     List<OrderEntity> findByUserUsername(String username);
     boolean existsByUserAndBook(UserEntity user, BookEntity book);
-    @Query("SELECT new map(b.title as title, b.author as author, b.price as price, o.type as type, o.orderPrice as finalPrice) " +
+    @Query("SELECT new map(b.title as title, b.author as author, b.price as price, o.borrowed as borrowed, o.startDate as startDate, o.borrowDays as borrowDays) " +
             "FROM OrderEntity o JOIN o.book b JOIN o.user u WHERE u.username = :username")
-    ArrayList<OrderEntity> retrieveUserBooks(@Param("username") String username);
+    List<Map<String, Object>> retrieveUserBooks(@Param("username") String username);
+
 
 }

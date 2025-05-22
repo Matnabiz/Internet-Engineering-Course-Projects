@@ -15,10 +15,12 @@ public class ReviewEntity {
     private Long id;
 
     private String username;
-    private String title;
+    private String bookTitle;
     private String comment;
     private String date;
-    private int rate;
+    private int rating;
 
 
+    public ReviewEntity(UserEntity customer, BookEntity book, int rating, String commentBody) {
+    }
 }

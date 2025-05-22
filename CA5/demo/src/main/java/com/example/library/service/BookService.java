@@ -1,11 +1,7 @@
 package com.example.library.service;
 
 import com.example.library.dto.ResponseWrapper;
-import com.example.library.entity.BookEntity;
-import com.example.library.entity.CommentEntity;
-import com.example.library.entity.UserEntity;
-import com.example.library.model.Book;
-import com.example.library.model.Comment;
+import com.example.library.entity.*;
 import com.example.library.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,20 +26,20 @@ public class BookService {
     @Autowired
     private final OrderRepository orderRepository;
     @Autowired
-    private final CommentRepository commentRepository;
+    private final ReviewRepository reviewRepository;
 
     public BookService(Repository systemData,
                        AuthorRepository authorRepository,
                        UserRepository userRepository,
                        BookRepository bookRepository,
                        OrderRepository userBooksRepository,
-                       CommentRepository commentRepository){
+                       ReviewRepository reviewRepository){
         this.systemData = systemData;
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
         this.orderRepository = userBooksRepository;
         this.authorRepository = authorRepository;
-        this.commentRepository = commentRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public ResponseEntity<ResponseWrapper> addBook (String username, String bookTitle,
@@ -69,7 +65,9 @@ public class BookService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        UserEntity userAddingBook = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));;
+        UserEntity userAddingBook = userRepository.findByUsername(username).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
 
         if (!userAddingBook.getRole().equals("admin")) {
             message = "Only an admin can add books!";
@@ -81,9 +79,6 @@ public class BookService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        Book newBook = new Book(bookTitle, bookAuthor,
-                bookPublisher, publishYear,
-                bookGenres,bookPrice,bookSynopsis,bookContent);
         BookEntity bookToBeAdded = new BookEntity(
                 userAddingBook.getUsername() ,bookTitle, bookAuthor, bookPublisher,
                 publishYear, bookPrice, bookSynopsis, bookContent);
@@ -119,10 +114,12 @@ public class BookService {
 
     public ArrayList<Map<String,Object>> gatherBookReviews (String bookTitle){
 
-        Book book = systemData.findBook(bookTitle);
+        BookEntity book = bookRepository.findByTitle(bookTitle).orElseThrow(
+                () -> new RuntimeException("Book not found")
+        );
         ArrayList<Map<String,Object>> reviews = new ArrayList<>();
-        for(Comment comment : book.getComments()){
-            reviews.add(Map.of("username",comment.getUsername(),"rate",comment.getRating(),"comment",comment.getBody()));
+        for(ReviewEntity review : reviewRepository.findByBookTitle(bookTitle)){
+            reviews.add(Map.of("username",review.getUsername(),"rating",review.getRating(),"comment",review.getComment()));
         }
         return  reviews;
     }
@@ -132,12 +129,12 @@ public class BookService {
             message = "Unauthorized: You should log into your account in order to access this.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        if (!systemData.userExists(username)) {
+        if (!userRepository.existsByUsername(username)) {
             message = "User doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        if (!systemData.bookExists(bookTitle)) {
+        if (!bookRepository.existsByTitle(bookTitle)) {
             message = "Book doesn't exist!";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
@@ -148,7 +145,10 @@ public class BookService {
         }
 
         message = "Book Content retrieved successfully.";
-        Book bookToBeShown = systemData.findBook(bookTitle);
+        BookEntity bookToBeShown = bookRepository.findByTitle(bookTitle).orElseThrow(
+                () -> new RuntimeException("Book not found")
+        );
+
         Map<String, Object> bookContent = Map.of(
                 "title", bookTitle,
                 "content", bookToBeShown.getContent()
@@ -158,18 +158,18 @@ public class BookService {
     }
 
     public double computeAverageRating(BookEntity book){
-        List<CommentEntity> comments = commentRepository.findByBook(book);
+        List<ReviewEntity> reviews = reviewRepository.findByBookTitle(book.getTitle());
 
-        if (comments.isEmpty()) {
+        if (reviews.isEmpty()) {
             return 0.0;
         }
 
         int totalRating = 0;
-        for (CommentEntity comment : comments) {
-            totalRating += comment.getRating();
+        for (ReviewEntity review : reviews) {
+            totalRating += review.getRating();
         }
 
-        return (double) totalRating / comments.size();
+        return (double) totalRating / reviews.size();
     }
 
 

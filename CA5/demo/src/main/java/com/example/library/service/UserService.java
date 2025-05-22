@@ -1,8 +1,6 @@
 package com.example.library.service;
 
 import com.example.library.dto.ResponseWrapper;
-import com.example.library.entity.AddressEmbeddable;
-import com.example.library.entity.UserEntity;
 import com.example.library.model.*;
 import com.example.library.repository.*;
 import com.example.library.entity.*;
@@ -24,20 +22,20 @@ public class UserService {
     @Autowired
     private final BookRepository bookRepository;
     @Autowired
-    private final CommentRepository commentRepository;
+    private final ReviewRepository reviewRepository;
     @Autowired
     private final OrderRepository orderRepository;
     @Autowired
     public UserService(
             UserRepository userRepository,
             BookRepository bookRepository,
-            CommentRepository commentRepository,
+            ReviewRepository reviewRepository,
             OrderRepository orderRepository,
             Repository systemData) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
+        this.reviewRepository = reviewRepository;
         this.systemData = systemData;
-        this.commentRepository = commentRepository;
         this.orderRepository = orderRepository;
     }
     private final Repository systemData;
@@ -180,7 +178,7 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        CommentEntity newComment = new CommentEntity(customer, book, rating, commentBody);
+        ReviewEntity newReview = new ReviewEntity(customer, book, rating, commentBody);
 
         message = "Review added successfully.";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
@@ -193,7 +191,7 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        List<OrderEntity> booksInAccess = OrderRepository.findByUserUsername(username);
+        List<OrderEntity> booksInAccess = orderRepository.findByUserUsername(username);
         if (booksInAccess == null) { booksInAccess = new ArrayList<>(); }
         message = "User details retrieved successfully.\n";
         UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
@@ -269,7 +267,7 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        ArrayList<OrderEntity> booksInAccess = orderRepository.retrieveUserBooks(username);
+        List<Map<String, Object>> booksInAccess = orderRepository.retrieveUserBooks(username);
         Map<String, Object> finalPurchasedBook = Map.of(
                 "username", username,
                 "books", booksInAccess
