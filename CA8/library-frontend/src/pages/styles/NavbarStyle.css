@@ -1,0 +1,56 @@
+/* Navbar container */
+.navbar {
+    background-color: #ffffff; /* Dark slate background */
+    padding: 1rem 2rem;
+    color: rgb(219, 16, 16);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Search input field */
+  .search-input {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 250px;
+    /* margin-left: 0.5rem; */
+    background-color: #e9e8e8;
+    color: #0f172a;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  
+  /* Dropdown select */
+  .my-search-select {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #e9e8e8;
+    color: #0f172a;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .my-search-select option {
+    color: #0e0000;       /* Text color of options */
+    background-color: #e9e8e8; /* Background when dropdown opens */
+  }
+  
+  
+  /* Button style */
+  .my-btn {
+    background-color: #16423C; /* Blue button */
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .my-btn:hover {
+    background-color: #012d23; /* Darker on hover */
+  }
+  

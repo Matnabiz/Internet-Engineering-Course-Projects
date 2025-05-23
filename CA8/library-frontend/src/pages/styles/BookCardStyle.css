@@ -1,0 +1,10 @@
+/* styles/BookCardStyle.css */
+.book-card {
+    width: 200px;
+    margin: 10px;
+  }
+  .book-card img {
+    height: 250px;
+    object-fit: cover;
+  }
+  
