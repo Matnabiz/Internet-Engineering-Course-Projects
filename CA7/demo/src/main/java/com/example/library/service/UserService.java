@@ -5,7 +5,7 @@ import com.example.library.model.*;
 import com.example.library.repository.*;
 import com.example.library.entity.*;
 import com.example.library.repository.Repository;
-import jakarta.transaction.Transactional;
+import com.example.library.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -109,7 +109,9 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        UserEntity newUserEntity = new UserEntity(username, password, email, role, 0, new AddressEmbeddable((String) address.userCountry, (String) address.userCity));
+        String salt = PasswordUtils.generateSalt();
+        String hashedPassword = PasswordUtils.hashPassword(password, salt);
+        UserEntity newUserEntity = new UserEntity(username, hashedPassword, salt, email, role, 0, new AddressEmbeddable((String) address.userCountry, (String) address.userCity));
         userRepository.save(newUserEntity);
 
         message = "User successfully registered!";
@@ -145,7 +147,7 @@ public class UserService {
             return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
         }
     }
-    @Transactional
+
     public ResponseEntity<ResponseWrapper> addComment(String username, String bookTitle, String commentBody, int rating) {
         if (!systemData.isLoggedIn(username)) {
             message = "Unauthorized: You should log into your account in order to access this.";
