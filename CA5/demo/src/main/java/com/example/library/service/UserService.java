@@ -5,6 +5,7 @@ import com.example.library.model.*;
 import com.example.library.repository.*;
 import com.example.library.entity.*;
 import com.example.library.repository.Repository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -144,19 +145,22 @@ public class UserService {
             return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));
         }
     }
-
+    @Transactional
     public ResponseEntity<ResponseWrapper> addComment(String username, String bookTitle, String commentBody, int rating) {
         if (!systemData.isLoggedIn(username)) {
             message = "Unauthorized: You should log into your account in order to access this.";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
-        UserEntity customer = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found."));
-        BookEntity book = bookRepository.findByTitle(bookTitle).orElseThrow(() -> new RuntimeException("Book not found."));
-
         if(!userRepository.existsByUsername(username)){
             message = "This username doesn't exist in system";
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
+        UserEntity customer = userRepository.findByUsername(username).orElseThrow(
+                () -> new RuntimeException("User not found.")
+        );
+        BookEntity book = bookRepository.findByTitle(bookTitle).orElseThrow(
+                () -> new RuntimeException("Book not found.")
+        );
 
         if(customer.getRole().equals("admin")) {
             message = "As an admin, You can't submit a comment.";
@@ -178,7 +182,8 @@ public class UserService {
             return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
         }
 
-        ReviewEntity newReview = new ReviewEntity(customer, book, rating, commentBody);
+        ReviewEntity newReview = new ReviewEntity(customer.getUsername(), book.getTitle(), commentBody, rating);
+        reviewRepository.save(newReview);
 
         message = "Review added successfully.";
         return ResponseEntity.ok().body(new ResponseWrapper(true, message, null));

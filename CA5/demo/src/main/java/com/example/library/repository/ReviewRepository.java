@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
 
-    List<ReviewEntity> findByBookTitle(String bookTitle);
+    List<ReviewEntity> findByTitle(String bookTitle);
 
 
 }

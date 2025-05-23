@@ -118,8 +118,8 @@ public class BookService {
                 () -> new RuntimeException("Book not found")
         );
         ArrayList<Map<String,Object>> reviews = new ArrayList<>();
-        for(ReviewEntity review : reviewRepository.findByBookTitle(bookTitle)){
-            reviews.add(Map.of("username",review.getUsername(),"rating",review.getRating(),"comment",review.getComment()));
+        for(ReviewEntity review : reviewRepository.findByTitle(bookTitle)){
+            reviews.add(Map.of("username",review.getUsername(),"rating",review.getRate(),"comment",review.getComment()));
         }
         return  reviews;
     }
@@ -158,7 +158,7 @@ public class BookService {
     }
 
     public double computeAverageRating(BookEntity book){
-        List<ReviewEntity> reviews = reviewRepository.findByBookTitle(book.getTitle());
+        List<ReviewEntity> reviews = reviewRepository.findByTitle(book.getTitle());
 
         if (reviews.isEmpty()) {
             return 0.0;
@@ -166,7 +166,7 @@ public class BookService {
 
         int totalRating = 0;
         for (ReviewEntity review : reviews) {
-            totalRating += review.getRating();
+            totalRating += review.getRate();
         }
 
         return (double) totalRating / reviews.size();
