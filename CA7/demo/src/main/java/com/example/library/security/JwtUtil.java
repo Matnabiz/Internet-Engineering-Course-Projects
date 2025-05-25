@@ -23,7 +23,7 @@ public class JwtUtil {
     }
 
     public Claims validateToken(String token) throws JwtException {
-        return Jwts.parserBuilder()
+        return Jwts.parser()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)

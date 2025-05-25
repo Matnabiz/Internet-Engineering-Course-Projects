@@ -1,6 +1,8 @@
 package com.example.library.controller;
 
+import com.example.library.dto.ResponseWrapper;
 import com.example.library.security.JwtUtil;
+import com.example.library.service.AuthenticationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,26 +14,16 @@ import java.util.Map;
 public class AuthenticationController {
 
     private final JwtUtil jwtUtil;
-
-    public AuthenticationController(JwtUtil jwtUtil) {
+    private final AuthenticationService authenticationService;
+    public AuthenticationController(JwtUtil jwtUtil, AuthenticationService authenticationService) {
         this.jwtUtil = jwtUtil;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestParam String username,
-                                                     @RequestParam String password) {
-        // Simulate user validation — replace with real authentication
-        if (username.equals("user") && password.equals("password")) {
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("sub", username);
-            claims.put("role", "USER");
-            String token = jwtUtil.generateToken(claims);
+    public ResponseEntity<ResponseWrapper> login(@RequestBody Map<String, Object> body) {
 
-            Map<String, String> response = new HashMap<>();
-            response.put("token", token);
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(401).build();
-        }
+
+        return authenticationService.loginUser((String) body.get("username"), (String) body.get("password"));
     }
 }

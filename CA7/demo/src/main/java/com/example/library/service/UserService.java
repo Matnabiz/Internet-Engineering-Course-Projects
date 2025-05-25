@@ -53,28 +53,7 @@ public class UserService {
         return ResponseEntity.ok(new ResponseWrapper(true, message, null));
     }
 
-    public ResponseEntity<ResponseWrapper> loginUser(String username, String password) {
-        if (!userRepository.existsByUsername(username)) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseWrapper(false, "User not found!", null));
-        }
 
-        if (systemData.isLoggedIn(username)) {
-            message = "This user has already signed in.";
-            return ResponseEntity.badRequest().body(new ResponseWrapper(false, message, null));
-        }
-        UserEntity userLoggingIn = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!Validation.authenticatePassword(password, userLoggingIn)) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new ResponseWrapper(false, "Invalid credentials.", null));
-        }
-
-        systemData.loggedInUsers.add(username);
-        return ResponseEntity.ok(new ResponseWrapper(true, "Login Successful", null));
-    }
 
     public ResponseEntity<ResponseWrapper> addUser(String username, String password, String email, Address address, String role) {
 
